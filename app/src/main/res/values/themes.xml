@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.BibliotecaUnifor" parent="android:Theme.Material.Light.NoActionBar" />
+    <!-- Tema principal do app -->
+    <style name="Theme.BibliotecaUnifor" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Cor primária da Unifor -->
+        <item name="colorPrimary">@color/unifor_anil_primary</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- Cor secundária da Unifor -->
+        <item name="colorSecondary">@color/unifor_marinho_dark</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <!-- Fonte personalizada Satoshi -->
+        <item name="android:fontFamily">@font/satoshi_family</item>
+        <!-- Cor da barrinha de status do Android -->
+        <item name="android:statusBarColor">?attr/colorPrimary</item>
+    </style>
 </resources>
