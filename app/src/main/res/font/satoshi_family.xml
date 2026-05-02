@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<font-family xmlns:android="http://schemas.android.com/apk/res/android">
+<!-- Satoshi Regular (400) -->
+<font
+    android:font="@font/satoshi_regular"
+    android:fontStyle="normal"
+    android:fontWeight="400" />
+
+<!-- Satoshi Italic (400) -->
+<font
+    android:font="@font/satoshi_italic"
+    android:fontStyle="italic"
+    android:fontWeight="400" />
+
+<!-- Satoshi Medium (500) -->
+<font
+    android:font="@font/satoshi_medium"
+    android:fontStyle="normal"
+    android:fontWeight="500" />
+
+<!-- Satoshi Medium Italic (500) -->
+<font
+    android:font="@font/satoshi_mediumitalic"
+    android:fontStyle="italic"
+    android:fontWeight="500" />
+
+<!-- Satoshi Bold (700) -->
+<font
+    android:font="@font/satoshi_bold"
+    android:fontStyle="normal"
+    android:fontWeight="700" />
+
+<!-- Satoshi Bold Italic (700) -->
+<font
+    android:font="@font/satoshi_bolditalic"
+    android:fontStyle="italic"
+    android:fontWeight="700" />
+
+<!-- Satoshi Black (900) -->
+<font
+    android:font="@font/satoshi_black"
+    android:fontStyle="normal"
+    android:fontWeight="900" />
+
+<!-- Satoshi Black Italic (900) -->
+<font
+    android:font="@font/satoshi_blackitalic"
+    android:fontStyle="italic"
+    android:fontWeight="900" />
+
+<!-- Satoshi Light (300) -->
+<font
+    android:font="@font/satoshi_light"
+    android:fontStyle="normal"
+    android:fontWeight="300" />
+
+<!-- Satoshi Light Italic (300) -->
+<font
+    android:font="@font/satoshi_lightitalic"
+    android:fontStyle="italic"
+    android:fontWeight="300" />
+</font-family>
