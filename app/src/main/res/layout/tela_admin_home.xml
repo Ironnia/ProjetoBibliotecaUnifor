@@ -70,12 +70,18 @@
                 android:src="@android:drawable/ic_menu_search"
                 app:tint="@color/unifor_marinho_dark" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <EditText
+                android:id="@+id/et_search"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_marginStart="8dp"
-                android:text="Pesquisar acervo..."
-                android:textColor="#888888" />
+                android:background="@null"
+                android:hint="Pesquisar acervo..."
+                android:textColorHint="#888888"
+                android:textColor="@color/unifor_marinho_dark"
+                android:inputType="text"
+                android:maxLines="1"
+                android:imeOptions="actionSearch" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
@@ -220,7 +226,7 @@
                         <ImageView
                             android:layout_width="32dp"
                             android:layout_height="32dp"
-                            android:src="@drawable/ic_door_admin"
+                            android:src="@drawable/room_preferences_24px"
                             app:tint="@color/unifor_anil_primary" />
                             
                         <TextView
@@ -245,6 +251,7 @@
                 android:textStyle="bold" />
 
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_devolucoes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
@@ -369,6 +376,6 @@
         app:itemIconTint="@color/unifor_marinho_dark"
         app:itemTextColor="@color/unifor_marinho_dark"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:menu="@menu/bottom_nav_menu" />
+        app:menu="@menu/bottom_nav_admin_menu" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

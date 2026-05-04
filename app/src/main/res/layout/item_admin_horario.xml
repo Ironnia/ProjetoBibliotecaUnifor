@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginVertical="4dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="0dp"
+    app:strokeColor="#DDDDDD"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Horário principal + dropdown arrow -->
+        <RelativeLayout
+            android:id="@+id/layout_header"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:paddingHorizontal="16dp"
+            android:background="?attr/selectableItemBackground">
+
+            <TextView
+                android:id="@+id/tv_horario"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="7:10 - 8:00"
+                android:textColor="@color/unifor_marinho_dark"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <View
+                android:id="@+id/iv_slot_status"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@id/iv_dropdown"
+                android:layout_marginEnd="8dp"
+                android:visibility="gone"
+                android:background="@drawable/bg_circle_red" />
+
+            <ImageView
+                android:id="@+id/iv_dropdown"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:contentDescription="Expandir"
+                android:src="@android:drawable/arrow_down_float"
+                app:tint="#888888" />
+        </RelativeLayout>
+
+        <!-- Detalhe expandível -->
+        <LinearLayout
+            android:id="@+id/layout_detalhe"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingBottom="12dp"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/tv_matricula"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Matrícula: 1213145"
+                android:textColor="#666666"
+                android:textSize="13sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_ocupar"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:text="Ocupar"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    app:backgroundTint="#EF5350"
+                    app:cornerRadius="6dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_liberar"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Liberar"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    app:backgroundTint="@color/success_green"
+                    app:cornerRadius="6dp" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

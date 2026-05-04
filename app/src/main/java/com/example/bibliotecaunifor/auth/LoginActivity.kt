@@ -23,7 +23,7 @@ class LoginActivity : AppCompatActivity() {
             val senha = binding.editTextSenha.text.toString()
 
             if (email.isBlank() || senha.isBlank()) {
-                Toast.makeText(this, "Usuário(a) ou senha incorretos", Toast.LENGTH_SHORT).show()
+                com.google.android.material.snackbar.Snackbar.make(binding.root, "Usuário(a) ou senha incorretos", com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show()
             } else if (email == "admin" && senha == "admin") {
                 startActivity(Intent(this, AdminHomeActivity::class.java))
                 finish()

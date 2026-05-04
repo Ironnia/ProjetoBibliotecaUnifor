@@ -71,13 +71,26 @@
             android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_opcoes"
+                android:id="@+id/btn_editar"
                 style="@style/Widget.Material3.Button.TonalButton"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Opções"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:text="Editar"
                 android:textColor="@color/unifor_marinho_dark"
-                app:backgroundTint="#EEEEEE"
+                app:backgroundTint="#FFD54F"
+                app:cornerRadius="8dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_excluir"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Excluir"
+                android:textColor="@color/white"
+                app:backgroundTint="#EF5350"
                 app:cornerRadius="8dp" />
         </LinearLayout>
     </LinearLayout>

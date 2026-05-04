@@ -26,7 +26,9 @@ class AdminAcervoActivity : AppCompatActivity() {
         setupRecyclerView()
 
         binding.fabAdd.setOnClickListener {
-            startActivity(android.content.Intent(this, AdminCriarLivroActivity::class.java))
+            val intent = android.content.Intent(this, AdminCriarLivroActivity::class.java)
+            intent.putExtra("isEdit", false)
+            startActivity(intent)
         }
     }
 

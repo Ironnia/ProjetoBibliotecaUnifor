@@ -31,8 +31,16 @@ class AdminHomeActivity : AppCompatActivity() {
             startActivity(android.content.Intent(this, com.example.bibliotecaunifor.admin.agendamentos.AdminAgendamentosActivity::class.java))
         }
 
+        // A barra de pesquisa agora é apenas um EditText para digitação, sem redirecionamento ao clicar.
+
+        // Próximas Devoluções - Atalho rápido para Empréstimos
+        binding.cardDevolucoes.setOnClickListener {
+            startActivity(android.content.Intent(this, com.example.bibliotecaunifor.admin.emprestimos.AdminEmprestimosActivity::class.java))
+        }
+
         binding.ivProfile.setOnClickListener {
-            finish() // Logs out the admin back to Login
+            // Em vez de fechar, vamos para a tela de Usuários (que é o "Perfil" do Admin)
+            startActivity(android.content.Intent(this, com.example.bibliotecaunifor.admin.usuarios.AdminUsuariosActivity::class.java))
         }
 
         NavigationUtils.setupAdminNavigation(this, binding.bottomNavigation, R.id.navigation_home)

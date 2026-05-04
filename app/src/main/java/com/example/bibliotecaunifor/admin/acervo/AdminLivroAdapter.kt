@@ -33,32 +33,20 @@ class AdminLivroAdapter(private val items: List<AdminLivro>) :
                 holder.itemView.context.startActivity(intent)
             }
 
-            btnOpcoes.setOnClickListener {
-                val opcoes = arrayOf("Ver detalhes (ADM)", "Editar dados", "Remover do acervo")
+            btnEditar.setOnClickListener {
+                val intent = android.content.Intent(holder.itemView.context, AdminCriarLivroActivity::class.java)
+                intent.putExtra("isEdit", true)
+                holder.itemView.context.startActivity(intent)
+            }
+
+            btnExcluir.setOnClickListener {
                 MaterialAlertDialogBuilder(holder.itemView.context)
-                    .setTitle("Gestão - ${item.titulo}")
-                    .setItems(opcoes) { _, which ->
-                        when (which) {
-                            0 -> {
-                                val intent = android.content.Intent(holder.itemView.context, AdminDetalhesLivroActivity::class.java)
-                                holder.itemView.context.startActivity(intent)
-                            }
-                            1 -> {
-                                val intent = android.content.Intent(holder.itemView.context, AdminCriarLivroActivity::class.java)
-                                holder.itemView.context.startActivity(intent)
-                            }
-                            2 -> {
-                                MaterialAlertDialogBuilder(holder.itemView.context)
-                                    .setTitle("Confirmar Exclusão")
-                                    .setMessage("Deseja realmente excluir \"${item.titulo}\"?")
-                                    .setPositiveButton("Excluir") { _, _ ->
-                                        Snackbar.make(holder.binding.root, "Livro removido com sucesso!", Snackbar.LENGTH_SHORT).show()
-                                    }
-                                    .setNegativeButton("Cancelar", null)
-                                    .show()
-                            }
-                        }
+                    .setTitle("Confirmar Exclusão")
+                    .setMessage("Deseja realmente excluir \"${item.titulo}\" do catálogo? Esta ação não pode ser desfeita.")
+                    .setPositiveButton("Excluir") { _, _ ->
+                        Snackbar.make(holder.binding.root, "Livro removido com sucesso!", Snackbar.LENGTH_SHORT).show()
                     }
+                    .setNegativeButton("Cancelar", null)
                     .show()
             }
         }

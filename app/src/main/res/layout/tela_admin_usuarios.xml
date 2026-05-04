@@ -99,6 +99,6 @@
         app:itemIconTint="@color/unifor_marinho_dark"
         app:itemTextColor="@color/unifor_marinho_dark"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:menu="@menu/bottom_nav_menu" />
+        app:menu="@menu/bottom_nav_admin_menu" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
