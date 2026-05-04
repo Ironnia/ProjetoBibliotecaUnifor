@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="#FFFFFF">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="700dp"
+        tools:context=".CadastroActivity">
+
+        <!-- ===== CABEÇALHO COM GRADIENTE AZUL ===== -->
+        <View
+            android:id="@+id/viewHeader"
+            android:layout_width="0dp"
+            android:layout_height="220dp"
+            android:background="@drawable/bg_header_gradient"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Círculo decorativo atrás do logo -->
+        <View
+            android:id="@+id/viewCircleLogo"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:background="@drawable/bg_circle_white"
+            android:elevation="4dp"
+            app:layout_constraintTop_toTopOf="@id/viewHeader"
+            app:layout_constraintBottom_toBottomOf="@id/viewHeader"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintVertical_bias="0.55" />
+
+        <!-- Logo da Universidade -->
+        <ImageView
+            android:id="@+id/imageViewLogo"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:scaleType="centerInside"
+            android:elevation="6dp"
+            app:srcCompat="@drawable/logo_unifor"
+            app:layout_constraintTop_toTopOf="@id/viewCircleLogo"
+            app:layout_constraintBottom_toBottomOf="@id/viewCircleLogo"
+            app:layout_constraintStart_toStartOf="@id/viewCircleLogo"
+            app:layout_constraintEnd_toEndOf="@id/viewCircleLogo" />
+
+        <!-- Nome da universidade -->
+        <TextView
+            android:id="@+id/textViewUniversidade"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Universidade de Fortaleza"
+            android:textSize="20sp"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:alpha="0.9"
+            android:letterSpacing="0.08"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/viewCircleLogo"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- ===== CARD BRANCO DO FORMULÁRIO ===== -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardForm"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="24dp"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="12dp"
+            app:cardBackgroundColor="#FFFFFF"
+            app:layout_constraintTop_toBottomOf="@id/viewHeader"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintVertical_bias="0.0">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:paddingTop="28dp"
+                android:paddingBottom="32dp">
+
+                <!-- Título CADASTRO -->
+                <TextView
+                    android:id="@+id/textViewCadastro"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cadastro"
+                    android:textSize="42sp"
+                    android:textColor="#1A237E"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.04"
+                    android:fontFamily="sans-serif-black"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+                <!-- Linha decorativa abaixo do título -->
+                <View
+                    android:id="@+id/viewDivider"
+                    android:layout_width="48dp"
+                    android:layout_height="4dp"
+                    android:background="@drawable/bg_divider_rounded"
+                    android:layout_marginTop="2dp"
+                    app:layout_constraintTop_toBottomOf="@id/textViewCadastro"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+                <!-- Campo Nome ou Matrícula -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/layoutNome"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    app:startIconDrawable="@android:drawable/ic_menu_myplaces"
+                    app:startIconTint="#1565C0"
+                    app:boxStrokeColor="#1565C0"
+                    app:boxStrokeWidth="1dp"
+                    app:boxStrokeWidthFocused="2dp"
+                    app:boxCornerRadiusTopStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusBottomEnd="12dp"
+                    app:hintTextColor="#1565C0"
+                    app:layout_constraintTop_toBottomOf="@id/viewDivider"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editTextNome"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Nome ou Matrícula"
+                        android:inputType="textPersonName"
+                        android:imeOptions="actionNext"
+                        android:textSize="15sp"
+                        android:paddingStart="4dp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Campo Email -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/layoutEmail"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    app:startIconDrawable="@android:drawable/ic_dialog_email"
+                    app:startIconTint="#1565C0"
+                    app:boxStrokeColor="#1565C0"
+                    app:boxStrokeWidth="1dp"
+                    app:boxStrokeWidthFocused="2dp"
+                    app:boxCornerRadiusTopStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusBottomEnd="12dp"
+                    app:hintTextColor="#1565C0"
+                    app:layout_constraintTop_toBottomOf="@id/layoutNome"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editTextEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="E-mail"
+                        android:inputType="textEmailAddress"
+                        android:imeOptions="actionNext"
+                        android:textSize="15sp"
+                        android:paddingStart="4dp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Campo Senha -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/layoutSenha"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    app:startIconDrawable="@android:drawable/ic_lock_idle_lock"
+                    app:startIconTint="#1565C0"
+                    app:endIconMode="password_toggle"
+                    app:endIconTint="#9E9E9E"
+                    app:boxStrokeColor="#1565C0"
+                    app:boxStrokeWidth="1dp"
+                    app:boxStrokeWidthFocused="2dp"
+                    app:boxCornerRadiusTopStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusBottomEnd="12dp"
+                    app:hintTextColor="#1565C0"
+                    app:layout_constraintTop_toBottomOf="@id/layoutEmail"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editTextSenha"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Senha"
+                        android:inputType="textPassword"
+                        android:imeOptions="actionNext"
+                        android:textSize="15sp"
+                        android:paddingStart="4dp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Campo Repetir Senha -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/layoutRepetirSenha"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    app:startIconDrawable="@android:drawable/ic_lock_idle_lock"
+                    app:startIconTint="#1565C0"
+                    app:endIconMode="password_toggle"
+                    app:endIconTint="#9E9E9E"
+                    app:boxStrokeColor="#1565C0"
+                    app:boxStrokeWidth="1dp"
+                    app:boxStrokeWidthFocused="2dp"
+                    app:boxCornerRadiusTopStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusBottomEnd="12dp"
+                    app:hintTextColor="#1565C0"
+                    app:layout_constraintTop_toBottomOf="@id/layoutSenha"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editTextRepetirSenha"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Repita a senha"
+                        android:inputType="textPassword"
+                        android:imeOptions="actionDone"
+                        android:textSize="15sp"
+                        android:paddingStart="4dp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Link: já tem conta? -->
+                <TextView
+                    android:id="@+id/textViewJaTenho"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Já tem conta? "
+                    android:textSize="12sp"
+                    android:textColor="#757575"
+                    android:layout_marginTop="12dp"
+                    app:layout_constraintTop_toBottomOf="@id/layoutRepetirSenha"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <TextView
+                    android:id="@+id/textViewFazerLogin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="fazer login"
+                    android:textSize="12sp"
+                    android:textColor="#1565C0"
+                    android:textStyle="bold"
+                    app:layout_constraintBaseline_toBaselineOf="@id/textViewJaTenho"
+                    app:layout_constraintStart_toEndOf="@id/textViewJaTenho" />
+
+                <!-- Botão Cadastrar -->
+                <Button
+                    android:id="@+id/buttonCadastrar"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_marginTop="28dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:text="Cadastrar"
+                    android:textSize="17sp"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.06"
+                    android:backgroundTint="#1565C0"
+                    android:stateListAnimator="@null"
+                    android:elevation="6dp"
+                    app:cornerRadius="26dp"
+                    app:layout_constraintTop_toBottomOf="@id/textViewJaTenho"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
