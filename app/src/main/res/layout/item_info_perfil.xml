@@ -11,7 +11,7 @@
         android:id="@+id/iv_info_icon"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:src="@drawable/ic_trophy"
+        android:src="@drawable/trophy_24"
         app:tint="@color/black" />
 
     <TextView

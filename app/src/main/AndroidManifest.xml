@@ -12,16 +12,41 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BibliotecaUnifor">
         <activity
-            android:name=".MainActivity"
+            android:name=".auth.LoginActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.BibliotecaUnifor">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
+        <activity android:name=".MainActivity" android:exported="false" />
+        <activity android:name=".auth.CadastroActivity" android:exported="false" />
+        <activity android:name=".auth.RecuperarSenhaActivity" android:exported="false" />
+        <activity android:name=".usuario.catalogo.CatalogoActivity" android:exported="false" />
+        <activity android:name=".usuario.reserva.DetalhesLivroActivity" android:exported="false" />
+        <activity android:name=".usuario.salas.SalasActivity" android:exported="false" />
+        <activity android:name=".usuario.perfil.PerfilUsuarioActivity" android:exported="false" />
+        <activity android:name=".usuario.alugueis.AlugueisActivity" android:exported="false" />
+        <activity android:name=".usuario.ranking.RankingUsuarioActivity" android:exported="false" />
+        <activity android:name=".usuario.configuracoes.ConfiguracoesUsuarioActivity" android:exported="false" />
+        <activity android:name=".admin.AdminHomeActivity" android:exported="false" />
+        <activity android:name=".admin.acervo.AdminAcervoActivity" android:exported="false" />
+        <activity android:name=".admin.acervo.AdminCriarLivroActivity" android:exported="false" />
+        <activity android:name=".admin.acervo.AdminDetalhesLivroActivity" android:exported="false" />
+        <activity android:name=".admin.emprestimos.AdminEmprestimosActivity" android:exported="false" />
+        <activity android:name=".admin.usuarios.AdminUsuariosActivity" android:exported="false" />
+        <activity android:name=".admin.agendamentos.AdminAgendamentosActivity" android:exported="false" />
+        
+        <!-- Novas Telas Usuário -->
+        <activity android:name=".usuario.historico.HistoricoActivity" android:exported="false" />
+        <activity android:name=".usuario.jogos.JogosTabuleiroActivity" android:exported="false" />
+        <activity android:name=".usuario.salas.AgendarSalaActivity" android:exported="false" />
+        <activity android:name=".usuario.configuracoes.TrocarSenhaActivity" android:exported="false" />
+        <activity android:name=".usuario.configuracoes.ChatSuporteActivity" android:exported="false" />
+        <activity android:name=".usuario.emprestimos.MeusLivrosActivity" android:exported="false" />
     </application>
 
 </manifest>

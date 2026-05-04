@@ -8,15 +8,26 @@
     tools:context=".MainActivity">
 
     <!-- Parte de cima: Foto e o Troféu de ranking -->
+    <ImageView
+        android:id="@+id/iv_unifor_logo"
+        android:layout_width="120dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="32dp"
+        android:src="@drawable/ic_unifor_logo"
+        android:scaleType="fitStart"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/iv_profile"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_marginTop="32dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="24dp"
         android:scaleType="centerCrop"
         android:src="@drawable/ic_profile_tab"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
         app:strokeColor="@color/unifor_anil_primary"
@@ -27,12 +38,12 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_marginEnd="24dp"
+        android:layout_marginTop="24dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="Ranking"
-        android:src="@drawable/ic_trophy"
-        app:layout_constraintBottom_toBottomOf="@+id/iv_profile"
+        android:src="@drawable/trophy_24"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/iv_profile"
+        app:layout_constraintTop_toTopOf="parent"
         app:tint="@color/unifor_marinho_dark" />
 
     <!-- Mensagem de boas-vindas pro usuário -->
@@ -89,6 +100,7 @@
 
         <!-- Atalho pra ver as reservas de salas -->
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_agendamentos"
             android:layout_width="0dp"
             android:layout_height="120dp"
             android:layout_margin="8dp"
@@ -106,7 +118,7 @@
                 <ImageView
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:src="@drawable/ic_rooms"
+                    android:src="@drawable/calendar_clock_24"
                     app:tint="@color/unifor_anil_primary" />
 
                 <TextView
@@ -122,6 +134,7 @@
 
         <!-- Atalho pra ver os livros alugados -->
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_emprestimos"
             android:layout_width="0dp"
             android:layout_height="120dp"
             android:layout_margin="8dp"
@@ -139,7 +152,7 @@
                 <ImageView
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:src="@drawable/ic_books"
+                    android:src="@drawable/menu_book_24"
                     app:tint="@color/unifor_anil_primary" />
 
                 <TextView
@@ -147,7 +160,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/satoshi_family"
                     android:gravity="center"
-                    android:text="Empréstimos de livros"
+                    android:text="Meus livros"
                     android:textColor="@color/unifor_marinho_dark"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -155,6 +168,7 @@
 
         <!-- Ver o que já foi lido ou reservado -->
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_historico"
             android:layout_width="0dp"
             android:layout_height="120dp"
             android:layout_margin="8dp"
@@ -188,6 +202,7 @@
 
         <!-- Atalho pra parte de jogos de tabuleiro -->
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_jogos"
             android:layout_width="0dp"
             android:layout_height="120dp"
             android:layout_margin="8dp"
@@ -205,7 +220,7 @@
                 <ImageView
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:src="@drawable/ic_board_games"
+                    android:src="@drawable/casino_24"
                     app:tint="@color/unifor_anil_primary" />
 
                 <TextView

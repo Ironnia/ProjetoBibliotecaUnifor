@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <style name="Theme.BibliotecaUnifor" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/unifor_anil_primary</item>
+        <item name="colorSecondary">@color/unifor_marinho_dark</item>
+    </style>
 
-    <style name="Theme.BibliotecaUnifor" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="CircleImageView">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
 </resources>

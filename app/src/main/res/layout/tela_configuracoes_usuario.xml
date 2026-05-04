@@ -1,282 +1,184 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white">
 
-    <!-- Cabeçalho -->
-    <LinearLayout
-        android:id="@+id/ll_header_config"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingHorizontal="16dp"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <ImageButton
-            android:id="@+id/btn_voltar"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_back"
-            app:tint="@color/black" />
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/white"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationIcon="@drawable/ic_arrow_back">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:fontFamily="@font/satoshi_family"
             android:text="Configurações"
-            android:textColor="@color/black"
-            android:textSize="28sp"
+            android:textColor="@color/unifor_marinho_dark"
+            android:textSize="20sp"
             android:textStyle="bold" />
-    </LinearLayout>
+    </androidx.appcompat.widget.Toolbar>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
         app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
-        app:layout_constraintTop_toBottomOf="@+id/ll_header_config">
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingHorizontal="16dp">
+            android:padding="16dp">
 
-            <!-- Perfil e Segurança -->
+            <!-- Seção Perfil e Segurança -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                app:cardBackgroundColor="@color/unifor_gelo_bg"
-                app:cardCornerRadius="24dp"
-                app:cardElevation="0dp">
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:strokeColor="#DDDDDD"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/ic_settings"
-                            app:tint="@color/black" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:fontFamily="@font/satoshi_family"
-                            android:text="Perfil e segurança"
-                            android:textColor="@color/black"
-                            android:textSize="18sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
+                    android:padding="12dp">
 
                     <TextView
-                        android:id="@+id/tv_editor_tags"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Perfil e segurança"
+                        android:textColor="@color/unifor_marinho_dark"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:drawableStartCompat="@drawable/ic_profile_tab"
+                        android:drawablePadding="8dp"
+                        app:drawableTint="@color/unifor_marinho_dark" />
+
+                    <Button
+                        android:id="@+id/btnTags"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:drawableStart="@drawable/ic_tag"
-                        android:drawablePadding="8dp"
-                        android:drawableTint="@color/black"
-                        android:fontFamily="@font/satoshi_family"
-                        android:text="Editor de tag de preferências"
-                        android:textColor="@color/black"
-                        android:textSize="16sp" />
+                        android:text="Editor de tag de preferências >"
+                        android:textAlignment="viewStart"
+                        android:textColor="#666666" />
 
-                    <TextView
-                        android:id="@+id/tv_alterar_senha"
+                    <Button
+                        android:id="@+id/btnAlterarSenha"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:drawableStart="@drawable/ic_lock"
-                        android:drawablePadding="8dp"
-                        android:drawableTint="@color/black"
-                        android:fontFamily="@font/satoshi_family"
-                        android:text="Alterar senha"
-                        android:textColor="@color/black"
-                        android:textSize="16sp" />
-
+                        android:text="Alterar senha >"
+                        android:textAlignment="viewStart"
+                        android:textColor="#666666" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Acessibilidade -->
+            <!-- Seção Acessibilidade -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                app:cardBackgroundColor="@color/unifor_gelo_bg"
-                app:cardCornerRadius="24dp"
-                app:cardElevation="0dp">
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:strokeColor="#DDDDDD"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="12dp">
 
-                    <LinearLayout
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Acessibilidade"
+                        android:textColor="@color/unifor_marinho_dark"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:drawableStartCompat="@drawable/ic_profile_tab"
+                        android:drawablePadding="8dp"
+                        app:drawableTint="@color/unifor_marinho_dark" />
+
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/switchVoz"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/ic_rooms"
-                            app:tint="@color/black" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:fontFamily="@font/satoshi_family"
-                            android:text="Acessibilidade"
-                            android:textColor="@color/black"
-                            android:textSize="18sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
+                        android:text="Comando por voz"
+                        android:textColor="#666666" />
 
-                    <LinearLayout
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/switchContraste"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:drawableStart="@drawable/ic_mic"
-                            android:drawablePadding="8dp"
-                            android:drawableTint="@color/black"
-                            android:fontFamily="@font/satoshi_family"
-                            android:text="Comando por voz"
-                            android:textColor="@color/black"
-                            android:textSize="16sp" />
-                        <com.google.android.material.materialswitch.MaterialSwitch
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:checked="true"
-                            app:thumbTint="@color/success_green" />
-                    </LinearLayout>
+                        android:text="Alto contraste"
+                        android:textColor="#666666" />
 
-                    <LinearLayout
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/switchVLibras"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:drawableStart="@drawable/ic_contrast"
-                            android:drawablePadding="8dp"
-                            android:drawableTint="@color/black"
-                            android:fontFamily="@font/satoshi_family"
-                            android:text="Alto contraste"
-                            android:textColor="@color/black"
-                            android:textSize="16sp" />
-                        <com.google.android.material.materialswitch.MaterialSwitch
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:drawableStart="@drawable/ic_profile_tab"
-                            android:drawablePadding="8dp"
-                            android:drawableTint="@color/unifor_anil_primary"
-                            android:fontFamily="@font/satoshi_family"
-                            android:text="vLibras"
-                            android:textColor="@color/black"
-                            android:textSize="16sp" />
-                        <com.google.android.material.materialswitch.MaterialSwitch
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-                    </LinearLayout>
-
+                        android:text="vLibras"
+                        android:textColor="#666666" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Ajuda e Suporte -->
+            <!-- Seção Ajuda e Suporte -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="32dp"
-                app:cardBackgroundColor="@color/unifor_gelo_bg"
-                app:cardCornerRadius="24dp"
-                app:cardElevation="0dp">
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:strokeColor="#DDDDDD"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/ic_help"
-                            app:tint="@color/black" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:fontFamily="@font/satoshi_family"
-                            android:text="Ajuda e suporte"
-                            android:textColor="@color/black"
-                            android:textSize="18sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
+                    android:padding="12dp">
 
                     <TextView
-                        android:id="@+id/tv_faq"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Ajuda e suporte"
+                        android:textColor="@color/unifor_marinho_dark"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:drawableStartCompat="@android:drawable/ic_menu_help"
+                        android:drawablePadding="8dp"
+                        app:drawableTint="@color/unifor_marinho_dark" />
+
+                    <Button
+                        android:id="@+id/btnFAQ"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:drawableStart="@drawable/ic_books"
-                        android:drawablePadding="8dp"
-                        android:drawableTint="@color/black"
-                        android:fontFamily="@font/satoshi_family"
-                        android:text="Central de ajuda/FAQ"
-                        android:textColor="@color/black"
-                        android:textSize="16sp" />
+                        android:text="Central de ajuda/FAQ >"
+                        android:textAlignment="viewStart"
+                        android:textColor="#666666" />
 
+                    <Button
+                        android:id="@+id/btnChat"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Chat com suporte >"
+                        android:textAlignment="viewStart"
+                        android:textColor="#666666" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
-
         </LinearLayout>
     </ScrollView>
 
-    <!-- Menu de navegação inferior -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginVertical="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp"
+    app:strokeColor="#DDDDDD"
+    app:strokeWidth="1dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp">
+
+        <ImageView
+            android:id="@+id/ivLivroIcon"
+            android:layout_width="48dp"
+            android:layout_height="64dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/menu_book_24"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/unifor_anil_primary" />
+
+        <TextView
+            android:id="@+id/tvLivroTitulo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:text="Dom Casmurro"
+            android:textColor="@color/unifor_marinho_dark"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/ivLivroIcon"
+            app:layout_constraintTop_toTopOf="@id/ivLivroIcon" />
+
+        <TextView
+            android:id="@+id/tvLivroAutor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Machado de Assis"
+            android:textColor="#666666"
+            android:textSize="13sp"
+            app:layout_constraintStart_toStartOf="@id/tvLivroTitulo"
+            app:layout_constraintTop_toBottomOf="@id/tvLivroTitulo" />
+
+        <TextView
+            android:id="@+id/tvStatusOuVencimento"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Vence em: 20/04/2026"
+            android:textColor="@color/error_red"
+            android:textSize="13sp"
+            app:layout_constraintStart_toStartOf="@id/tvLivroTitulo"
+            app:layout_constraintTop_toBottomOf="@id/tvLivroAutor" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAcaoAluguel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Renovar"
+            android:textSize="12sp"
+            app:cornerRadius="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvStatusOuVencimento" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

@@ -4,19 +4,101 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    tools:context=".usuario.salas.SalasActivity">
+    android:background="@color/white">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Em breve: Agendamento de Salas"
-        android:textColor="@color/unifor_marinho_dark"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
+    <ImageButton
+        android:id="@+id/btn_back"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_arrow_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/unifor_marinho_dark" />
+
+    <!-- Header com Logo -->
+    <ImageView
+        android:id="@+id/iv_unifor_logo"
+        android:layout_width="120dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/ic_unifor_logo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Agendar sala de estudos"
+        android:textColor="@color/unifor_marinho_dark"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/iv_unifor_logo" />
+
+    <!-- Filtros -->
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chipGroupFiltros"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_title"
+        app:singleSelection="true">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipDisponivel"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Disponível" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipOcupadas"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ocupadas" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipTodas"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="Todas as salas" />
+    </com.google.android.material.chip.ChipGroup>
+
+    <!-- Lista de Salas / Meus Agendamentos -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvSalas"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:paddingHorizontal="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
+        app:layout_constraintTop_toBottomOf="@id/chipGroupFiltros"
+        tools:listitem="@layout/item_sala" />
+
+    <!-- Botão flutuante ou Alternador para "Meus Agendamentos" -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnMeusAgendamentos"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="Meus Agendamentos"
+        android:textColor="@color/unifor_anil_primary"
+        app:icon="@drawable/ic_history"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"

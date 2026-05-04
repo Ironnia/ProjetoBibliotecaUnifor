@@ -6,6 +6,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.example.bibliotecaunifor.MainActivity
 import com.example.bibliotecaunifor.databinding.TelaCatalogoBinding
+import com.example.bibliotecaunifor.usuario.utils.NavigationUtils
 
 class CatalogoActivity : AppCompatActivity() {
     private lateinit var binding: TelaCatalogoBinding
@@ -37,13 +38,49 @@ class CatalogoActivity : AppCompatActivity() {
             },
             onReserveClicked = { book ->
                 if (book.availableCopies > 0) {
+                    val calendar = java.util.Calendar.getInstance()
+                    // Retirada: Amanhã às 21:00
+                    calendar.add(java.util.Calendar.DAY_OF_YEAR, 1)
+                    val retiradaDate = java.text.SimpleDateFormat("dd/MM/yyyy").format(calendar.time)
+                    // Devolução: 14 dias após a retirada
+                    calendar.add(java.util.Calendar.DAY_OF_YEAR, 14)
+                    val devolucaoDate = java.text.SimpleDateFormat("dd/MM/yyyy").format(calendar.time)
+
+                    val imageView = android.widget.ImageView(this).apply {
+                        setImageResource(com.example.bibliotecaunifor.R.drawable.ic_qrcode)
+                        setPadding(0, 32, 0, 32)
+                        layoutParams = android.view.ViewGroup.LayoutParams(
+                            android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                            500
+                        )
+                    }
+
                     androidx.appcompat.app.AlertDialog.Builder(this)
-                        .setTitle("Reservar ${book.title}?")
-                        .setMessage("Prazo para retirada: 23:59:59")
+                        .setTitle("Reservar Livro?")
+                        .setMessage("Título: ${book.title}\nAutor: ${book.author}\nISBN: ${book.isbn}\n\nPrazo para retirada: $retiradaDate às 21:00")
                         .setPositiveButton("Confirmar") { _, _ ->
+                            val dialogView = android.widget.LinearLayout(this).apply {
+                                orientation = android.widget.LinearLayout.VERTICAL
+                                gravity = android.view.Gravity.CENTER_HORIZONTAL
+                                setPadding(32, 32, 32, 32)
+                                val iv = android.widget.ImageView(context).apply {
+                                    setImageResource(com.example.bibliotecaunifor.R.drawable.ic_qrcode)
+                                    layoutParams = android.widget.LinearLayout.LayoutParams(500, 500)
+                                }
+                                val tv = android.widget.TextView(context).apply {
+                                    text = "(Apresente no balcão)"
+                                    textSize = 14f
+                                    gravity = android.view.Gravity.CENTER
+                                    setPadding(0, 16, 0, 0)
+                                }
+                                addView(iv)
+                                addView(tv)
+                            }
+
                             androidx.appcompat.app.AlertDialog.Builder(this)
-                                .setTitle("O livro \"${book.title}\" foi reservado")
-                                .setMessage("Retirar até amanhã às 09:00\nDevolver em 7 dias.")
+                                .setTitle("Reserva Efetuada!")
+                                .setMessage("O livro ${book.title} foi reservado!\n\nRetirar até $retiradaDate às 21:00\nDevolver em $devolucaoDate.")
+                                .setView(dialogView)
                                 .setPositiveButton("Fechar", null)
                                 .show()
                         }
@@ -62,18 +99,6 @@ class CatalogoActivity : AppCompatActivity() {
         binding.rvBooks.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
         binding.rvBooks.adapter = adapter
 
-        binding.bottomNavigation.selectedItemId = com.example.bibliotecaunifor.R.id.navigation_catalogo
-        binding.bottomNavigation.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                com.example.bibliotecaunifor.R.id.navigation_home -> {
-                    startActivity(Intent(this, MainActivity::class.java))
-                    finish()
-                    true
-                }
-                com.example.bibliotecaunifor.R.id.navigation_catalogo -> true
-                // TODO: Salas and Perfil
-                else -> false
-            }
-        }
+        NavigationUtils.setupBottomNavigation(this, binding.bottomNavigation, com.example.bibliotecaunifor.R.id.navigation_catalogo)
     }
 }

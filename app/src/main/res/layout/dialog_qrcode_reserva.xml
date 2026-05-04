@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:gravity="center">
+
+    <TextView
+        android:id="@+id/tv_qr_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Código de Retirada"
+        android:textColor="@color/unifor_marinho_dark"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/iv_qrcode"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="24dp"
+        android:src="@drawable/ic_qrcode" />
+
+    <TextView
+        android:id="@+id/tv_qr_instructions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Apresente este código no balcão para confirmar sua solicitação."
+        android:textColor="#666666"
+        android:textSize="14sp"
+        android:gravity="center" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_fechar_qr"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Fechar"
+        app:cornerRadius="12dp"
+        app:backgroundTint="@color/unifor_anil_primary" />
+
+</LinearLayout>

@@ -1,94 +1,66 @@
 package com.example.bibliotecaunifor
 
+import android.content.Intent
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBox
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewScreenSizes
-import com.example.bibliotecaunifor.ui.theme.BibliotecaUniforTheme
+import androidx.appcompat.app.AppCompatActivity
+import com.example.bibliotecaunifor.databinding.TelaHomeUsuarioBinding
+import com.example.bibliotecaunifor.usuario.catalogo.CatalogoActivity
+import com.example.bibliotecaunifor.usuario.perfil.PerfilUsuarioActivity
+import com.example.bibliotecaunifor.usuario.salas.SalasActivity
 
-class MainActivity : ComponentActivity() {
+import com.example.bibliotecaunifor.usuario.utils.NavigationUtils
+import com.example.bibliotecaunifor.usuario.ranking.RankingUsuarioActivity
+import com.example.bibliotecaunifor.usuario.alugueis.AlugueisActivity
+
+class MainActivity : AppCompatActivity() {
+    private lateinit var binding: TelaHomeUsuarioBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContent {
-            BibliotecaUniforTheme {
-                BibliotecaUniforApp()
+        binding = TelaHomeUsuarioBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        // Setup Navigation
+        NavigationUtils.setupBottomNavigation(this, binding.bottomNavigation, R.id.navigation_home)
+
+        // Header
+        binding.ivProfile.setOnClickListener {
+            startActivity(Intent(this, PerfilUsuarioActivity::class.java))
+        }
+        binding.btnRanking.setOnClickListener {
+            startActivity(Intent(this, RankingUsuarioActivity::class.java))
+        }
+
+        // Shortcuts
+        binding.cardAgendamentos.setOnClickListener {
+            startActivity(Intent(this, SalasActivity::class.java))
+        }
+        binding.cardEmprestimos.setOnClickListener {
+            startActivity(Intent(this, com.example.bibliotecaunifor.usuario.emprestimos.MeusLivrosActivity::class.java))
+        }
+        binding.cardHistorico.setOnClickListener {
+            startActivity(Intent(this, com.example.bibliotecaunifor.usuario.historico.HistoricoActivity::class.java))
+        }
+        binding.cardJogos.setOnClickListener {
+            startActivity(Intent(this, com.example.bibliotecaunifor.usuario.jogos.JogosTabuleiroActivity::class.java))
+        }
+
+        // Search Bar fake enter
+        binding.etSearch.setOnEditorActionListener { _, _, _ ->
+            startActivity(Intent(this, CatalogoActivity::class.java))
+            true
+        }
+
+        // Devolucoes List fake click - leva para os detalhes do livro
+        binding.tvDevolucoesList.setOnClickListener {
+            val intent = Intent(this, com.example.bibliotecaunifor.usuario.reserva.DetalhesLivroActivity::class.java).apply {
+                putExtra("title", "Dom Casmurro")
+                putExtra("author", "Machado de Assis")
+                putExtra("available", 0)
             }
+            startActivity(intent)
         }
-    }
-}
-
-@PreviewScreenSizes
-@Composable
-fun BibliotecaUniforApp() {
-    var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.HOME) }
-
-    NavigationSuiteScaffold(
-        navigationSuiteItems = {
-            AppDestinations.entries.forEach {
-                item(
-                    icon = {
-                        Icon(
-                            it.icon,
-                            contentDescription = it.label
-                        )
-                    },
-                    label = { Text(it.label) },
-                    selected = it == currentDestination,
-                    onClick = { currentDestination = it }
-                )
-            }
-        }
-    ) {
-        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-            Greeting(
-                name = "Android",
-                modifier = Modifier.padding(innerPadding)
-            )
-        }
-    }
-}
-
-enum class AppDestinations(
-    val label: String,
-    val icon: ImageVector,
-) {
-    HOME("Home", Icons.Default.Home),
-    FAVORITES("Favorites", Icons.Default.Favorite),
-    PROFILE("Profile", Icons.Default.AccountBox),
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    BibliotecaUniforTheme {
-        Greeting("Android")
     }
 }
