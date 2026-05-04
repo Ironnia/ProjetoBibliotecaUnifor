@@ -11,7 +11,7 @@ class CadastroActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        // enableEdgeToEdge()
         binding = CadastroBinding.inflate(layoutInflater)
         setContentView(binding.root)
 

@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
 }
 
 android {
@@ -14,6 +15,7 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
     }
 
     buildTypes {
@@ -29,12 +31,16 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+    kotlinOptions {
+        jvmTarget = "11"
+    }
     buildFeatures {
         viewBinding = true
     }
 }
 
 dependencies {
+    implementation(libs.androidx.activity)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

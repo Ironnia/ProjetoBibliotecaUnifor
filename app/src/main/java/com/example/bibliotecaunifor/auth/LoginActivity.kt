@@ -14,7 +14,7 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        // enableEdgeToEdge()
         binding = Login1Binding.inflate(layoutInflater)
         setContentView(binding.root)
 

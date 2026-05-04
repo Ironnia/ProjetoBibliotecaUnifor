@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        // enableEdgeToEdge()
         binding = TelaHomeUsuarioBinding.inflate(layoutInflater)
         setContentView(binding.root)
 

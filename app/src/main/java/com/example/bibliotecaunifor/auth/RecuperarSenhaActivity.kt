@@ -12,7 +12,7 @@ class RecuperarSenhaActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        // enableEdgeToEdge()
         binding = RecuperarsenhaBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
