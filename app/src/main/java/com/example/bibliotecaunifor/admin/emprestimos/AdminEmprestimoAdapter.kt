@@ -6,10 +6,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.bibliotecaunifor.R
 import com.example.bibliotecaunifor.databinding.ItemAdminEmprestimoBinding
 
-class AdminEmprestimoAdapter(private val items: List<AdminEmprestimo>) :
+class AdminEmprestimoAdapter(private var items: List<AdminEmprestimo>) :
     RecyclerView.Adapter<AdminEmprestimoAdapter.ViewHolder>() {
 
     class ViewHolder(val binding: ItemAdminEmprestimoBinding) : RecyclerView.ViewHolder(binding.root)
+
+    fun updateList(newItems: List<AdminEmprestimo>) {
+        items = newItems
+        notifyDataSetChanged()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemAdminEmprestimoBinding.inflate(
@@ -43,13 +48,13 @@ class AdminEmprestimoAdapter(private val items: List<AdminEmprestimo>) :
                         .setTitle("Confirmar Renovação")
                         .setMessage("Deseja renovar o empréstimo do livro \"${item.titulo}\" para o aluno ${item.matricula}?")
                         .setPositiveButton("Confirmar") { _, _ ->
-                            com.google.android.material.snackbar.Snackbar.make(holder.binding.root, "Renovação solicitada com sucesso!", com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show()
+                            com.google.android.material.snackbar.Snackbar.make(holder.binding.root, "Renovação realizada com sucesso!", com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show()
                         }
                         .setNegativeButton("Cancelar", null)
                         .show()
                 }
 
-                btnAprovar.text = "Aprovar"
+                btnAprovar.text = "Devolver"
                 btnAprovar.setBackgroundColor(holder.itemView.context.getColor(R.color.unifor_anil_primary))
                 btnAprovar.setTextColor(holder.itemView.context.getColor(R.color.white))
                 

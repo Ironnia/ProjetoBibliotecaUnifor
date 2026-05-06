@@ -50,7 +50,7 @@ object NavigationUtils {
                 R.id.navigation_home -> activity is com.example.bibliotecaunifor.admin.AdminHomeActivity
                 R.id.navigation_catalogo -> activity is com.example.bibliotecaunifor.admin.acervo.AdminAcervoActivity
                 R.id.navigation_salas -> activity is com.example.bibliotecaunifor.admin.agendamentos.AdminAgendamentosActivity
-                R.id.navigation_perfil -> activity is com.example.bibliotecaunifor.admin.usuarios.AdminUsuariosActivity
+                R.id.navigation_perfil -> activity is com.example.bibliotecaunifor.admin.emprestimos.AdminEmprestimosActivity
                 else -> false
             }
 
@@ -59,7 +59,7 @@ object NavigationUtils {
                     R.id.navigation_home -> Intent(activity, com.example.bibliotecaunifor.admin.AdminHomeActivity::class.java)
                     R.id.navigation_catalogo -> Intent(activity, com.example.bibliotecaunifor.admin.acervo.AdminAcervoActivity::class.java)
                     R.id.navigation_salas -> Intent(activity, com.example.bibliotecaunifor.admin.agendamentos.AdminAgendamentosActivity::class.java)
-                    R.id.navigation_perfil -> Intent(activity, com.example.bibliotecaunifor.admin.usuarios.AdminUsuariosActivity::class.java)
+                    R.id.navigation_perfil -> Intent(activity, com.example.bibliotecaunifor.admin.emprestimos.AdminEmprestimosActivity::class.java)
                     else -> null
                 }
 

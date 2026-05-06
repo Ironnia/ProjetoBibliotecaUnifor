@@ -15,5 +15,5 @@
     <item
         android:id="@+id/navigation_perfil"
         android:icon="@drawable/ic_profile_tab"
-        android:title="Usuários" />
+        android:title="Empréstimos" />
 </menu>
