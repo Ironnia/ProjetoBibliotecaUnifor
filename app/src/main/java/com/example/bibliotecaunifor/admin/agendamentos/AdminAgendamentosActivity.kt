@@ -7,8 +7,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.bibliotecaunifor.R
+import com.example.bibliotecaunifor.databinding.DialogAdminGerenciarHorariosBinding
 import com.example.bibliotecaunifor.databinding.TelaAdminAgendamentosBinding
 import com.example.bibliotecaunifor.usuario.utils.NavigationUtils
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 
 class AdminAgendamentosActivity : AppCompatActivity() {
@@ -75,18 +77,38 @@ class AdminAgendamentosActivity : AppCompatActivity() {
     private fun setupEstacoes() {
         binding.recyclerMesas.layoutManager = LinearLayoutManager(this)
         binding.recyclerMesas.adapter = AdminMesaAdapter(mesas) { mesa ->
-            // Callback "Gerenciar Horários" → muda para aba Cordelteca
-            binding.chipCordelteca.isChecked = true
-            mostrarHorarios()
-            Snackbar.make(binding.root, "Horários da ${mesa.nome}", Snackbar.LENGTH_SHORT).show()
+            showGerenciarHorariosDialog(mesa)
         }
+    }
+
+    private fun showGerenciarHorariosDialog(mesa: AdminMesa) {
+        val dialogBinding = DialogAdminGerenciarHorariosBinding.inflate(layoutInflater)
+        val dialog = BottomSheetDialog(this)
+        dialog.setContentView(dialogBinding.root)
+
+        dialogBinding.tvTituloDialog.text = "Gerenciar Horários - ${mesa.nome}"
+
+        val slots = listOf(
+            "07:10 - 08:00", "08:00 - 08:50", "08:50 - 09:40", "09:40 - 10:30",
+            "10:40 - 11:30", "11:30 - 12:20", "12:20 - 13:10", "13:10 - 14:00",
+            "14:00 - 14:50", "14:50 - 15:40", "15:40 - 16:30", "16:30 - 17:20",
+            "17:20 - 18:10", "18:10 - 19:00", "19:00 - 19:50", "19:50 - 20:40",
+            "20:40 - 21:30"
+        )
+        val horariosPopup = slots.mapIndexed { index, s ->
+            AdminHorario(s, index % 4 == 0)
+        }
+
+        dialogBinding.recyclerHorariosPopup.layoutManager = LinearLayoutManager(this)
+        dialogBinding.recyclerHorariosPopup.adapter = AdminHorarioPopupAdapter(horariosPopup)
+
+        dialog.show()
     }
 
     private fun setupCalendario() {
         val grid = binding.gridCalendario
         grid.removeAllViews()
 
-        // Cabeçalho dos dias da semana
         val diasSemana = listOf("Seg", "Ter", "Qua", "Qui", "Sex", "Sáb")
         for (dia in diasSemana) {
             val header = android.widget.TextView(this)
@@ -103,7 +125,6 @@ class AdminAgendamentosActivity : AppCompatActivity() {
             grid.addView(header)
         }
 
-        // Dias do mês com números
         for (i in diasCalendario.indices) {
             val isOcupado = diasCalendario[i]
             val diaNumero = i + 1
