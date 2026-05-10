@@ -3,6 +3,7 @@
     <style name="Theme.BibliotecaUnifor" parent="Theme.Material3.Light.NoActionBar">
         <item name="colorPrimary">@color/unifor_anil_primary</item>
         <item name="colorSecondary">@color/unifor_marinho_dark</item>
+        <item name="android:fontFamily">@font/satoshi_family</item>
     </style>
 
     <style name="CircleImageView">
