@@ -199,7 +199,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:text="Usuários"
+                            android:text="Gerenciar\nUsuários"
                             android:textAlignment="center"
                             android:textColor="@color/unifor_marinho_dark"
                             android:textStyle="bold" />
