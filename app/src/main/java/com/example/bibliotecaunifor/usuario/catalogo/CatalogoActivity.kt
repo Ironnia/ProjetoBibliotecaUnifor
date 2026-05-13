@@ -25,6 +25,10 @@ class CatalogoActivity : AppCompatActivity() {
             Book("O espelho", "Machado de Assis", 1)
         )
 
+        binding.ivBack.setOnClickListener {
+            finish()
+        }
+
         val adapter = BookAdapter(
             books = books,
             onBookClicked = { book ->

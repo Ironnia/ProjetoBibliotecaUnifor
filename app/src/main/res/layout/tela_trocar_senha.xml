@@ -56,15 +56,21 @@
                 android:textColor="@color/black"
                 android:layout_marginBottom="4dp" />
 
-            <EditText
-                android:id="@+id/etSenhaAtual"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_senha_atual"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:hint="Digite sua senha atual"
-                android:inputType="textPassword"
-                android:paddingHorizontal="12dp"
-                android:background="@drawable/bg_edittext_simple"
-                android:layout_marginBottom="16dp" />
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:endIconMode="password_toggle">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etSenhaAtual"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Digite sua senha atual"
+                    android:inputType="textPassword" />
+            </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -74,15 +80,21 @@
                 android:textColor="@color/black"
                 android:layout_marginBottom="4dp" />
 
-            <EditText
-                android:id="@+id/etNovaSenha"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_nova_senha"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:hint="Digite sua senha nova"
-                android:inputType="textPassword"
-                android:paddingHorizontal="12dp"
-                android:background="@drawable/bg_edittext_simple"
-                android:layout_marginBottom="16dp" />
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:endIconMode="password_toggle">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etNovaSenha"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Digite sua senha nova"
+                    android:inputType="textPassword" />
+            </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -92,15 +104,21 @@
                 android:textColor="@color/black"
                 android:layout_marginBottom="4dp" />
 
-            <EditText
-                android:id="@+id/etConfirmarSenha"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_confirmar_senha"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:hint="Repita sua senha nova"
-                android:inputType="textPassword"
-                android:paddingHorizontal="12dp"
-                android:background="@drawable/bg_edittext_simple"
-                android:layout_marginBottom="32dp" />
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="32dp"
+                app:endIconMode="password_toggle">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etConfirmarSenha"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Repita sua senha nova"
+                    android:inputType="textPassword" />
+            </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnConfirmar"

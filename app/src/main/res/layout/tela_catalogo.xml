@@ -8,6 +8,18 @@
     tools:context=".usuario.catalogo.CatalogoActivity">
 
     <ImageView
+        android:id="@+id/iv_back"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
+        android:padding="12dp"
+        android:src="@drawable/ic_arrow_back"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_unifor_logo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/iv_unifor_logo"
+        app:tint="@color/unifor_marinho_dark" />
+
+    <ImageView
         android:id="@+id/iv_unifor_logo"
         android:layout_width="120dp"
         android:layout_height="60dp"
