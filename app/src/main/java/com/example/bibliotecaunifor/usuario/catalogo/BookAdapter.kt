@@ -4,24 +4,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.example.bibliotecaunifor.crud.Entrada
 import com.example.bibliotecaunifor.R
 
-data class Book(
-    val title: String,
-    val author: String,
-    val availableCopies: Int,
-    val isbn: String = "978-0000000000",
-    val type: String = "Livro"
-)
-
 class BookAdapter(
-    private var books: List<Book>,
-    private val onBookClicked: (Book) -> Unit,
-    private val onReserveClicked: (Book) -> Unit
+    private var entries: List<Entrada>,
+    private val onBookClicked: (Entrada) -> Unit,
+    private val onReserveClicked: (Entrada) -> Unit
 ) : RecyclerView.Adapter<BookAdapter.BookViewHolder>() {
 
     class BookViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -38,13 +30,14 @@ class BookAdapter(
     }
 
     override fun onBindViewHolder(holder: BookViewHolder, position: Int) {
-        val book = books[position]
-        holder.tvTitle.text = book.title
-        holder.tvAuthor.text = book.author
+        val entry = entries[position]
+        holder.tvTitle.text = entry.titulo
+        holder.tvAuthor.text = entry.autor
         
-        holder.tvAvailability.text = "Disponibilidade: ${book.availableCopies} exemplares"
+        val available = entry.exemplaresDisponiveis
+        holder.tvAvailability.text = "Disponibilidade: $available exemplares"
         
-        if (book.availableCopies > 0) {
+        if (available > 0) {
             holder.btnAction.text = "Reservar"
             holder.btnAction.backgroundTintList = ContextCompat.getColorStateList(holder.itemView.context, R.color.success_green)
             holder.tvAvailability.setTextColor(ContextCompat.getColor(holder.itemView.context, android.R.color.darker_gray))
@@ -54,14 +47,14 @@ class BookAdapter(
             holder.tvAvailability.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.error_red))
         }
 
-        holder.itemView.setOnClickListener { onBookClicked(book) }
-        holder.btnAction.setOnClickListener { onReserveClicked(book) }
+        holder.itemView.setOnClickListener { onBookClicked(entry) }
+        holder.btnAction.setOnClickListener { onReserveClicked(entry) }
     }
 
-    override fun getItemCount() = books.size
+    override fun getItemCount() = entries.size
     
-    fun updateData(newBooks: List<Book>) {
-        books = newBooks
+    fun updateData(newEntries: List<Entrada>) {
+        entries = newEntries
         notifyDataSetChanged()
     }
 }
