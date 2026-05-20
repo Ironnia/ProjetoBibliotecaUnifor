@@ -14,6 +14,7 @@ import com.example.bibliotecaunifor.usuario.configuracoes.ConfiguracoesUsuarioAc
 import androidx.appcompat.app.AlertDialog
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
 
 class PerfilUsuarioActivity : AppCompatActivity() {
     private lateinit var binding: TelaPerfilUsuarioBinding
@@ -49,6 +50,7 @@ class PerfilUsuarioActivity : AppCompatActivity() {
                 .setTitle("Sair")
                 .setMessage("Deseja realmente sair da sua conta?")
                 .setPositiveButton("Sair") { _, _ ->
+                    FirebaseAuth.getInstance().signOut()
                     val intent = Intent(this, com.example.bibliotecaunifor.auth.LoginActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(intent)
