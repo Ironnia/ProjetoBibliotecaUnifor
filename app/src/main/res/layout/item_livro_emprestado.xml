@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginVertical="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <ImageView
+            android:id="@+id/ivLivroCapa"
+            android:layout_width="60dp"
+            android:layout_height="90dp"
+            android:background="@color/unifor_gelo_bg"
+            android:src="@drawable/menu_book_24"
+            android:padding="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvLivroTitulo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="Título do Livro"
+            android:textColor="@color/unifor_marinho_dark"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/ivLivroCapa"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvLivroAutor"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Nome do Autor"
+            android:textColor="#666666"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="@id/tvLivroTitulo"
+            app:layout_constraintStart_toStartOf="@id/tvLivroTitulo"
+            app:layout_constraintTop_toBottomOf="@id/tvLivroTitulo" />
+
+        <TextView
+            android:id="@+id/tvPrazo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Prazo: 15/04/2026"
+            android:textColor="@color/unifor_anil_primary"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="@id/tvLivroAutor"
+            app:layout_constraintStart_toStartOf="@id/tvLivroAutor"
+            app:layout_constraintTop_toBottomOf="@id/tvLivroAutor" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAcaoLivro"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Renovar"
+            android:textColor="@color/unifor_anil_primary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvPrazo" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

@@ -41,11 +41,11 @@
         <!-- Logo da Universidade -->
         <ImageView
             android:id="@+id/imageViewLogo"
-            android:layout_width="72dp"
-            android:layout_height="72dp"
+            android:layout_width="120dp"
+            android:layout_height="60dp"
             android:scaleType="centerInside"
             android:elevation="6dp"
-            app:srcCompat="@drawable/logo_unifor"
+            app:srcCompat="@drawable/ic_unifor_logo"
             app:layout_constraintTop_toTopOf="@id/viewCircleLogo"
             app:layout_constraintBottom_toBottomOf="@id/viewCircleLogo"
             app:layout_constraintStart_toStartOf="@id/viewCircleLogo"
@@ -150,7 +150,7 @@
                     app:boxCornerRadiusTopEnd="12dp"
                     app:boxCornerRadiusBottomStart="12dp"
                     app:boxCornerRadiusBottomEnd="12dp"
-                    app:hintTextColor="#1565C0"
+                    app:hintTextColor="@color/unifor_anil_primary"
                     app:layout_constraintTop_toBottomOf="@id/textViewSubtitulo"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent">
@@ -218,7 +218,7 @@
                         android:layout_height="wrap_content"
                         android:text="Fraca"
                         android:textSize="11sp"
-                        android:textColor="#1565C0"
+                        android:textColor="@color/unifor_anil_primary"
                         android:layout_marginStart="8dp" />
 
                 </LinearLayout>
@@ -231,10 +231,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     app:startIconDrawable="@android:drawable/ic_lock_idle_lock"
-                    app:startIconTint="#1565C0"
+                    app:startIconTint="@color/unifor_anil_primary"
                     app:endIconMode="password_toggle"
                     app:endIconTint="#9E9E9E"
-                    app:boxStrokeColor="#1565C0"
+                    app:boxStrokeColor="@color/unifor_anil_primary"
                     app:boxStrokeWidth="1dp"
                     app:boxStrokeWidthFocused="2dp"
                     app:boxCornerRadiusTopStart="12dp"
@@ -270,7 +270,7 @@
                     android:textColor="#FFFFFF"
                     android:textStyle="bold"
                     android:letterSpacing="0.06"
-                    android:backgroundTint="#1565C0"
+                    android:backgroundTint="@color/unifor_anil_primary"
                     android:stateListAnimator="@null"
                     android:elevation="6dp"
                     app:cornerRadius="26dp"
