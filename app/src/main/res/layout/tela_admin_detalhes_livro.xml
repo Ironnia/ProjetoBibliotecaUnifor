@@ -77,8 +77,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:orientation="vertical"
-                android:visibility="gone">
+                android:orientation="vertical">
 
                 <GridLayout
                     android:layout_width="match_parent"
@@ -93,7 +92,7 @@
                         android:orientation="vertical"
                         android:padding="8dp">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="ISBN" android:textStyle="bold" android:textSize="12sp" />
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="9788567097091" android:textSize="12sp" />
+                        <TextView android:id="@+id/tv_isbn" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="9788567097091" android:textSize="12sp" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -103,7 +102,7 @@
                         android:orientation="vertical"
                         android:padding="8dp">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="CDU e Cutter" android:textStyle="bold" android:textSize="12sp" />
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="869.0(81)-31 A848d" android:textSize="12sp" />
+                        <TextView android:id="@+id/tv_cdu_cutter" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="869.0(81)-31 A848d" android:textSize="12sp" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -113,7 +112,7 @@
                         android:orientation="vertical"
                         android:padding="8dp">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Edição" android:textStyle="bold" android:textSize="12sp" />
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="2ª reimpressão" android:textSize="12sp" />
+                        <TextView android:id="@+id/tv_edicao" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="2ª reimpressão" android:textSize="12sp" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -123,7 +122,7 @@
                         android:orientation="vertical"
                         android:padding="8dp">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Publicação" android:textStyle="bold" android:textSize="12sp" />
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="São Paulo : Via Leitu..." android:textSize="12sp" />
+                        <TextView android:id="@+id/tv_publicacao" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="São Paulo : Via Leitu..." android:textSize="12sp" />
                     </LinearLayout>
                 </GridLayout>
             </LinearLayout>
@@ -197,6 +196,7 @@
                 android:textStyle="bold" />
 
             <TableLayout
+                android:id="@+id/table_exemplares"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"

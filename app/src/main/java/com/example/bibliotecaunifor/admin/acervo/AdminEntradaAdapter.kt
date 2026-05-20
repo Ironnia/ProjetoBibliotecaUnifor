@@ -1,17 +1,22 @@
 package com.example.bibliotecaunifor.admin.acervo
 
+import android.content.Intent
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import com.example.bibliotecaunifor.R
+import com.example.bibliotecaunifor.crud.Entrada
 import com.example.bibliotecaunifor.databinding.ItemAdminLivroBinding
+import com.example.bibliotecaunifor.crud.excluirEntrada
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-class AdminLivroAdapter(private val items: List<AdminLivro>) :
-    RecyclerView.Adapter<AdminLivroAdapter.ViewHolder>() {
+class AdminEntradaAdapter(
+    private var items: List<Entrada>,
+    private val onDataChanged: () -> Unit
+) : RecyclerView.Adapter<AdminEntradaAdapter.ViewHolder>() {
 
     class ViewHolder(val binding: ItemAdminLivroBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -29,13 +34,25 @@ class AdminLivroAdapter(private val items: List<AdminLivro>) :
             tvCopiesInfo.text = "${item.totalExemplares} exemplares | ${item.exemplaresAlugados} alugados"
 
             ivInfo.setOnClickListener {
-                val intent = android.content.Intent(holder.itemView.context, AdminDetalhesLivroActivity::class.java)
+                val intent = Intent(holder.itemView.context, AdminDetalhesLivroActivity::class.java).apply {
+                    putExtra("entrada_id", item.id)
+                }
                 holder.itemView.context.startActivity(intent)
             }
 
             btnEditar.setOnClickListener {
-                val intent = android.content.Intent(holder.itemView.context, AdminCriarLivroActivity::class.java)
-                intent.putExtra("isEdit", true)
+                val intent = Intent(holder.itemView.context, AdminCriarLivroActivity::class.java).apply {
+                    putExtra("isEdit", true)
+                    putExtra("entrada_id", item.id)
+                    putExtra("titulo", item.titulo)
+                    putExtra("autor", item.autor)
+                    putExtra("isbn", item.isbn)
+                    putExtra("edicao", item.edicao)
+                    putExtra("publicacao", item.publicacao)
+                    putExtra("cdu", item.cdu)
+                    putExtra("cutter", item.cutter)
+                    putStringArrayListExtra("assuntos", ArrayList(item.assuntos))
+                }
                 holder.itemView.context.startActivity(intent)
             }
 
@@ -44,7 +61,11 @@ class AdminLivroAdapter(private val items: List<AdminLivro>) :
                     .setTitle("Confirmar Exclusão")
                     .setMessage("Deseja realmente excluir \"${item.titulo}\" do catálogo? Esta ação não pode ser desfeita.")
                     .setPositiveButton("Excluir") { _, _ ->
-                        Snackbar.make(holder.binding.root, "Livro removido com sucesso!", Snackbar.LENGTH_SHORT).show()
+                        CoroutineScope(Dispatchers.Main).launch {
+                            excluirEntrada(item.id)
+                            Snackbar.make(holder.binding.root, "Livro removido com sucesso!", Snackbar.LENGTH_SHORT).show()
+                            onDataChanged()
+                        }
                     }
                     .setNegativeButton("Cancelar", null)
                     .show()
@@ -53,4 +74,9 @@ class AdminLivroAdapter(private val items: List<AdminLivro>) :
     }
 
     override fun getItemCount() = items.size
+
+    fun updateData(newItems: List<Entrada>) {
+        items = newItems
+        notifyDataSetChanged()
+    }
 }
