@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "152152181808",
+    "project_id": "bibliodb-7614e",
+    "storage_bucket": "bibliodb-7614e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:152152181808:android:c8dc7f798d476efab5f1f5",
+        "android_client_info": {
+          "package_name": "com.example.bibliotecaunifor"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCCrvWJ2MM1MYXgpiMeA4gDk6qbTOC7FQs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
