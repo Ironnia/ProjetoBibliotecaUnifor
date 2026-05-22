@@ -54,12 +54,13 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
         android:fontFamily="@font/satoshi_family"
-        android:text="Olá Vitor,\no que você quer fazer hoje?"
+        android:text="Carregando..."
         android:textColor="@color/unifor_marinho_dark"
         android:textSize="22sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/iv_profile" />
+<!--    android:text="Olá Vitor,\no que você quer fazer hoje?"-->
 
     <!-- Barra pra buscar livros no acervo -->
     <com.google.android.material.textfield.TextInputLayout

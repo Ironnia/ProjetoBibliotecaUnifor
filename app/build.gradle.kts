@@ -2,6 +2,9 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("com.google.gms.google-services")
+    // Add the Crashlytics Gradle plugin
+    // https://firebase.google.com/docs/crashlytics/android/get-started?hl=pt-br#add-plugin
+    id("com.google.firebase.crashlytics")
 }
 
 android {
@@ -55,4 +58,8 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.1.0"))
     implementation("com.google.firebase:firebase-auth-ktx")
     implementation("com.google.firebase:firebase-firestore-ktx")
+    // https://firebase.google.com/docs/crashlytics/android/get-started?hl=pt-br#add-sdk
+    // Adicionando o crashlytics, facilitar possíveis problemas.
+    implementation("com.google.firebase:firebase-crashlytics")
+    implementation("com.google.firebase:firebase-analytics")
 }

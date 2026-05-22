@@ -6,13 +6,16 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.bibliotecaunifor.databinding.CadastroBinding
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 class CadastroActivity : AppCompatActivity() {
     private lateinit var binding: CadastroBinding
     // https://firebase.google.com/docs/auth/android/start?hl=pt-br#check_current_auth_state
-    private val auth = FirebaseAuth.getInstance()
-    private val db = FirebaseFirestore.getInstance()
+    private val auth = Firebase.auth
+    private val db = Firebase.firestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +53,8 @@ class CadastroActivity : AppCompatActivity() {
                         "tipo" to "usuario"
                     )
 
+                    // https://firebase.google.com/docs/firestore/manage-data/add-data?hl=pt-br#add_a_document
+                    // "No back-end, .add(...) e .doc().set(...) são equivalentes, então você pode usar qualquer uma das opções." - documentação
                     db.collection("usuario").document(uid).set(usuarioMap)
                         .addOnSuccessListener {
                             Toast.makeText(this, "Cadastro feito com sucesso!", Toast.LENGTH_LONG).show()
