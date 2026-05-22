@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.bibliotecaunifor.databinding.CadastroBinding
+import com.example.bibliotecaunifor.mostrarToast
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -29,7 +30,7 @@ class CadastroActivity : AppCompatActivity() {
             val repetir = binding.editTextRepetirSenha.text.toString()
 
             if (nome.isEmpty() || email.isEmpty() || senha.isEmpty() || repetir.isEmpty()) {
-                Toast.makeText(this, "Preencha todos os campos!", Toast.LENGTH_SHORT).show()
+                mostrarToast("Preencha todos os campos!")
                 return@setOnClickListener
             }
             

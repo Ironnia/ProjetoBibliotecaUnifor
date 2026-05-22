@@ -1,5 +1,6 @@
 package com.example.bibliotecaunifor
 
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.ktx.auth
@@ -12,6 +13,12 @@ import com.google.firebase.ktx.Firebase
 // Vai funcionar para todas as classes que forem activity.
 fun AppCompatActivity.mostrarAviso(mensagem: String) {
     Snackbar.make(findViewById(android.R.id.content), mensagem, Snackbar.LENGTH_SHORT).show()
+}
+
+// Mesma ideia do de cima
+// fica: mostrarToast("mensagem")
+fun AppCompatActivity.mostrarToast(mensagem: String, duracao: Int = Toast.LENGTH_SHORT) {
+    Toast.makeText(this, mensagem, duracao).show()
 }
 
 
