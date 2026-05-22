@@ -10,6 +10,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class CadastroActivity : AppCompatActivity() {
     private lateinit var binding: CadastroBinding
+    // https://firebase.google.com/docs/auth/android/start?hl=pt-br#check_current_auth_state
     private val auth = FirebaseAuth.getInstance()
     private val db = FirebaseFirestore.getInstance()
 
@@ -34,9 +35,13 @@ class CadastroActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
+            // Para bloquear vários clicks de requisição ao sitema Auth.
             binding.buttonCadastrar.isEnabled = false
 
+            // https://firebase.google.com/docs/auth/android/start?hl=pt-br#sign_up_new_users
+            //
             auth.createUserWithEmailAndPassword(email, senha)
+                // usando o .add inve´s de if e else fica mais fácil de ler.
                 .addOnSuccessListener { resultado ->
                     val uid = resultado.user!!.uid
                     val usuarioMap = hashMapOf(
@@ -58,6 +63,7 @@ class CadastroActivity : AppCompatActivity() {
                 }
                 .addOnFailureListener { exception ->
                     binding.buttonCadastrar.isEnabled = true
+                    //
                     when (exception) {
                         is com.google.firebase.auth.FirebaseAuthWeakPasswordException -> {
                             binding.layoutSenha.error = "A senha deve conter no mínimo 6 caracteres"

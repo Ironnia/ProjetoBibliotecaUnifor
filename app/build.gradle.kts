@@ -50,6 +50,8 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    // https://firebase.google.com/docs/auth/android/start?hl=pt-br#add_to_your_app
+    // Com o sufixo "-ktx" podemos fazer com  uma sintaxe mais simples.
     implementation(platform("com.google.firebase:firebase-bom:33.1.0"))
     implementation("com.google.firebase:firebase-auth-ktx")
     implementation("com.google.firebase:firebase-firestore-ktx")
