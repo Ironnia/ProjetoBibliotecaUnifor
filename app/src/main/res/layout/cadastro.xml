@@ -144,7 +144,7 @@
                         android:id="@+id/editTextNome"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Nome ou Matrícula"
+                        android:hint="Nome Completo"
                         android:inputType="textPersonName"
                         android:imeOptions="actionNext"
                         android:textSize="15sp"
@@ -182,6 +182,44 @@
                         android:textSize="15sp"
                         android:paddingStart="4dp" />
                 </com.google.android.material.textfield.TextInputLayout>
+                <!-- Aviso Informativo UX (E-mail imutável) -->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/layoutAvisoEmail"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/bg_border"
+                    android:backgroundTint="#E3F2FD"
+                    android:padding="12dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/layoutEmail">
+
+                    <ImageView
+                        android:id="@+id/iconInfo"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@android:drawable/ic_dialog_info"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:tint="#1565C0" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:lineSpacingExtra="2dp"
+                        android:text="Atenção: Este e-mail será sua identidade na Unifor e NÃO poderá ser alterado após o cadastro."
+                        android:textColor="#1565C0"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/iconInfo"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
 
                 <!-- Campo Senha -->
                 <com.google.android.material.textfield.TextInputLayout
@@ -202,12 +240,13 @@
                     app:boxCornerRadiusBottomStart="12dp"
                     app:boxCornerRadiusBottomEnd="12dp"
                     app:hintTextColor="#1565C0"
-                    app:layout_constraintTop_toBottomOf="@id/layoutEmail"
+                    app:layout_constraintTop_toBottomOf="@id/layoutAvisoEmail"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/editTextSenha"
+                        android:nextFocusForward="@+id/editTextRepetirSenha"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Senha"
@@ -216,6 +255,8 @@
                         android:textSize="15sp"
                         android:paddingStart="4dp" />
                 </com.google.android.material.textfield.TextInputLayout>
+
+
 
                 <!-- Campo Repetir Senha -->
                 <com.google.android.material.textfield.TextInputLayout
@@ -242,6 +283,7 @@
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/editTextRepetirSenha"
+                        android:nextFocusForward="@+id/buttonCadastrar"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Repita a senha"
@@ -295,6 +337,17 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent" />
+
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:indeterminateTint="@color/unifor_anil_primary"
+                    app:layout_constraintTop_toTopOf="@id/buttonCadastrar"
+                    app:layout_constraintBottom_toBottomOf="@id/buttonCadastrar"
+                    app:layout_constraintStart_toStartOf="@id/buttonCadastrar"
+                    app:layout_constraintEnd_toEndOf="@id/buttonCadastrar" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>

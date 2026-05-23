@@ -1,5 +1,6 @@
 package com.example.bibliotecaunifor.usuario.perfil
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
@@ -15,6 +16,7 @@ import androidx.appcompat.app.AlertDialog
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
+import androidx.core.content.edit
 
 class PerfilUsuarioActivity : AppCompatActivity() {
     private lateinit var binding: TelaPerfilUsuarioBinding
@@ -50,6 +52,10 @@ class PerfilUsuarioActivity : AppCompatActivity() {
                 .setTitle("Sair")
                 .setMessage("Deseja realmente sair da sua conta?")
                 .setPositiveButton("Sair") { _, _ ->
+
+                    val prefs = getSharedPreferences("login", Context.MODE_PRIVATE)
+                    prefs.edit { putBoolean("lembrar_me", false) }
+
                     FirebaseAuth.getInstance().signOut()
                     val intent = Intent(this, com.example.bibliotecaunifor.auth.LoginActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

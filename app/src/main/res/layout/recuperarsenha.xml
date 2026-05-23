@@ -209,6 +209,17 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent" />
 
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:indeterminateTint="@color/unifor_anil_primary"
+                    app:layout_constraintTop_toTopOf="@id/buttonEnviarLink"
+                    app:layout_constraintBottom_toBottomOf="@id/buttonEnviarLink"
+                    app:layout_constraintStart_toStartOf="@id/buttonEnviarLink"
+                    app:layout_constraintEnd_toEndOf="@id/buttonEnviarLink" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
 
