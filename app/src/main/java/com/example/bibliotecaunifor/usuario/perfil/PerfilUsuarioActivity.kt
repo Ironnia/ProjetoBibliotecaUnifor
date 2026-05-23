@@ -17,6 +17,7 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import androidx.core.content.edit
+import com.example.bibliotecaunifor.pegarNomeUsuario
 
 class PerfilUsuarioActivity : AppCompatActivity() {
     private lateinit var binding: TelaPerfilUsuarioBinding
@@ -26,6 +27,12 @@ class PerfilUsuarioActivity : AppCompatActivity() {
         enableEdgeToEdge()
         binding = TelaPerfilUsuarioBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Nome do aluno:
+        pegarNomeUsuario { nome ->
+            // como é só o nome do usuário colocar "$nome" dava erro.
+            binding.tvName.text = nome
+        }
 
         NavigationUtils.setupBottomNavigation(this, binding.bottomNavigation, com.example.bibliotecaunifor.R.id.navigation_perfil)
 

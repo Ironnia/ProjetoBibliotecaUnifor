@@ -74,14 +74,17 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
+
+        // Isso que é uma lógica para fazer lá na prente. Deixar assim para sinalizar.
+        binding.tvDevolucoesList.text = "PLACEHOLDER CORRIGIR!"
         // Devolucoes List fake click - leva para os detalhes do livro
-        binding.tvDevolucoesList.setOnClickListener {
-            val intent = Intent(this, com.example.bibliotecaunifor.usuario.reserva.DetalhesLivroActivity::class.java).apply {
-                putExtra("title", "Dom Casmurro")
-                putExtra("author", "Machado de Assis")
-                putExtra("available", 0)
-            }
-            startActivity(intent)
-        }
+//        binding.tvDevolucoesList.setOnClickListener {
+//            val intent = Intent(this, com.example.bibliotecaunifor.usuario.reserva.DetalhesLivroActivity::class.java).apply {
+//                putExtra("title", "Dom Casmurro")
+//                putExtra("author", "Machado de Assis")
+//                putExtra("available", 0)
+//            }
+//            startActivity(intent)
+//        }
     }
 }

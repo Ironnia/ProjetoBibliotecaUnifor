@@ -4,10 +4,18 @@
         <item name="colorPrimary">@color/unifor_anil_primary</item>
         <item name="colorSecondary">@color/unifor_marinho_dark</item>
         <item name="android:fontFamily">@font/satoshi_family</item>
+        <item name="bottomNavigationStyle">@style/Widget.App.BottomNavigation</item>
     </style>
 
     <style name="CircleImageView">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
     </style>
+
+    <style name="Widget.App.BottomNavigation" parent="Widget.Material3.BottomNavigationView">
+        <item name="android:background">@color/unifor_gelo_bg</item>
+        <item name="itemIconTint">@color/unifor_marinho_dark</item>
+        <item name="itemTextColor">@color/unifor_marinho_dark</item>
+    </style>
+
 </resources>

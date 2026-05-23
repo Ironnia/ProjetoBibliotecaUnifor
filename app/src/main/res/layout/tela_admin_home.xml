@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/unifor_gelo_bg"
     tools:context=".admin.AdminHomeActivity">
 
     <!-- Header Section -->
@@ -379,3 +378,4 @@
         app:menu="@menu/bottom_nav_admin_menu" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
