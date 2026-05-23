@@ -1,5 +1,6 @@
 package com.example.bibliotecaunifor
 
+import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -13,13 +14,22 @@ import com.example.bibliotecaunifor.usuario.salas.SalasActivity
 import com.example.bibliotecaunifor.usuario.utils.NavigationUtils
 import com.example.bibliotecaunifor.usuario.ranking.RankingUsuarioActivity
 import com.example.bibliotecaunifor.usuario.alugueis.AlugueisActivity
+import com.example.bibliotecaunifor.usuario.emprestimos.MeusLivrosActivity
+import com.example.bibliotecaunifor.usuario.historico.HistoricoActivity
+import com.example.bibliotecaunifor.usuario.jogos.JogosTabuleiroActivity
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+
 
 // A lógica da Home do usuário está aqui
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: TelaHomeUsuarioBinding
+
+    private val db = Firebase.firestore
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,13 +50,21 @@ class MainActivity : AppCompatActivity() {
 //        }
 
         pegarNomeUsuario { nome ->
-            binding.tvGreeting.text = "Olá $nome, \no que você quer fazer hoje?"
+            binding.tvGreeting.apply {
+                text = "Olá $nome, \no que você quer fazer hoje?"
+            // animação;  Não dá nem pra ver kk; Talvez retirar
+                alpha = 0f
+                animate().alpha(1f).setDuration(500).start()
+            }
         }
 
         // Setup Navigation
         NavigationUtils.setupBottomNavigation(this, binding.bottomNavigation, R.id.navigation_home)
 
+        configurarSecaoDevolucoes()
+
         // Header
+
         binding.ivProfile.setOnClickListener {
             startActivity(Intent(this, PerfilUsuarioActivity::class.java))
         }
@@ -59,13 +77,13 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, SalasActivity::class.java))
         }
         binding.cardEmprestimos.setOnClickListener {
-            startActivity(Intent(this, com.example.bibliotecaunifor.usuario.emprestimos.MeusLivrosActivity::class.java))
+            startActivity(Intent(this, MeusLivrosActivity::class.java))
         }
         binding.cardHistorico.setOnClickListener {
-            startActivity(Intent(this, com.example.bibliotecaunifor.usuario.historico.HistoricoActivity::class.java))
+            startActivity(Intent(this, HistoricoActivity::class.java))
         }
         binding.cardJogos.setOnClickListener {
-            startActivity(Intent(this, com.example.bibliotecaunifor.usuario.jogos.JogosTabuleiroActivity::class.java))
+            startActivity(Intent(this, JogosTabuleiroActivity::class.java))
         }
 
         // Search Bar fake enter
@@ -76,7 +94,9 @@ class MainActivity : AppCompatActivity() {
 
 
         // Isso que é uma lógica para fazer lá na prente. Deixar assim para sinalizar.
-        binding.tvDevolucoesList.text = "PLACEHOLDER CORRIGIR!"
+//        binding.tvDevolucoesList.text = "PLACEHOLDER CORRIGIR!"
+
+
         // Devolucoes List fake click - leva para os detalhes do livro
 //        binding.tvDevolucoesList.setOnClickListener {
 //            val intent = Intent(this, com.example.bibliotecaunifor.usuario.reserva.DetalhesLivroActivity::class.java).apply {
@@ -86,5 +106,46 @@ class MainActivity : AppCompatActivity() {
 //            }
 //            startActivity(intent)
 //        }
+    }
+    // Fazer um mock para depois entender como conectar no firestro. Acho que seria algo assim, baseado na documentação:
+    // https://firebase.google.com/docs/firestore/query-data/get-data?hl=pt-br#custom_objects
+    // Estruturado com auxilio do chat da documentação:
+    // private para não ser chamado por outras telas sem querer no biding.
+    private fun configurarSecaoDevolucoes() {
+        val uid = Firebase.auth.currentUser?.uid ?: return
+
+        // esperar o carregar do firestore:
+        binding.tvDevolucoesList.text = "Buscando suas devoluções..."
+
+        // Ajuda da documentação, montado junto com o chat da documentação:
+        db.collection("alugueis")
+            .whereEqualTo("usuarioID", uid) // fitra os livros só para o aluno.
+            .whereEqualTo("status", "ativo") // mos
+            .get()
+            .addOnSuccessListener { result ->
+                if (result.isEmpty) {
+                    binding.tvDevolucoesList.text =
+                        "Tudo em dia! \nVocê não tem devoluções para esta semana."
+                    // Dica: Aqui você poderia até mudar a cor do texto para o azul da Unifor
+                } else {git
+                    // 3. Mapeamento dos dados
+                    val livros = result.map { doc ->
+                        val titulo = doc.getString("titulo") ?: "Livro"
+                        val data = doc.getString("dataDevolucao") ?: "Sem data"
+                        "• $titulo ($data)"
+                    }
+                    binding.tvDevolucoesList.text = livros.joinToString("\n")
+                }
+            }
+            .addOnFailureListener {
+                binding.tvDevolucoesList.text = "Erro ao carregar devoluções."
+            }
+        // Agora dá para clicar ir para telda de alugueis
+        binding.cardAlertaDevolucoes.setOnClickListener {
+            // Fazendo animação ser diferente para padrozinar a animação do menu inferior (besteira minha)
+            val options = ActivityOptions.makeCustomAnimation(this, 0, 0)
+            val intent = Intent(this, MeusLivrosActivity::class.java)
+            startActivity(intent, options.toBundle())
+        }
     }
 }

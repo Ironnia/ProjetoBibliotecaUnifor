@@ -236,32 +236,50 @@
         </com.google.android.material.card.MaterialCardView>
     </androidx.gridlayout.widget.GridLayout>
 
-    <!-- Lista das próximas devoluções do carinha -->
-    <TextView
-        android:id="@+id/tv_label_devolucoes"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
-        android:fontFamily="@font/satoshi_family"
-        android:text="Próximas devoluções:"
-        android:textColor="@color/unifor_marinho_dark"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/gl_shortcuts" />
-
-    <TextView
-        android:id="@+id/tv_devolucoes_list"
+    <!-- Card de Alerta de Devoluções (RF005) -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_alerta_devolucoes"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="8dp"
-        android:fontFamily="@font/satoshi_family"
-        android:text="Dom Casmurro - M. Assis - 22/Abril\nHelena - M. Assis - 25/Abril"
-        android:textColor="@color/black"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="20dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="0dp"
+        app:strokeWidth="1dp"
+        app:strokeColor="#E0E0E0"
+        app:cardBackgroundColor="#F5F9FF"
+        app:layout_constraintTop_toBottomOf="@+id/gl_shortcuts"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_label_devolucoes" />
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/tv_label_devolucoes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/satoshi_family"
+                android:text="Próximas devoluções:"
+                android:textColor="@color/unifor_marinho_dark"
+                android:textStyle="bold"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tv_devolucoes_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/satoshi_family"
+                android:text="Carregando..."
+                android:textColor="@color/black"
+                android:textSize="13sp"
+                android:lineSpacingExtra="4dp" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
     <!-- Menu de navegação inferior -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
