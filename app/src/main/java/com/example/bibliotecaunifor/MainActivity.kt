@@ -13,13 +13,15 @@ import com.example.bibliotecaunifor.usuario.salas.SalasActivity
 
 import com.example.bibliotecaunifor.usuario.utils.NavigationUtils
 import com.example.bibliotecaunifor.usuario.ranking.RankingUsuarioActivity
-import com.example.bibliotecaunifor.usuario.alugueis.AlugueisActivity
 import com.example.bibliotecaunifor.usuario.emprestimos.MeusLivrosActivity
 import com.example.bibliotecaunifor.usuario.historico.HistoricoActivity
 import com.example.bibliotecaunifor.usuario.jogos.JogosTabuleiroActivity
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 
 // A lógica da Home do usuário está aqui
@@ -119,7 +121,7 @@ class MainActivity : AppCompatActivity() {
 
         // Ajuda da documentação, montado junto com o chat da documentação:
         db.collection("alugueis")
-            .whereEqualTo("usuarioID", uid) // fitra os livros só para o aluno.
+            .whereEqualTo("idUsuario", uid) // fitra os livros só para o aluno.
             .whereEqualTo("status", "ativo") // mos
             .get()
             .addOnSuccessListener { result ->
@@ -129,9 +131,13 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     // 3. Mapeamento dos dados
                     val livros = result.map { doc ->
-                        val titulo = doc.getString("titulo") ?: "Livro"
-                        val data = doc.getString("dataDevolucao") ?: "Sem data"
-                        "• $titulo ($data)"
+                        val titulo = doc.getString("tituloItem") ?: "Livro"
+                        val dataLong = doc.getLong("dataDevolucao") ?: 0L
+                        val dataStr = if (dataLong > 0) {
+                            SimpleDateFormat("dd/MM", Locale.getDefault()).format(Date(dataLong))
+                        } else "??/??"
+
+                        "• $titulo ($dataStr)"
                     }
                     binding.tvDevolucoesList.text = livros.joinToString("\n")
                 }

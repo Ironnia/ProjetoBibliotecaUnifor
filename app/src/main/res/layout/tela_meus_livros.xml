@@ -69,6 +69,28 @@
             android:text="A retirar" />
     </com.google.android.material.chip.ChipGroup>
 
+<!--    informação se está vazio o emprestimo-->
+    <TextView
+        android:id="@+id/tvEmptyState"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Você não possui livros aqui."
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@id/rvEmprestimos"
+        app:layout_constraintBottom_toBottomOf="@id/rvEmprestimos"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <!-- Lista de Empréstimos -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvEmprestimos"

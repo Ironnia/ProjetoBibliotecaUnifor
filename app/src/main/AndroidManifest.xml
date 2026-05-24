@@ -30,7 +30,6 @@
         <activity android:name=".usuario.reserva.DetalhesLivroActivity" android:exported="false" />
         <activity android:name=".usuario.salas.SalasActivity" android:exported="false" />
         <activity android:name=".usuario.perfil.PerfilUsuarioActivity" android:exported="false" />
-        <activity android:name=".usuario.alugueis.AlugueisActivity" android:exported="false" />
         <activity android:name=".usuario.ranking.RankingUsuarioActivity" android:exported="false" />
         <activity android:name=".usuario.configuracoes.ConfiguracoesUsuarioActivity" android:exported="false" />
         <activity android:name=".admin.AdminHomeActivity" android:exported="false" />

@@ -7,6 +7,7 @@ data class Emprestimo(
     val idUsuario: String = "",
     val matricula: String = "",
     val idItem: String = "", // essa é a id do Livro ou Jogo, algo que precisamos colocar para registrar no CRUD.
+    val autorItem: String = "",
     val tituloItem: String = "",
     val dataEmprestimo: Long = 0,
     val dataDevolucao: Long = 0,

@@ -182,7 +182,7 @@ class DetalhesLivroActivity : AppCompatActivity() {
             .setPositiveButton("Confirmar") { _, _ ->
                 val uid = Firebase.auth.currentUser?.uid ?: return@setPositiveButton
                 val novoAluguel = hashMapOf(
-                    "usuarioID" to uid,
+                    "idUsuario" to uid,
                     "titulo" to entry.titulo,
                     "autor" to entry.autor,
                     "dataDevolucao" to devolucaoDate, // Variável que você já calculou
