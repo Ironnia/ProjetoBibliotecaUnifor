@@ -34,7 +34,7 @@
         <activity android:name=".usuario.configuracoes.ConfiguracoesUsuarioActivity" android:exported="false" />
         <activity android:name=".admin.AdminHomeActivity" android:exported="false" />
         <activity android:name=".admin.acervo.AdminAcervoActivity" android:exported="false" />
-        <activity android:name=".admin.acervo.AdminCriarLivroActivity" android:exported="false" />
+        <activity android:name=".admin.acervo.AdminCriarEntradaActivity" android:exported="false" />
         <activity android:name=".admin.acervo.AdminDetalhesLivroActivity" android:exported="false" />
         <activity android:name=".admin.emprestimos.AdminEmprestimosActivity" android:exported="false" />
         <activity android:name=".admin.usuarios.AdminUsuariosActivity" android:exported="false" />

@@ -3,12 +3,10 @@ package com.example.bibliotecaunifor.admin.acervo
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.TableLayout
-import android.widget.TableRow
-import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.bibliotecaunifor.crud.Entrada
 import com.example.bibliotecaunifor.R
 import com.example.bibliotecaunifor.crud.buscarEntradaPorId
@@ -38,23 +36,7 @@ class AdminDetalhesLivroActivity : AppCompatActivity() {
             finish()
         }
 
-        binding.btnEditarDados.setOnClickListener {
-            entrada?.let {
-                val intent = Intent(this, AdminCriarLivroActivity::class.java).apply {
-                    putExtra("isEdit", true)
-                    putExtra("entrada_id", it.id)
-                    putExtra("titulo", it.titulo)
-                    putExtra("autor", it.autor)
-                    putExtra("isbn", it.isbn)
-                    putExtra("edicao", it.edicao)
-                    putExtra("publicacao", it.publicacao)
-                    putExtra("cdu", it.cdu)
-                    putExtra("cutter", it.cutter)
-                    putStringArrayListExtra("assuntos", ArrayList(it.assuntos))
-                }
-                startActivity(intent)
-            }
-        }
+        binding.exemplares.layoutManager = LinearLayoutManager(this)
 
         binding.btnDetalhes.setOnClickListener {
             if (binding.layoutInfoTecnica.visibility == View.VISIBLE) {
@@ -67,6 +49,24 @@ class AdminDetalhesLivroActivity : AppCompatActivity() {
                 binding.btnDetalhes.strokeWidth = 0
                 binding.btnDetalhes.setBackgroundColor(getColor(R.color.unifor_anil_primary))
                 binding.btnDetalhes.setTextColor(getColor(android.R.color.white))
+            }
+        }
+
+        binding.btnEditarDados.setOnClickListener {
+            entrada?.let {
+                val intent = Intent(this, AdminCriarEntradaActivity::class.java).apply {
+                    putExtra("isEdit", true)
+                    putExtra("entrada_id", it.id)
+                    putExtra("titulo", it.titulo)
+                    putExtra("autor", it.autor)
+                    putExtra("isbn", it.isbn)
+                    putExtra("edicao", it.edicao)
+                    putExtra("publicacao", it.publicacao)
+                    putExtra("cdu", it.cdu)
+                    putExtra("cutter", it.cutter)
+                    putStringArrayListExtra("assuntos", ArrayList(it.assuntos))
+                }
+                startActivity(intent)
             }
         }
 
@@ -86,6 +86,7 @@ class AdminDetalhesLivroActivity : AppCompatActivity() {
                 .setNegativeButton("Cancelar", null)
                 .show()
         }
+
     }
 
     private fun loadEntrada(id: String) {
@@ -98,10 +99,10 @@ class AdminDetalhesLivroActivity : AppCompatActivity() {
     private fun updateUI(entrada: Entrada) {
         binding.tvTitle.text = entrada.titulo
         binding.tvAuthor.text = entrada.autor
-        binding.tvIsbn.text = entrada.isbn
-        binding.tvCduCutter.text = "${entrada.cdu} ${entrada.cutter}"
-        binding.tvEdicao.text = entrada.edicao
-        binding.tvPublicacao.text = entrada.publicacao
+        setupBox(binding.boxIsbn, binding.tvIsbn, entrada.isbn)
+        setupBox(binding.boxCduCutter, binding.tvCduCutter, "${entrada.cdu} ${entrada.cutter}".trim())
+        setupBox(binding.boxEdicao, binding.tvEdicao, entrada.edicao)
+        setupBox(binding.boxPublicacao, binding.tvPublicacao, entrada.publicacao)
 
         binding.chipGroupAssuntos.removeAllViews()
         entrada.assuntos.forEach { assunto ->
@@ -112,34 +113,15 @@ class AdminDetalhesLivroActivity : AppCompatActivity() {
             binding.chipGroupAssuntos.addView(chip)
         }
 
-        while (binding.tableExemplares.childCount > 1) {
-            binding.tableExemplares.removeViewAt(1)
-        }
+        binding.exemplares.adapter = AdminExemplarAdapter(entrada.exemplares)
+    }
 
-        entrada.exemplares.forEachIndexed { index, exemplar ->
-            val row = TableRow(this).apply {
-                setBackgroundResource(android.R.color.white)
-                val params = TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT)
-                params.setMargins(0, 1, 0, 0)
-                layoutParams = params
-            }
-
-            val tvInfo = TextView(this).apply {
-                text = "Exemplar ${index + 1} - ${exemplar.localizacao}"
-                setPadding(24, 24, 24, 24)
-                layoutParams = TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1f)
-            }
-
-            val tvSituacao = TextView(this).apply {
-                text = exemplar.situacao
-                setPadding(24, 24, 24, 24)
-                setTextColor(if (exemplar.situacao == "Disponivel") getColor(R.color.success_green) else getColor(R.color.error_red))
-                layoutParams = TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1f)
-            }
-
-            row.addView(tvInfo)
-            row.addView(tvSituacao)
-            binding.tableExemplares.addView(row)
+    private fun setupBox(box: View, textView: android.widget.TextView, value: String?) {
+        if (value.isNullOrBlank()) {
+            box.visibility = View.GONE
+        } else {
+            box.visibility = View.VISIBLE
+            textView.text = value
         }
     }
 }
