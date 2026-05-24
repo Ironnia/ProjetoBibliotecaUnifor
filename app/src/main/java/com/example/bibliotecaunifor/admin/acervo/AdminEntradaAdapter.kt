@@ -5,7 +5,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bibliotecaunifor.crud.Entrada
-import com.example.bibliotecaunifor.databinding.ItemAdminLivroBinding
+import com.example.bibliotecaunifor.crud.Exemplar
+import com.example.bibliotecaunifor.databinding.ItemAdminEntradaBinding
 import com.example.bibliotecaunifor.crud.excluirEntrada
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
@@ -18,10 +19,10 @@ class AdminEntradaAdapter(
     private val onDataChanged: () -> Unit
 ) : RecyclerView.Adapter<AdminEntradaAdapter.ViewHolder>() {
 
-    class ViewHolder(val binding: ItemAdminLivroBinding) : RecyclerView.ViewHolder(binding.root)
+    class ViewHolder(val binding: ItemAdminEntradaBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemAdminLivroBinding.inflate(
+        val binding = ItemAdminEntradaBinding.inflate(
             LayoutInflater.from(parent.context), parent, false
         )
         return ViewHolder(binding)
@@ -41,7 +42,7 @@ class AdminEntradaAdapter(
             }
 
             btnEditar.setOnClickListener {
-                val intent = Intent(holder.itemView.context, AdminCriarLivroActivity::class.java).apply {
+                val intent = Intent(holder.itemView.context, AdminCriarEntradaActivity::class.java).apply {
                     putExtra("isEdit", true)
                     putExtra("entrada_id", item.id)
                     putExtra("titulo", item.titulo)
@@ -72,6 +73,11 @@ class AdminEntradaAdapter(
             }
         }
     }
+
+    private fun putParcelableArrayListExtra(
+        name: String,
+        value: ArrayList<Exemplar>
+    ) {}
 
     override fun getItemCount() = items.size
 

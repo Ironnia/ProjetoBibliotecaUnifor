@@ -55,23 +55,27 @@ suspend fun buscarEntrada(pesquisa: String): List<Entrada> {
     }
 }
 
-suspend fun listarEntradas(): List<Entrada> {
-    try {
-        val snapshot = db.collection("Acervo")
-            .get().await()
-        return snapshot.toObjects(Entrada::class.java)
-    } catch (e: Exception) {
-        println("Erro ao listar entradas: ${e.message}")
-        return emptyList()
-    }
-}
-
 suspend fun buscarEntradaPorId(id: String): Entrada? {
     try {
-        val snapshot = db.collection("Acervo").document(id).get().await()
+        val snapshot = db.collection("Acervo")
+            .document(id)
+            .get()
+            .await()
         return snapshot.toObject(Entrada::class.java)
     } catch (e: Exception) {
         println("Erro ao buscar entrada por ID: ${e.message}")
         return null
+    }
+}
+
+suspend fun listarEntradas(): List<Entrada> {
+    try {
+        val snapshot = db.collection("Acervo")
+            .get()
+            .await()
+        return snapshot.toObjects(Entrada::class.java)
+    } catch (e: Exception) {
+        println("Erro ao listar entradas: ${e.message}")
+        return emptyList()
     }
 }

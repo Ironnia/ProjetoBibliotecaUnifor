@@ -77,6 +77,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
+                android:visibility="gone"
                 android:orientation="vertical">
 
                 <GridLayout
@@ -86,6 +87,7 @@
                     android:rowCount="2">
 
                     <LinearLayout
+                        android:id="@+id/box_isbn"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_columnWeight="1"
@@ -96,6 +98,7 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/box_cdu_cutter"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_columnWeight="1"
@@ -106,6 +109,7 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/box_edicao"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_columnWeight="1"
@@ -116,6 +120,7 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/box_publicacao"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_columnWeight="1"
@@ -195,22 +200,10 @@
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
-            <TableLayout
-                android:id="@+id/table_exemplares"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/exemplares"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="#EEEEEE"
-                android:padding="1dp">
-                <TableRow android:background="@color/white">
-                    <TextView android:padding="8dp" android:text="Informações" android:textStyle="bold" android:layout_weight="1" />
-                    <TextView android:padding="8dp" android:text="Situação" android:textStyle="bold" android:layout_weight="1" />
-                </TableRow>
-                <TableRow android:background="@color/white" android:layout_marginTop="1dp">
-                    <TextView android:padding="8dp" android:text="Exemplar 1" android:layout_weight="1" />
-                    <TextView android:padding="8dp" android:text="Disponível" android:textColor="@color/success_green" android:layout_weight="1" />
-                </TableRow>
-            </TableLayout>
+                android:layout_height="match_parent" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

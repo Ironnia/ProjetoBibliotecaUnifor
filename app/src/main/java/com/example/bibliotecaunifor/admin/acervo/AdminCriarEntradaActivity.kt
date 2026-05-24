@@ -4,18 +4,21 @@ import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.bibliotecaunifor.crud.Entrada
 import com.example.bibliotecaunifor.crud.Exemplar
 import com.example.bibliotecaunifor.crud.adicionarEntrada
+import com.example.bibliotecaunifor.crud.buscarEntradaPorId
 import com.example.bibliotecaunifor.crud.editarEntrada
 import com.example.bibliotecaunifor.databinding.TelaAdminEditarLivroBinding
 import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
-class AdminCriarLivroActivity : AppCompatActivity() {
+class AdminCriarEntradaActivity : AppCompatActivity() {
     private lateinit var binding: TelaAdminEditarLivroBinding
     private var entradaId: String? = null
+    private lateinit var exemplarAdapter: AdminExemplarEditAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,9 +26,10 @@ class AdminCriarLivroActivity : AppCompatActivity() {
         binding = TelaAdminEditarLivroBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setupRecyclerView()
+
         val isEdit = intent.getBooleanExtra("isEdit", false)
         entradaId = intent.getStringExtra("entrada_id")
-
         if (isEdit && entradaId != null) {
             val titulo = intent.getStringExtra("titulo") ?: ""
             val autor = intent.getStringExtra("autor") ?: ""
@@ -43,8 +47,13 @@ class AdminCriarLivroActivity : AppCompatActivity() {
             binding.etPublicacao.setText(publicacao)
             binding.etCdu.setText(cdu)
             binding.etCutter.setText(cutter)
-            
             assuntos.forEach { adicionarChipAssunto(it) }
+
+            lifecycleScope.launch {
+                val entrada = buscarEntradaPorId(entradaId!!)
+                val exemplares = entrada?.exemplares ?: emptyList()
+                exemplarAdapter.setExemplares(exemplares)
+            }
         }
 
         binding.btnBack.setOnClickListener { finish() }
@@ -58,8 +67,24 @@ class AdminCriarLivroActivity : AppCompatActivity() {
             }
         }
 
+        binding.btnAddExemplar.setOnClickListener {
+            exemplarAdapter.adicionarExemplar()
+        }
+
+        if (!isEdit) {
+            exemplarAdapter.adicionarExemplar()
+        }
+
         binding.btnConcluir.setOnClickListener {
             salvarEntrada(isEdit)
+        }
+    }
+
+    private fun setupRecyclerView() {
+        exemplarAdapter = AdminExemplarEditAdapter()
+        binding.rvExemplares.apply {
+            adapter = exemplarAdapter
+            layoutManager = LinearLayoutManager(this@AdminCriarEntradaActivity)
         }
     }
 
@@ -78,6 +103,8 @@ class AdminCriarLivroActivity : AppCompatActivity() {
             assuntos.add(chip.text.toString())
         }
 
+        val exemplares = exemplarAdapter.getExemplares()
+
         val novaEntrada = Entrada(
             id = entradaId ?: "",
             isbn = isbn,
@@ -88,9 +115,7 @@ class AdminCriarLivroActivity : AppCompatActivity() {
             cdu = cdu,
             cutter = cutter,
             assuntos = assuntos,
-            exemplares = listOf(
-                Exemplar("REG-001", "1", 2024, "Impresso", "Estante A1", "Disponivel")
-            )
+            exemplares = exemplares
         )
 
         lifecycleScope.launch {
@@ -119,4 +144,5 @@ class AdminCriarLivroActivity : AppCompatActivity() {
         }
         binding.chipGroupAssuntos.addView(chip)
     }
+
 }
