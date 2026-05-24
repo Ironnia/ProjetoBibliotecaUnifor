@@ -34,7 +34,7 @@ object NavigationUtils {
 //          if (item.itemId == currentItemId) return@setOnItemSelectedListener true
                 // as telas "secundárias" estavam com o home desativado.
                 val estouNaTelaAtual = when (item.itemId) {
-                    R.id.navigation_home -> activity is AdminHomeActivity
+                    R.id.navigation_home -> activity is MainActivity
                     R.id.navigation_catalogo -> activity is CatalogoActivity
                     R.id.navigation_salas -> activity is SalasActivity
                     R.id.navigation_perfil -> activity is PerfilUsuarioActivity
@@ -84,10 +84,10 @@ object NavigationUtils {
             setOnItemSelectedListener { item ->
                 //if (item.itemId == currentItemId) return@setOnItemSelectedListener true
                 val estouNaTelaAtual = when (item.itemId) {
-                    R.id.navigation_home -> activity is MainActivity
-                    R.id.navigation_catalogo -> activity is CatalogoActivity
-                    R.id.navigation_salas -> activity is SalasActivity
-                    R.id.navigation_perfil -> activity is PerfilUsuarioActivity
+                    R.id.navigation_home -> activity is AdminHomeActivity
+                    R.id.navigation_catalogo -> activity is AdminAcervoActivity
+                    R.id.navigation_salas -> activity is AdminAgendamentosActivity
+                    R.id.navigation_perfil -> activity is AdminEmprestimosActivity
                     else -> false
                 }
 
