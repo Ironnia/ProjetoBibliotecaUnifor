@@ -5,10 +5,8 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import com.example.bibliotecaunifor.MainActivity
 import com.example.bibliotecaunifor.R
 import com.example.bibliotecaunifor.databinding.TelaPerfilUsuarioBinding
-import com.example.bibliotecaunifor.usuario.catalogo.CatalogoActivity
 
 import com.example.bibliotecaunifor.usuario.utils.NavigationUtils
 import com.example.bibliotecaunifor.usuario.configuracoes.ConfiguracoesUsuarioActivity
@@ -37,7 +35,7 @@ class PerfilUsuarioActivity : AppCompatActivity() {
         binding.tvMatricula.text = "Email: ${pegarEmailUsuario()}"
 
 
-        NavigationUtils.setupBottomNavigation(this, binding.bottomNavigation, com.example.bibliotecaunifor.R.id.navigation_perfil)
+        NavigationUtils.navegacaoAluno(this, binding.bottomNavigation, com.example.bibliotecaunifor.R.id.navigation_perfil)
 
         binding.btnSettings.setOnClickListener {
             startActivity(Intent(this, ConfiguracoesUsuarioActivity::class.java))

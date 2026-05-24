@@ -39,6 +39,7 @@
         <activity android:name=".admin.emprestimos.AdminEmprestimosActivity" android:exported="false" />
         <activity android:name=".admin.usuarios.AdminUsuariosActivity" android:exported="false" />
         <activity android:name=".admin.agendamentos.AdminAgendamentosActivity" android:exported="false" />
+        <activity android:name=".admin.jogos.AdminJogosActivity" android:exported="false" />
         
         <!-- Novas Telas Usuário -->
         <activity android:name=".usuario.historico.HistoricoActivity" android:exported="false" />

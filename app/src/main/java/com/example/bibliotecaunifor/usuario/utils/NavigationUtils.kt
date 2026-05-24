@@ -9,13 +9,14 @@ import com.example.bibliotecaunifor.admin.AdminHomeActivity
 import com.example.bibliotecaunifor.admin.acervo.AdminAcervoActivity
 import com.example.bibliotecaunifor.admin.agendamentos.AdminAgendamentosActivity
 import com.example.bibliotecaunifor.admin.emprestimos.AdminEmprestimosActivity
+import com.example.bibliotecaunifor.admin.jogos.AdminJogosActivity
 import com.example.bibliotecaunifor.usuario.catalogo.CatalogoActivity
 import com.example.bibliotecaunifor.usuario.perfil.PerfilUsuarioActivity
 import com.example.bibliotecaunifor.usuario.salas.SalasActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 object NavigationUtils {
-    fun setupBottomNavigation(activity: Activity, bottomNavigationView: BottomNavigationView, currentItemId: Int) {
+    fun navegacaoAluno(activity: Activity, bottomNavigationView: BottomNavigationView, currentItemId: Int) {
        // Deixando mais fácil de escrever.
         bottomNavigationView.apply {
             labelVisibilityMode = BottomNavigationView.LABEL_VISIBILITY_LABELED
@@ -76,7 +77,7 @@ object NavigationUtils {
             }
         }
     }
-    fun setupAdminNavigation(activity: Activity, bottomNavigationView: BottomNavigationView, currentItemId: Int) {
+    fun navegacaoAdmin(activity: Activity, bottomNavigationView: BottomNavigationView, currentItemId: Int) {
         bottomNavigationView.apply {
             labelVisibilityMode = BottomNavigationView.LABEL_VISIBILITY_LABELED
             selectedItemId = currentItemId
@@ -87,7 +88,7 @@ object NavigationUtils {
                     R.id.navigation_home -> activity is AdminHomeActivity
                     R.id.navigation_catalogo -> activity is AdminAcervoActivity
                     R.id.navigation_salas -> activity is AdminAgendamentosActivity
-                    R.id.navigation_perfil -> activity is AdminEmprestimosActivity
+                    R.id.navigation_perfil -> activity is AdminJogosActivity
                     else -> false
                 }
 
@@ -97,7 +98,7 @@ object NavigationUtils {
                     R.id.navigation_home -> AdminHomeActivity::class.java
                     R.id.navigation_catalogo -> AdminAcervoActivity::class.java
                     R.id.navigation_salas -> AdminAgendamentosActivity::class.java
-                    R.id.navigation_perfil -> AdminEmprestimosActivity::class.java
+                    R.id.navigation_perfil -> AdminJogosActivity::class.java
                     else -> null
                 }
 

@@ -11,7 +11,6 @@ import com.example.bibliotecaunifor.databinding.DialogAdminGerenciarHorariosBind
 import com.example.bibliotecaunifor.databinding.TelaAdminAgendamentosBinding
 import com.example.bibliotecaunifor.usuario.utils.NavigationUtils
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.snackbar.Snackbar
 
 class AdminAgendamentosActivity : AppCompatActivity() {
     private lateinit var binding: TelaAdminAgendamentosBinding
@@ -59,7 +58,7 @@ class AdminAgendamentosActivity : AppCompatActivity() {
 
         binding.includeToolbar.btnBack.setOnClickListener { finish() }
 
-        NavigationUtils.setupAdminNavigation(this, binding.bottomNavigation, R.id.navigation_salas)
+        NavigationUtils.navegacaoAdmin(this, binding.bottomNavigation, R.id.navigation_salas)
 
         setupEstacoes()
         setupCalendario()

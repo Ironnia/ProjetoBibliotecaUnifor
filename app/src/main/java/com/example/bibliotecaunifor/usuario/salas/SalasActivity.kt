@@ -60,7 +60,7 @@ class SalasActivity : AppCompatActivity() {
             }
         }
 
-        NavigationUtils.setupBottomNavigation(this, binding.bottomNavigation, R.id.navigation_salas)
+        NavigationUtils.navegacaoAluno(this, binding.bottomNavigation, R.id.navigation_salas)
     }
 
     private fun setupAdapters() {

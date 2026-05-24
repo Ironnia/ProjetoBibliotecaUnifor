@@ -3,8 +3,6 @@ package com.example.bibliotecaunifor
 import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.example.bibliotecaunifor.databinding.TelaHomeUsuarioBinding
 import com.example.bibliotecaunifor.usuario.catalogo.CatalogoActivity
@@ -61,7 +59,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Setup Navigation
-        NavigationUtils.setupBottomNavigation(this, binding.bottomNavigation, R.id.navigation_home)
+        NavigationUtils.navegacaoAluno(this, binding.bottomNavigation, R.id.navigation_home)
 
         configurarSecaoDevolucoes()
 

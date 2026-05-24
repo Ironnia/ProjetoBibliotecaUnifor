@@ -5,14 +5,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.bibliotecaunifor.Emprestimo
 import com.example.bibliotecaunifor.R
 import com.example.bibliotecaunifor.databinding.TelaMeusLivrosBinding
@@ -20,14 +18,10 @@ import com.example.bibliotecaunifor.mostrarAviso
 import com.example.bibliotecaunifor.usuario.reserva.DetalhesLivroActivity
 import com.example.bibliotecaunifor.usuario.utils.NavigationUtils
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.firestore
-import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.toObjects
-import kotlin.text.format
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -64,7 +58,7 @@ class MeusLivrosActivity : AppCompatActivity() {
             finish()
         }
 
-        NavigationUtils.setupBottomNavigation(this, binding.bottomNavigation, R.id.navigation_home)
+        NavigationUtils.navegacaoAluno(this, binding.bottomNavigation, R.id.navigation_home)
     }
 
     private fun setupRecyclerView() {

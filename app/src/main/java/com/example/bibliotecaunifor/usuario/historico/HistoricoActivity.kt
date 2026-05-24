@@ -23,7 +23,7 @@ class HistoricoActivity : AppCompatActivity() {
 
         setupHistoryList()
 
-        NavigationUtils.setupBottomNavigation(this, binding.bottomNavigation, R.id.navigation_perfil) // tentando melhorar a navegação.
+        NavigationUtils.navegacaoAluno(this, binding.bottomNavigation, R.id.navigation_perfil) // tentando melhorar a navegação.
     }
 
     private fun setupHistoryList() {

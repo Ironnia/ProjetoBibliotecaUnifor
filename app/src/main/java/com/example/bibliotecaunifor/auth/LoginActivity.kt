@@ -18,6 +18,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import javax.annotation.meta.When
 import androidx.core.content.edit
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 
 class LoginActivity : AppCompatActivity() {
@@ -157,7 +158,8 @@ class LoginActivity : AppCompatActivity() {
                 startActivity(Intent(this, destino))
                 finish()
             }
-            .addOnFailureListener {
+            .addOnFailureListener { e ->
+                FirebaseCrashlytics.getInstance().recordException(e)
                 startActivity(Intent(this, MainActivity::class.java))
                 finish()
             }

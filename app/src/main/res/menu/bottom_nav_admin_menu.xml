@@ -7,13 +7,13 @@
     <item
         android:id="@+id/navigation_catalogo"
         android:icon="@drawable/menu_book_24"
-        android:title="Catálogo" />
+        android:title="Acervo" />
     <item
         android:id="@+id/navigation_salas"
-        android:icon="@drawable/calendar_clock_24"
+        android:icon="@drawable/room_preferences_24px"
         android:title="Salas" />
     <item
         android:id="@+id/navigation_perfil"
-        android:icon="@drawable/ic_profile_tab"
-        android:title="Empréstimos Usuários" />
+        android:icon="@drawable/casino_24"
+        android:title="Jogos" />
 </menu>

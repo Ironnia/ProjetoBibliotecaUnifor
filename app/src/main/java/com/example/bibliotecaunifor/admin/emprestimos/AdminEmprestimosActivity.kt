@@ -25,7 +25,7 @@ class AdminEmprestimosActivity : AppCompatActivity() {
             finish()
         }
 
-        NavigationUtils.setupAdminNavigation(this, binding.bottomNavigation, R.id.navigation_home)
+        NavigationUtils.navegacaoAdmin(this, binding.bottomNavigation, R.id.navigation_home)
 
         setupRecyclerView()
         setupFilters()

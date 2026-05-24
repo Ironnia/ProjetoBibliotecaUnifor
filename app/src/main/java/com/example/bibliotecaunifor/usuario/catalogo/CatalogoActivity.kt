@@ -6,7 +6,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.RecyclerView
 import com.example.bibliotecaunifor.crud.Entrada
 import com.example.bibliotecaunifor.databinding.TelaCatalogoBinding
 import com.example.bibliotecaunifor.crud.listarEntradas
@@ -67,7 +66,7 @@ class CatalogoActivity : AppCompatActivity() {
         }
 
 
-        NavigationUtils.setupBottomNavigation(this, binding.bottomNavigation, com.example.bibliotecaunifor.R.id.navigation_catalogo)
+        NavigationUtils.navegacaoAluno(this, binding.bottomNavigation, com.example.bibliotecaunifor.R.id.navigation_catalogo)
         
         loadEntries()
     }

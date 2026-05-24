@@ -36,6 +36,6 @@ class TrocarSenhaActivity : AppCompatActivity() {
             }
         }
 
-        NavigationUtils.setupBottomNavigation(this, binding.bottomNavigation, R.id.navigation_perfil)
+        NavigationUtils.navegacaoAluno(this, binding.bottomNavigation, R.id.navigation_perfil)
     }
 }

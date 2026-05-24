@@ -25,7 +25,7 @@ class AdminAcervoActivity : AppCompatActivity() {
             finish()
         }
 
-        NavigationUtils.setupAdminNavigation(this, binding.bottomNavigation, R.id.navigation_catalogo)
+        NavigationUtils.navegacaoAdmin(this, binding.bottomNavigation, R.id.navigation_catalogo)
 
         setupRecyclerView()
 

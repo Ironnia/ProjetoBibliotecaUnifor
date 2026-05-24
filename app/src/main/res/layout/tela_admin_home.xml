@@ -18,16 +18,18 @@
 
     <TextView
         android:id="@+id/tv_greeting"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="48dp"
+        android:layout_marginEnd="16dp"
         android:text="Olá Admin,\no que você quer fazer hoje?"
         android:textColor="@color/white"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/iv_profile" />
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/iv_profile"
@@ -75,7 +77,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="8dp"
                 android:background="@null"
-                android:hint="Pesquisar acervo..."
+                android:hint="Pesquisar e-mail do aluno..."
                 android:textColorHint="#888888"
                 android:textColor="@color/unifor_marinho_dark"
                 android:inputType="text"
@@ -173,7 +175,7 @@
 
                 <!-- Atalho 3 -->
                 <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/card_usuarios"
+                    android:id="@+id/card_jogos"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
@@ -191,14 +193,14 @@
                         <ImageView
                             android:layout_width="32dp"
                             android:layout_height="32dp"
-                            android:src="@drawable/ic_profile_tab"
+                            android:src="@drawable/casino_24"
                             app:tint="@color/unifor_anil_primary" />
                             
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:text="Gerenciar\nUsuários"
+                            android:text="Gerenciar\nJogos"
                             android:textAlignment="center"
                             android:textColor="@color/unifor_marinho_dark"
                             android:textStyle="bold" />
@@ -232,7 +234,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:text="Gerenciar salas"
+                            android:text="Gerenciar\nsalas"
                             android:textAlignment="center"
                             android:textColor="@color/unifor_marinho_dark"
                             android:textStyle="bold" />
@@ -244,20 +246,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="Próximas devoluções: (Alunos)"
+                android:text="Resumo do Sistema"
                 android:textColor="@color/unifor_marinho_dark"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_devolucoes"
+                android:id="@+id/card_resumo_stats"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="0dp"
-                app:strokeColor="#EEEEEE"
-                app:strokeWidth="1dp">
+                app:cardElevation="2dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -265,20 +265,54 @@
                     android:orientation="vertical"
                     android:padding="16dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <!-- Linha 1 (Empréstimos) -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Dom Casmurro - M. Assis - 22/Abril 9:30"
-                        android:textColor="#444444"
-                        android:textSize="14sp" />
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="8dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/menu_book_24"
+                            app:tint="@color/unifor_anil_primary" />
+
+                        <TextView
+                            android:id="@+id/tv_resumo_emprestimos"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:text="0 alugados | 0 atrasados"
+                            android:textColor="@color/unifor_marinho_dark"
+                            android:textSize="14sp"
+                            android:fontFamily="@font/satoshi_medium" />
+                    </LinearLayout>
+
+                    <!-- Linha 2 (Salas) -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Helena - M. Assis - 25/Abril - 15:38"
-                        android:textColor="#444444"
-                        android:textSize="14sp" />
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/calendar_clock_24"
+                            app:tint="@color/unifor_anil_primary" />
+
+                        <TextView
+                            android:id="@+id/tv_resumo_salas"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:text="0 reservadas | 0 ocupadas"
+                            android:textColor="@color/unifor_marinho_dark"
+                            android:textSize="14sp"
+                            android:fontFamily="@font/satoshi_medium" />
+                    </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -302,65 +336,37 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="16dp"
-                    android:weightSum="2">
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-                    <LinearLayout
-                        android:layout_width="0dp"
+                    <TextView
+                        android:id="@+id/tv_top_1"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1.2"
-                        android:orientation="vertical">
+                        android:text="1. Dom Casmurro - 20 vezes"
+                        android:textSize="14sp"
+                        android:textColor="#666666"
+                        android:fontFamily="@font/satoshi_medium"
+                        android:layout_marginBottom="8dp" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="1. Dom Casmurro - 20 vezes"
-                            android:textSize="13sp"
-                            android:textColor="#666666" />
+                    <TextView
+                        android:id="@+id/tv_top_2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="2. A Metamorfose - 18 vezes"
+                        android:textSize="14sp"
+                        android:textColor="#666666"
+                        android:fontFamily="@font/satoshi_medium"
+                        android:layout_marginBottom="8dp" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="2. A Metamorfose - 18 vezes"
-                            android:textSize="13sp"
-                            android:textColor="#666666" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="3. O Código da Vinci - 10 vezes"
-                            android:textSize="13sp"
-                            android:textColor="#666666" />
-                    </LinearLayout>
-
-                    <!-- Mock Bar Chart -->
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="80dp"
-                        android:layout_weight="0.8"
-                        android:gravity="bottom|center_horizontal"
-                        android:orientation="horizontal">
-
-                        <View
-                            android:layout_width="12dp"
-                            android:layout_height="60dp"
-                            android:layout_marginEnd="8dp"
-                            android:background="@color/unifor_anil_primary" />
-
-                        <View
-                            android:layout_width="12dp"
-                            android:layout_height="50dp"
-                            android:layout_marginEnd="8dp"
-                            android:background="@color/unifor_marinho_dark" />
-
-                        <View
-                            android:layout_width="12dp"
-                            android:layout_height="30dp"
-                            android:background="@color/unifor_azul_claro" />
-                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/tv_top_3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="3. O Código da Vinci - 10 vezes"
+                        android:textSize="14sp"
+                        android:textColor="#666666"
+                        android:fontFamily="@font/satoshi_medium" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 

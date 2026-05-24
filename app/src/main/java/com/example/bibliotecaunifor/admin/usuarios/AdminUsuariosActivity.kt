@@ -37,7 +37,7 @@ class AdminUsuariosActivity : AppCompatActivity() {
                 .show()
         }
 
-        NavigationUtils.setupAdminNavigation(this, binding.bottomNavigation, R.id.navigation_perfil)
+        NavigationUtils.navegacaoAdmin(this, binding.bottomNavigation, R.id.navigation_perfil)
     }
 
     private fun setupRecyclerView() {
