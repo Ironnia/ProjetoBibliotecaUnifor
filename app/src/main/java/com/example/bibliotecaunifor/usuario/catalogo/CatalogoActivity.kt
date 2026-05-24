@@ -4,7 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.RecyclerView
 import com.example.bibliotecaunifor.crud.Entrada
 import com.example.bibliotecaunifor.databinding.TelaCatalogoBinding
 import com.example.bibliotecaunifor.crud.listarEntradas
@@ -19,6 +21,7 @@ class CatalogoActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         binding = TelaCatalogoBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -46,18 +49,23 @@ class CatalogoActivity : AppCompatActivity() {
         binding.rvBooks.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
         binding.rvBooks.adapter = adapter
 
-        binding.etSearch.addTextChangedListener(object : android.text.TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val query = s.toString()
-                if (query.isNotEmpty()) {
-                    searchEntries(query)
-                } else {
-                    loadEntries()
-                }
+        // +ktx, Nosso campinho de bucsar vai funcionar assim:
+        // "monitora" se tem texto escrito, se tem faz o "filtro, se não mostra tudo (mesmo de antes, mas agora simples de entender né)
+        binding.etSearch.doOnTextChanged { text, _, _, _ ->
+            val query = text.toString()
+            if (query.isNotEmpty()) searchEntries(query) else loadEntries()
+        }
+
+        // Direto do m3, é o filtro ráido. É legal.
+        // Em outro momento precisa meio que aumentar bastante a lógica para procurar por todo tipo de coisa, como autor; (acho que só titulo e Autor, está bom?)
+        binding.cgFilters.setOnCheckedStateChangeListener { group, checkedIds ->
+            if (checkedIds.isNotEmpty()) {
+                // isso vai identificar se é "livro" ou "artigo", ele vai ler o texto do botão. Po isso o caça pelo botão.
+                val chip = group.findViewById<com.google.android.material.chip.Chip>(checkedIds.first())
+                searchEntries(chip.text.toString())
             }
-            override fun afterTextChanged(s: android.text.Editable?) {}
-        })
+        }
+
 
         NavigationUtils.setupBottomNavigation(this, binding.bottomNavigation, com.example.bibliotecaunifor.R.id.navigation_catalogo)
         

@@ -91,6 +91,24 @@
                 android:text="Detalhes"
                 android:textColor="@color/unifor_anil_primary"
                 app:strokeColor="@color/unifor_anil_primary" />
+            <LinearLayout
+                android:id="@+id/layout_detalhes_expansivel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="24dp"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:background="@drawable/bg_border"
+                android:visibility="gone" >
+                <TextView
+                    android:id="@+id/tv_detalhes_conteudo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#666666"
+                    android:textSize="13sp"
+                    android:lineSpacingExtra="4dp" />
+            </LinearLayout>
+
 
             <TextView
                 android:id="@+id/tv_label_assuntos"

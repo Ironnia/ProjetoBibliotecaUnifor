@@ -14,10 +14,20 @@ import com.example.bibliotecaunifor.crud.buscarEntradaPorId
 import com.example.bibliotecaunifor.databinding.TelaDetalhesLivroBinding
 import com.google.android.material.chip.Chip
 import kotlinx.coroutines.launch
+import androidx.core.view.isVisible
+import com.example.bibliotecaunifor.mostrarDialogo
+import com.example.bibliotecaunifor.mostrarDialogoSimples
+import com.example.bibliotecaunifor.mostrarToast
+import com.example.bibliotecaunifor.usuario.utils.NavigationUtils
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 class DetalhesLivroActivity : AppCompatActivity() {
     private lateinit var binding: TelaDetalhesLivroBinding
     private var entrada: Entrada? = null
+
+    private val db = Firebase.firestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,13 +45,30 @@ class DetalhesLivroActivity : AppCompatActivity() {
         }
 
         binding.btnDetails.setOnClickListener {
-            entrada?.let {
-                AlertDialog.Builder(this)
-                    .setTitle("Detalhes do Livro")
-                    .setMessage("Título: ${it.titulo}\nAutor: ${it.autor}\nISBN: ${it.isbn}\nEdição: ${it.edicao}\nPublicação: ${it.publicacao}\nCDU/Cutter: ${it.cdu} ${it.cutter}")
-                    .setPositiveButton("Ok", null)
-                    .show()
+//            entrada?.let {
+//                AlertDialog.Builder(this)
+//                    .setTitle("Detalhes do Livro")
+//                    .setMessage("Título: ${it.titulo}\nAutor: ${it.autor}\nISBN: ${it.isbn}\nEdição: ${it.edicao}\nPublicação: ${it.publicacao}\nCDU/Cutter: ${it.cdu} ${it.cutter}")
+//                    .setPositiveButton("Ok", null)
+//                    .show()
+//            }
+            // deixando igual do adm como o prof. pediu
+        with(binding) {
+            val estaVisivel = layoutDetalhesExpansivel.isVisible
+
+            if (estaVisivel) { //vai fechar
+                layoutDetalhesExpansivel.visibility = android.view.View.GONE
+                btnDetails.text = "Mostrar Detalhes"
+            } else {//abre
+                entrada?.let {
+                    tvDetalhesConteudo.text =
+                        "ISBN: ${it.isbn}\nEdição: ${it.edicao}\nPublicação: ${it.publicacao}\nCDU/Cutter: ${it.cdu} ${it.cutter}"
+                }
+                layoutDetalhesExpansivel.visibility = android.view.View.VISIBLE
+                btnDetails.text = "Ocultar Detalhes"
             }
+        }
+
         }
 
         binding.btnReservar.setOnClickListener {
@@ -49,16 +76,12 @@ class DetalhesLivroActivity : AppCompatActivity() {
                 if (it.exemplaresDisponiveis > 0) {
                     confirmarReserva(it)
                 } else {
-                    AlertDialog.Builder(this)
-                        .setTitle("Indisponível")
-                        .setMessage("No momento este livro não está disponível!")
-                        .setPositiveButton("Voltar", null)
-                        .show()
+                    mostrarDialogoSimples("Indisponível", "No momento este livro não está disponível!", "Voltar")
                 }
             }
         }
 
-        com.example.bibliotecaunifor.usuario.utils.NavigationUtils.setupBottomNavigation(this, binding.bottomNavigation, R.id.navigation_catalogo)
+        NavigationUtils.setupBottomNavigation(this, binding.bottomNavigation, R.id.navigation_catalogo)
     }
 
     private fun loadEntrada(id: String) {
@@ -69,50 +92,80 @@ class DetalhesLivroActivity : AppCompatActivity() {
     }
 
     private fun updateUI(entrada: Entrada) {
-        binding.tvTitle.text = entrada.titulo
-        binding.tvAuthor.text = entrada.autor
+        // dnv ktx,
+        with(binding) {
+            tvTitle.text = entrada.titulo
+            tvAuthor.text = entrada.autor
 
-        binding.cgAssuntos.removeAllViews()
-        entrada.assuntos.forEach { assunto ->
-            val chip = Chip(this)
-            chip.text = assunto
-            chip.setTextColor(getColor(R.color.unifor_anil_primary))
-            chip.chipStrokeColor = android.content.res.ColorStateList.valueOf(getColor(R.color.unifor_anil_primary))
-            binding.cgAssuntos.addView(chip)
-        }
-
-        binding.layoutExemplaresData.removeAllViews()
-        entrada.exemplares.forEach { exemplar ->
-            val row = LinearLayout(this).apply {
-                orientation = LinearLayout.HORIZONTAL
-                weightSum = 2f
+            //fazer o botão de reservar não ser clicavel se  não tiver algo para reservar.
+            val temExemplares = entrada.exemplaresDisponiveis > 0
+            btnReservar.apply {
+                isEnabled = temExemplares
+                if (temExemplares) {
+                    text = "Reservar"
+                    backgroundTintList = android.content.res.ColorStateList.valueOf(getColor(R.color.success_green))
+                } else {
+                    text = "Indisponível no momento"
+                    backgroundTintList = android.content.res.ColorStateList.valueOf(getColor(android.R.color.darker_gray))
+                }
             }
 
-            val tvInfo = TextView(this).apply {
-                text = "Exemplar - ${exemplar.localizacao}"
-                gravity = Gravity.START
-                setPadding(36, 36, 36, 36)
-                setBackgroundResource(R.drawable.bg_border)
-                textSize = 12f
-                setTextColor(getColor(android.R.color.black))
-                layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+
+            cgAssuntos.removeAllViews()
+            entrada.assuntos.forEach { assunto ->
+                // só ktx, aproveitando que estou tentando ler uma lógica melhro.
+                val chip = Chip(this@DetalhesLivroActivity).apply {
+                    text = assunto
+                    setTextColor(getColor(R.color.unifor_anil_primary))
+                    chipStrokeColor =
+                        android.content.res.ColorStateList.valueOf(getColor(R.color.unifor_anil_primary))
+
+                }
+                cgAssuntos.addView(chip)
             }
 
-            val tvSituacao = TextView(this).apply {
-                text = exemplar.situacao
-                gravity = Gravity.CENTER
-                setPadding(36, 36, 36, 36)
-                setBackgroundResource(R.drawable.bg_border)
-                textSize = 12f
-                val isDisponivel = exemplar.situacao == "Disponivel"
-                setTextColor(if (isDisponivel) getColor(R.color.success_green) else getColor(R.color.error_red))
-                setTypeface(null, android.graphics.Typeface.BOLD)
-                layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
-            }
+            layoutExemplaresData.removeAllViews()
+            entrada.exemplares.forEach { exemplar ->
+                val row = LinearLayout(this@DetalhesLivroActivity).apply {
+                    orientation = LinearLayout.HORIZONTAL
+                    weightSum = 2f
+                }
 
-            row.addView(tvInfo)
-            row.addView(tvSituacao)
-            binding.layoutExemplaresData.addView(row)
+                val tvInfo = TextView(this@DetalhesLivroActivity).apply {
+                    text = "Exemplar - ${exemplar.localizacao}"
+                    gravity = Gravity.START
+                    // Talvez modificar um pouco? verificar!
+                    setPadding(36, 36, 36, 36)
+                    setBackgroundResource(R.drawable.bg_border)
+                    textSize = 12f
+                    setTextColor(getColor(android.R.color.black))
+                    layoutParams =
+                        LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+                }
+
+                val tvSituacao = TextView(this@DetalhesLivroActivity).apply {
+                    text = exemplar.situacao
+                    gravity = Gravity.CENTER
+                    setPadding(36, 36, 36, 36)
+                    setBackgroundResource(R.drawable.bg_border)
+                    textSize = 12f
+                    val isDisponivel = exemplar.situacao == "Disponivel"
+                    setTextColor(if (isDisponivel) getColor(R.color.success_green) else getColor(R.color.error_red))
+                    setTypeface(null, android.graphics.Typeface.BOLD)
+                    layoutParams =
+                        LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+                }
+
+                row.addView(tvInfo)
+                row.addView(tvSituacao)
+                // Melhorar a separação na hud:
+                val divisor = android.view.View(this@DetalhesLivroActivity).apply {
+                    layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 2)
+                    setBackgroundColor(getColor(R.color.unifor_gelo_bg))
+                }
+                layoutExemplaresData.addView(divisor)
+                layoutExemplaresData.addView(row)
+            }
         }
     }
 
@@ -127,7 +180,44 @@ class DetalhesLivroActivity : AppCompatActivity() {
             .setTitle("Confirmar Reserva")
             .setMessage("Título: ${entry.titulo}\nAutor: ${entry.autor}\nISBN: ${entry.isbn}\n\nDeseja confirmar a reserva deste item?")
             .setPositiveButton("Confirmar") { _, _ ->
-                exibirSucessoReserva(entry, retiradaDate, devolucaoDate)
+                val uid = Firebase.auth.currentUser?.uid ?: return@setPositiveButton
+                val novoAluguel = hashMapOf(
+                    "usuarioID" to uid,
+                    "titulo" to entry.titulo,
+                    "autor" to entry.autor,
+                    "dataDevolucao" to devolucaoDate, // Variável que você já calculou
+                    "status" to "pendente",
+                    "dataReserva" to java.util.Calendar.getInstance().time
+                )
+                // Usando o bloco atomico
+                //https://firebase.google.com/docs/firestore/manage-data/transactions?hl=pt-br
+                // O chat da documentação complicou demais como se precissasse mas funciona. Antes era mais simples:
+                db.runTransaction { transaction ->
+                    val livroRef = db.collection("entradas").document(entry.id)
+                    val snapshot = transaction.get(livroRef)
+                    val qtdAtual = snapshot.getLong("exemplaresDisponiveis") ?: 0
+
+                    if (qtdAtual > 0) {
+                        // cria o novo aluguel e dá dá baixa no estoque
+                        val aluguelRef = db.collection("alugueis").document()
+                        transaction.set(aluguelRef, novoAluguel)
+
+                        transaction.update(livroRef, "exemplaresDisponiveis", qtdAtual - 1)
+                        true
+                    } else {
+                        false
+                    }
+                }.addOnSuccessListener { sucesso ->
+                    if (sucesso) {
+                        exibirSucessoReserva(entry, retiradaDate, devolucaoDate)                        // atualiza na tela.
+                        loadEntrada(entry.id)
+                    } else {
+                        mostrarToast("Infelizmente o livro acabou de ficar indisponível.")
+                    }
+                }
+                    .addOnFailureListener {
+                        mostrarToast("Erro ao processar reserva. Tente novamente.")
+                    }
             }
             .setNegativeButton("Cancelar", null)
             .show()
@@ -138,6 +228,8 @@ class DetalhesLivroActivity : AppCompatActivity() {
             orientation = LinearLayout.VERTICAL
             gravity = Gravity.CENTER_HORIZONTAL
             setPadding(32, 32, 32, 32)
+
+            // Esse aqui é nosso QRCODE! Só sinalizando
             val iv = android.widget.ImageView(context).apply {
                 setImageResource(R.drawable.ic_qrcode)
                 layoutParams = LinearLayout.LayoutParams(500, 500)
@@ -147,16 +239,24 @@ class DetalhesLivroActivity : AppCompatActivity() {
                 textSize = 14f
                 gravity = Gravity.CENTER
                 setPadding(0, 16, 0, 0)
+                // setTextColor(getColor(android.R.color.darker_gray))
             }
             addView(iv)
             addView(tv)
         }
 
-        AlertDialog.Builder(this)
-            .setTitle("Reserva Realizada!")
-            .setMessage("O livro \"${entry.titulo}\" foi reservado com sucesso.\n\nRetirar até: $retiradaDate às 21:00\nDevolver em: $devolucaoDate")
-            .setView(dialogView)
-            .setPositiveButton("Fechar", null)
-            .show()
+//        AlertDialog.Builder(this)
+//            .setTitle("Reserva Realizada!")
+//            .setMessage("O livro \"${entry.titulo}\" foi reservado com sucesso.\n\nRetirar até: $retiradaDate às 21:00\nDevolver em: $devolucaoDate")
+//            .setView(dialogView)
+//            .setPositiveButton("Fechar", null)
+//            .show()
+        mostrarDialogo(
+            titulo = "Solicitação Enviada!",
+            mensagem = "Sua reserva para \"${entry.titulo}\" foi enviada com sucesso.\n\n" +
+                    "📅 Retire no balcão até: $retiradaDate às 21:00\n" + // Mudar isso para icones de emotes (todos os icones de todo o app) de verdade do googlefont!
+                    "⏳ Prazo de devolução: $devolucaoDate",
+            layoutCustomizado = dialogView // Lembrar de colocaro QRCODE aqui depois.
+        )
     }
 }
