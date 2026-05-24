@@ -64,10 +64,10 @@
             android:visibility="gone">
 
             <TextView
-                android:id="@+id/tv_matricula"
+                android:id="@+id/tv_email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Matrícula: 1213145"
+                android:text="test@test.com"
                 android:textColor="#666666"
                 android:textSize="13sp" />
 

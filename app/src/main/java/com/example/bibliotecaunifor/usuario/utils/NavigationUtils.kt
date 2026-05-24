@@ -31,7 +31,17 @@ object NavigationUtils {
 //                }
             // Para evitar a tela de "piscarr, clicando pra mesma. Evita ficar criando várias da mesma tela.
             // faz o mesmo do de ciam.
-                if (item.itemId == currentItemId) return@setOnItemSelectedListener true
+//          if (item.itemId == currentItemId) return@setOnItemSelectedListener true
+                // as telas "secundárias" estavam com o home desativado.
+                val estouNaTelaAtual = when (item.itemId) {
+                    R.id.navigation_home -> activity is AdminHomeActivity
+                    R.id.navigation_catalogo -> activity is CatalogoActivity
+                    R.id.navigation_salas -> activity is SalasActivity
+                    R.id.navigation_perfil -> activity is PerfilUsuarioActivity
+                    else -> false
+                }
+
+                if (estouNaTelaAtual) return@setOnItemSelectedListener true
 
                 val destino = when (item.itemId) {
                     R.id.navigation_home -> MainActivity::class.java
@@ -72,7 +82,16 @@ object NavigationUtils {
             selectedItemId = currentItemId
 
             setOnItemSelectedListener { item ->
-                if (item.itemId == currentItemId) return@setOnItemSelectedListener true
+                //if (item.itemId == currentItemId) return@setOnItemSelectedListener true
+                val estouNaTelaAtual = when (item.itemId) {
+                    R.id.navigation_home -> activity is MainActivity
+                    R.id.navigation_catalogo -> activity is CatalogoActivity
+                    R.id.navigation_salas -> activity is SalasActivity
+                    R.id.navigation_perfil -> activity is PerfilUsuarioActivity
+                    else -> false
+                }
+
+                if (estouNaTelaAtual) return@setOnItemSelectedListener true
 
                 val destino = when (item.itemId) {
                     R.id.navigation_home -> AdminHomeActivity::class.java

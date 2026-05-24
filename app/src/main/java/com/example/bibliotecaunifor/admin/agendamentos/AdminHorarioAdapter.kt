@@ -8,6 +8,7 @@ import com.example.bibliotecaunifor.R
 import com.example.bibliotecaunifor.databinding.ItemAdminHorarioBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import androidx.core.view.isVisible
 
 class AdminHorarioAdapter(private val items: List<AdminHorario>) :
     RecyclerView.Adapter<AdminHorarioAdapter.ViewHolder>() {
@@ -36,10 +37,10 @@ class AdminHorarioAdapter(private val items: List<AdminHorario>) :
 
             // Expandir/recolher ao clicar
             layoutDetalhe.visibility = View.GONE
-            tvMatricula.text = if (item.isOcupado) "Matrícula: ${item.matricula}" else "Livre"
+            tvEmail.text = if (item.isOcupado) "Email: ${item.email}" else "Livre"
 
             layoutHeader.setOnClickListener {
-                val isVisible = layoutDetalhe.visibility == View.VISIBLE
+                val isVisible = layoutDetalhe.isVisible
                 layoutDetalhe.visibility = if (isVisible) View.GONE else View.VISIBLE
             }
 

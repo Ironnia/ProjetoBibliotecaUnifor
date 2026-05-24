@@ -126,8 +126,7 @@ class MainActivity : AppCompatActivity() {
                 if (result.isEmpty) {
                     binding.tvDevolucoesList.text =
                         "Tudo em dia! \nVocê não tem devoluções para esta semana."
-                    // Dica: Aqui você poderia até mudar a cor do texto para o azul da Unifor
-                } else {git
+                } else {
                     // 3. Mapeamento dos dados
                     val livros = result.map { doc ->
                         val titulo = doc.getString("titulo") ?: "Livro"

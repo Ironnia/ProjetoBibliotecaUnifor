@@ -1,12 +1,16 @@
 package com.example.bibliotecaunifor.usuario.configuracoes
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.edit
 import com.example.bibliotecaunifor.R
 import com.example.bibliotecaunifor.databinding.TelaConfiguracoesUsuarioBinding
+import com.example.bibliotecaunifor.mostrarToast
 import com.example.bibliotecaunifor.usuario.utils.NavigationUtils
 
 class ConfiguracoesUsuarioActivity : AppCompatActivity() {
@@ -17,38 +21,61 @@ class ConfiguracoesUsuarioActivity : AppCompatActivity() {
         enableEdgeToEdge()
         binding = TelaConfiguracoesUsuarioBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        // Pra salvar local.
+        val prefs = getSharedPreferences("configuracoes", Context.MODE_PRIVATE)
 
-        binding.toolbar.setNavigationOnClickListener {
-            finish()
+        // Carregar as escolhas salvas
+        with(binding) {
+            switchVoz.isChecked = prefs.getBoolean("acessibilidade_voz", false)
+            switchContraste.isChecked = prefs.getBoolean("acessibilidade_contraste", false)
+            switchVLibras.isChecked = prefs.getBoolean("acessibilidade_vlibras", false)
+
+            toolbar.setNavigationOnClickListener { finish() }
+
+            btnAlterarSenha.setOnClickListener {
+                startActivity(
+                    Intent(
+                        this@ConfiguracoesUsuarioActivity,
+                        TrocarSenhaActivity::class.java
+                    )
+                )
+            }
+
+            btnChat.setOnClickListener {
+                startActivity(Intent(this@ConfiguracoesUsuarioActivity, ChatSuporteActivity::class.java))
+            }
+
+            btnFAQ.setOnClickListener {
+                mostrarToast("Redirecionando para FAQ...")
+                //Toast.makeText(this, "Redirecionando para FAQ...", Toast.LENGTH_SHORT).show()
+            }
+
+            // Usar KTX agora.
+            // tudo está sendo salvo local e checando como está.
+            switchVoz.setOnCheckedChangeListener { _, isChecked ->
+
+                prefs.edit { putBoolean("acessibilidade_voz", isChecked) }
+
+                val status = if (isChecked) "ativado" else "desativado"
+                mostrarToast("Comando por voz $status")
+            }
+
+            switchContraste.setOnCheckedChangeListener { _, isChecked ->
+                prefs.edit { putBoolean("acessibilidade_contraste", isChecked) }
+
+                val status = if (isChecked) "ativado" else "desativado"
+                mostrarToast("Alto contraste $status")
+            }
+
+            switchVLibras.setOnCheckedChangeListener { _, isChecked ->
+                prefs.edit { putBoolean("acessibilidade_vlibras", isChecked) }
+
+                val status = if (isChecked) "ativado" else "desativado"
+                mostrarToast("vLibras $status")
+            }
+
+            // Navegação Inferior
+            NavigationUtils.setupBottomNavigation(this@ConfiguracoesUsuarioActivity, bottomNavigation, R.id.navigation_perfil)
         }
-
-        binding.btnAlterarSenha.setOnClickListener {
-            startActivity(android.content.Intent(this, TrocarSenhaActivity::class.java))
-        }
-
-        binding.btnChat.setOnClickListener {
-            startActivity(android.content.Intent(this, ChatSuporteActivity::class.java))
-        }
-
-        binding.btnFAQ.setOnClickListener {
-            Toast.makeText(this, "Redirecionando para FAQ...", Toast.LENGTH_SHORT).show()
-        }
-
-        binding.switchVoz.setOnCheckedChangeListener { _, isChecked ->
-            val status = if (isChecked) "ativado" else "desativado"
-            Toast.makeText(this, "Comando por voz $status", Toast.LENGTH_SHORT).show()
-        }
-
-        binding.switchContraste.setOnCheckedChangeListener { _, isChecked ->
-            val status = if (isChecked) "ativado" else "desativado"
-            Toast.makeText(this, "Alto contraste $status", Toast.LENGTH_SHORT).show()
-        }
-
-        binding.switchVLibras.setOnCheckedChangeListener { _, isChecked ->
-            val status = if (isChecked) "ativado" else "desativado"
-            Toast.makeText(this, "vLibras $status", Toast.LENGTH_SHORT).show()
-        }
-
-        NavigationUtils.setupBottomNavigation(this, binding.bottomNavigation, R.id.navigation_perfil)
     }
 }

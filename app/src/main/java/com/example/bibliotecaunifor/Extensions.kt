@@ -40,3 +40,8 @@ fun pegarNomeUsuario(callback: (String) -> Unit) {
 
 
 }
+
+// o email já está na autenticação estão é só chamar, não precisa esperar o Firestore E verificar se está vazio ou não.
+fun pegarEmailUsuario(): String {
+    return Firebase.auth.currentUser?.email ?: "Email não disponível"
+}

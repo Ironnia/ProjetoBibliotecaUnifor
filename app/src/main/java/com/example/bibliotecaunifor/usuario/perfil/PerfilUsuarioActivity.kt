@@ -17,6 +17,7 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import androidx.core.content.edit
+import com.example.bibliotecaunifor.pegarEmailUsuario
 import com.example.bibliotecaunifor.pegarNomeUsuario
 
 class PerfilUsuarioActivity : AppCompatActivity() {
@@ -33,6 +34,8 @@ class PerfilUsuarioActivity : AppCompatActivity() {
             // como é só o nome do usuário colocar "$nome" dava erro.
             binding.tvName.text = nome
         }
+        binding.tvMatricula.text = "Email: ${pegarEmailUsuario()}"
+
 
         NavigationUtils.setupBottomNavigation(this, binding.bottomNavigation, com.example.bibliotecaunifor.R.id.navigation_perfil)
 
