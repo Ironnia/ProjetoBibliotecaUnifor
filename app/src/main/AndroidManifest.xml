@@ -43,7 +43,6 @@
         <!-- Novas Telas Usuário -->
         <activity android:name=".usuario.historico.HistoricoActivity" android:exported="false" />
         <activity android:name=".usuario.jogos.JogosTabuleiroActivity" android:exported="false" />
-        <activity android:name=".usuario.salas.AgendarSalaActivity" android:exported="false" />
         <activity android:name=".usuario.configuracoes.TrocarSenhaActivity" android:exported="false" />
         <activity android:name=".usuario.configuracoes.ChatSuporteActivity" android:exported="false" />
         <activity android:name=".usuario.emprestimos.MeusLivrosActivity" android:exported="false" />

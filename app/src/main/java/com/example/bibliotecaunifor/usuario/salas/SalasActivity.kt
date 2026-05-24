@@ -1,207 +1,250 @@
 package com.example.bibliotecaunifor.usuario.salas
 
+import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import android.widget.CalendarView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.bibliotecaunifor.R
+import com.example.bibliotecaunifor.Sala
 import com.example.bibliotecaunifor.databinding.TelaSalasBinding
+import com.example.bibliotecaunifor.mostrarAviso
+import com.example.bibliotecaunifor.pegarNomeUsuario
 import com.example.bibliotecaunifor.usuario.utils.NavigationUtils
 import com.google.android.material.button.MaterialButton
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
+import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.toObjects
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class SalasActivity : AppCompatActivity() {
     private lateinit var binding: TelaSalasBinding
     private var showingMeusAgendamentos = false
 
+    private val db = Firebase.firestore
+    private val auth = Firebase.auth
+    private lateinit var salaAdapter: SalaAdapter
+    private lateinit var agendamentoAdapter: AgendamentoAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         binding = TelaSalasBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.btnBack.setOnClickListener {
-            finish()
-        }
+        setupAdapters()
+        carregarSalas()
 
-        setupRecyclerView()
+        binding.btnBack.setOnClickListener { finish() }
 
         binding.btnMeusAgendamentos.setOnClickListener {
             showingMeusAgendamentos = !showingMeusAgendamentos
             if (showingMeusAgendamentos) {
                 binding.tvTitle.text = "Meus Agendamentos"
                 binding.btnMeusAgendamentos.text = "Agendar Sala"
-                
-                // Atualizar chips para filtros de agendamentos
-                binding.chipDisponivel.text = "Em breve"
-                binding.chipOcupadas.text = "Já ocorrida"
-                binding.chipTodas.text = "Todos"
-                binding.chipTodas.isChecked = true
-                
-                setupMeusAgendamentosRecyclerView()
+                carregarMeusAgendamentos()
             } else {
                 binding.tvTitle.text = "Agendar sala de estudos"
                 binding.btnMeusAgendamentos.text = "Meus Agendamentos"
-                
-                // Voltar chips para filtros de salas
-                binding.chipDisponivel.text = "Disponível"
-                binding.chipOcupadas.text = "Ocupadas"
-                binding.chipTodas.text = "Todas as salas"
-                binding.chipTodas.isChecked = true
-                
-                setupRecyclerView()
+                carregarSalas()
             }
         }
 
         NavigationUtils.setupBottomNavigation(this, binding.bottomNavigation, R.id.navigation_salas)
     }
 
-    private fun setupRecyclerView() {
-        val salas = listOf(
-            Sala("Estudo individual 2", "Disponível", true),
-            Sala("Sala Reunião", "Disponível", true),
-            Sala("Estudo individual 3", "Disponível", true),
-            Sala("Estudo Coletivo 4", "Ocupada", false),
-            Sala("Estudo Individual 5", "Disponível", true)
-        )
+    private fun setupAdapters() {
+        salaAdapter = SalaAdapter(emptyList()) { sala -> mostrarHorariosSala(sala) }
+        agendamentoAdapter = AgendamentoAdapter(emptyList()) { ag -> showCancelDialog(ag) }
 
         binding.rvSalas.layoutManager = LinearLayoutManager(this)
-        binding.rvSalas.adapter = object : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-            inner class SalaViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-                val nome: TextView = view.findViewById(R.id.tvSalaNome)
-                val status: TextView = view.findViewById(R.id.tvSalaStatus)
-                val btn: MaterialButton = view.findViewById(R.id.btnVerHorarios)
-            }
+        binding.rvSalas.adapter = salaAdapter
+    }
 
-            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-                val view = LayoutInflater.from(parent.context).inflate(R.layout.item_sala, parent, false)
-                return SalaViewHolder(view)
-            }
-
-            override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-                val sala = salas[position]
-                (holder as SalaViewHolder).nome.text = sala.nome
-                holder.status.text = sala.status
-                holder.status.setTextColor(if (sala.disponivel) getColor(R.color.success_green) else getColor(R.color.error_red))
-                holder.btn.isEnabled = sala.disponivel
-                holder.btn.setOnClickListener { showHorariosDialog(sala.nome) }
-            }
-
-            override fun getItemCount() = salas.size
+    private fun carregarSalas() {
+        db.collection("salas").get().addOnSuccessListener { result ->
+            val lista = result.toObjects<Sala>()
+            salaAdapter.atualizarLista(lista)
+            binding.rvSalas.adapter = salaAdapter
         }
     }
 
-    private fun setupMeusAgendamentosRecyclerView() {
-        val agendamentos = listOf(
-            Agendamento("Sala Reunião", "15/04", "09:00 - 11:30"),
-            Agendamento("Estudo Individual", "01/04", "09:00 - 11:00")
-        )
-
-        binding.rvSalas.adapter = object : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-            inner class AgendamentoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-                val nome: TextView = view.findViewById(R.id.tvAgendamentoSala)
-                val data: TextView = view.findViewById(R.id.tvAgendamentoData)
-                val horario: TextView = view.findViewById(R.id.tvAgendamentoHorario)
-                val btn: MaterialButton = view.findViewById(R.id.btnCancelar)
+    private fun carregarMeusAgendamentos() {
+        val uid = auth.currentUser?.uid ?: return
+        db.collection("agendamentos").whereEqualTo("idUsuario", uid).get()
+            .addOnSuccessListener { result ->
+                val lista = result.toObjects<AgendamentoDb>()
+                agendamentoAdapter.atualizarLista(lista)
+                binding.rvSalas.adapter = agendamentoAdapter
             }
-
-            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-                val view = LayoutInflater.from(parent.context).inflate(R.layout.item_agendamento, parent, false)
-                return AgendamentoViewHolder(view)
-            }
-
-            override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-                val ag = agendamentos[position]
-                (holder as AgendamentoViewHolder).nome.text = ag.sala
-                holder.data.text = "Data: ${ag.data}"
-                holder.horario.text = "Horário: ${ag.horario}"
-                holder.btn.setOnClickListener { showCancelDialog(ag) }
-            }
-
-            override fun getItemCount() = agendamentos.size
-        }
     }
 
-    private fun showHorariosDialog(salaNome: String) {
+    private fun mostrarHorariosSala(sala: Sala) {
         val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_sala_horarios, null)
-        val dialog = AlertDialog.Builder(this)
-            .setView(dialogView)
-            .create()
+        val dialog = AlertDialog.Builder(this).setView(dialogView).create()
 
-        dialogView.findViewById<TextView>(R.id.tv_dialog_title).text = "Selecionar horário\n($salaNome)"
+        // Data de hoje como padrão para os slots rápidos
+        val dataHoje = SimpleDateFormat("dd/MM", Locale.getDefault()).format(Date())
+
+        dialogView.findViewById<TextView>(R.id.tv_dialog_title).text = "Selecionar horário\n(${sala.nome})"
+
+        val btnSlot1 = dialogView.findViewById<MaterialButton>(R.id.btn_slot_1)
+        val btnSlot2 = dialogView.findViewById<MaterialButton>(R.id.btn_slot_2)
+        val btnSlot3 = dialogView.findViewById<MaterialButton>(R.id.btn_slot_3)
+        val btnSlot4 = dialogView.findViewById<MaterialButton>(R.id.btn_slot_4)
 
         val slotClickListener = View.OnClickListener { v ->
             val horario = (v as MaterialButton).text.toString()
             dialog.dismiss()
-            showSuccessDialog(salaNome, "15/04", horario)
+            verificarDisponibilidadeEReservar(sala, dataHoje, horario)
         }
 
-        dialogView.findViewById<MaterialButton>(R.id.btn_slot_1).setOnClickListener(slotClickListener)
-        dialogView.findViewById<MaterialButton>(R.id.btn_slot_2).setOnClickListener(slotClickListener)
-        dialogView.findViewById<MaterialButton>(R.id.btn_slot_3).setOnClickListener(slotClickListener)
-        dialogView.findViewById<MaterialButton>(R.id.btn_slot_4).setOnClickListener(slotClickListener)
+        btnSlot1.setOnClickListener(slotClickListener)
+        btnSlot2.setOnClickListener(slotClickListener)
+        btnSlot3.setOnClickListener(slotClickListener)
+        btnSlot4.setOnClickListener(slotClickListener)
+
+        // Busca assíncrona no Firestore para desabilitar slots já ocupados hoje
+        db.collection("agendamentos")
+            .whereEqualTo("idSala", sala.id)
+            .whereEqualTo("data", dataHoje)
+            .whereIn("status", listOf("pendente", "reservado"))
+            .get()
+            .addOnSuccessListener { result ->
+                val horariosOcupados = result.documents.mapNotNull { it.getString("horario") }
+                if (horariosOcupados.contains(btnSlot1.text.toString())) {
+                    btnSlot1.isEnabled = false
+                    btnSlot1.alpha = 0.4f
+                }
+                if (horariosOcupados.contains(btnSlot2.text.toString())) {
+                    btnSlot2.isEnabled = false
+                    btnSlot2.alpha = 0.4f
+                }
+                if (horariosOcupados.contains(btnSlot3.text.toString())) {
+                    btnSlot3.isEnabled = false
+                    btnSlot3.alpha = 0.4f
+                }
+                if (horariosOcupados.contains(btnSlot4.text.toString())) {
+                    btnSlot4.isEnabled = false
+                    btnSlot4.alpha = 0.4f
+                }
+            }
 
         dialogView.findViewById<MaterialButton>(R.id.btn_personalizar).setOnClickListener {
             dialog.dismiss()
-            showCalendarDialog(salaNome)
+            showCalendarDialog(sala)
         }
-
         dialog.show()
     }
 
-    private fun showCalendarDialog(salaNome: String) {
+    private fun showTimePicker(textView: TextView) {
+        val calendar = java.util.Calendar.getInstance()
+        val hour = calendar.get(java.util.Calendar.HOUR_OF_DAY)
+        val minute = calendar.get(java.util.Calendar.MINUTE)
+
+        android.app.TimePickerDialog(this, { _, selectedHour, selectedMinute ->
+            textView.text = String.format(java.util.Locale.getDefault(), "%02d:%02d", selectedHour, selectedMinute)
+        }, hour, minute, true).show()
+    }
+
+    private fun showCalendarDialog(sala: Sala) {
         val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_sala_calendario, null)
-        val dialog = AlertDialog.Builder(this)
-            .setView(dialogView)
-            .create()
+        val dialog = AlertDialog.Builder(this).setView(dialogView).create()
+
+        val calendarView = dialogView.findViewById<CalendarView>(R.id.calendar_view)
+        var dataSelecionada = SimpleDateFormat("dd/MM", Locale.getDefault()).format(Date(calendarView.date))
+
+        calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
+            dataSelecionada = String.format("%02d/%02d", dayOfMonth, month + 1)
+        }
+
+        val etHoraInicio = dialogView.findViewById<TextView>(R.id.et_hora_inicio)
+        val etHoraFim = dialogView.findViewById<TextView>(R.id.et_hora_fim)
+
+        etHoraInicio.setOnClickListener {
+            showTimePicker(etHoraInicio)
+        }
+
+        etHoraFim.setOnClickListener {
+            showTimePicker(etHoraFim)
+        }
 
         dialogView.findViewById<MaterialButton>(R.id.btn_confirmar_reserva).setOnClickListener {
-            val inicio = dialogView.findViewById<TextView>(R.id.et_hora_inicio).text.toString()
-            val fim = dialogView.findViewById<TextView>(R.id.et_hora_fim).text.toString()
+            val inicio = etHoraInicio.text.toString()
+            val fim = etHoraFim.text.toString()
+            if (fim <= inicio) {
+                mostrarAviso("O horário de término deve ser maior que o de início.")
+                return@setOnClickListener
+            }
             dialog.dismiss()
-            showSuccessDialog(salaNome, "15/04", "$inicio - $fim")
+            verificarDisponibilidadeEReservar(sala, dataSelecionada, "$inicio - $fim")
         }
-
         dialog.show()
     }
 
-    private fun showSuccessDialog(sala: String, data: String, horario: String) {
-        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_sala_sucesso, null)
-        val dialog = AlertDialog.Builder(this)
-            .setView(dialogView)
-            .create()
+    private fun verificarDisponibilidadeEReservar(sala: Sala, data: String, horario: String) {
+        db.collection("agendamentos")
+            .whereEqualTo("idSala", sala.id)
+            .whereEqualTo("data", data)
+            .whereEqualTo("horario", horario)
+            .get()
+            .addOnSuccessListener { result ->
+                if (!result.isEmpty) {
+                    mostrarAviso("Este horário já foi reservado por outro aluno.")
+                } else {
+                    salvarAgendamento(sala, data, horario)
+                }
+            }
+    }
 
+    private fun salvarAgendamento(sala: Sala, data: String, horario: String) {
+        val uid = auth.currentUser?.uid ?: return
+        pegarNomeUsuario { nome ->
+            val novoAgendamento = hashMapOf(
+                "idUsuario" to uid,
+                "nomeUsuario" to nome,
+                "idSala" to sala.id,
+                "nomeSala" to sala.nome,
+                "data" to data,
+                "horario" to horario,
+                "status" to "pendente"
+            )
+            db.collection("agendamentos").add(novoAgendamento).addOnSuccessListener {
+                showSuccessDialog(sala.nome, data, horario)
+                if (showingMeusAgendamentos) carregarMeusAgendamentos() else carregarSalas()
+            }
+        }
+    }
+
+    private fun showSuccessDialog(salaNome: String, data: String, horario: String) {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_sala_sucesso, null)
+        val dialog = AlertDialog.Builder(this).setView(dialogView).create()
         dialogView.findViewById<TextView>(R.id.tv_success_data).text = "Data: $data"
         dialogView.findViewById<TextView>(R.id.tv_success_horario).text = "Horário: $horario"
-        
-        dialogView.findViewById<MaterialButton>(R.id.btn_success_voltar).setOnClickListener {
-            dialog.dismiss()
-        }
-
+        dialogView.findViewById<MaterialButton>(R.id.btn_success_voltar).setOnClickListener { dialog.dismiss() }
         dialog.show()
     }
 
-    private fun showCancelDialog(ag: Agendamento) {
+    private fun showCancelDialog(ag: AgendamentoDb) {
         AlertDialog.Builder(this)
             .setTitle("ATENÇÃO!")
-            .setMessage("Você deseja cancelar o agendamento?\n\nSala: ${ag.sala}\nData: ${ag.data}\nHorário: ${ag.horario}")
+            .setMessage("Deseja cancelar a reserva?\nSala: ${ag.nomeSala}\nData: ${ag.data}")
             .setPositiveButton("Sim, Cancelar") { _, _ ->
-                AlertDialog.Builder(this)
-                    .setTitle("Agendamento cancelado")
-                    .setMessage("O agendamento para a sala \"${ag.sala}\" foi removido com sucesso.\n\nData: ${ag.data}\nHorário: ${ag.horario}")
-                    .setPositiveButton("Ok", null)
-                    .show()
+                db.collection("agendamentos").document(ag.id).delete().addOnSuccessListener {
+                    mostrarAviso("Cancelado com sucesso.")
+                    carregarMeusAgendamentos()
+                }
             }
-            .setNegativeButton("Voltar", null)
-            .show()
+            .setNegativeButton("Voltar", null).show()
     }
-
-    data class Sala(val nome: String, val status: String, val disponivel: Boolean)
-    data class Agendamento(val sala: String, val data: String, val horario: String)
 }
