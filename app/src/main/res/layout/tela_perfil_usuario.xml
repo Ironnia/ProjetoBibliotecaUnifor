@@ -100,6 +100,7 @@
                         android:orientation="vertical"
                         android:padding="16dp">
                         <TextView
+                            android:id="@+id/tv_count_livros"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="31"
@@ -128,6 +129,7 @@
                         android:orientation="vertical"
                         android:padding="16dp">
                         <TextView
+                            android:id="@+id/tv_count_pontos"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="52k"
@@ -156,6 +158,7 @@
                         android:orientation="vertical"
                         android:padding="16dp">
                         <TextView
+                            android:id="@+id/tv_count_ranking"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="5º"

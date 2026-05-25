@@ -68,7 +68,7 @@ object EmprestimosRepository {
 
         // 3. Se devolvido no prazo, concede +10 pontos ao perfil do usuário (Gamificação B13)
         if (concederPontos) {
-            val usuarioRef = db.collection("usuarios").document(idUsuario)
+            val usuarioRef = db.collection("usuario").document(idUsuario)
             batch.update(usuarioRef, "pontos", FieldValue.increment(10))
         }
 

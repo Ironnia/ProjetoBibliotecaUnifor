@@ -4,6 +4,7 @@ package com.example.bibliotecaunifor
 data class Usuario(
     val nome: String = "",
     val email: String = "",
-    val tipo: String = "usuario"
+    val tipo: String = "usuario",
+    val pontos: Int = 0
     // val matricula: String = ""
 )
