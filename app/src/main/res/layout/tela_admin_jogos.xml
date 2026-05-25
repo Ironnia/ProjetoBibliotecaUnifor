@@ -7,6 +7,7 @@
     android:background="@color/white"
     tools:context=".admin.jogos.AdminJogosActivity">
 
+    <!-- Header com Seta de Voltar -->
     <ImageButton
         android:id="@+id/btn_back"
         android:layout_width="48dp"
@@ -17,9 +18,10 @@
         android:src="@drawable/ic_arrow_back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/unifor_marinho_dark" />
+        app:tint="@color/unifor_marinho_dark"
+        android:contentDescription="Voltar para a tela anterior" />
 
-    <!-- Header com Logo -->
+    <!-- Logo Unifor -->
     <ImageView
         android:id="@+id/iv_unifor_logo"
         android:layout_width="120dp"
@@ -28,14 +30,16 @@
         android:src="@drawable/ic_unifor_logo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="Universidade de Fortaleza" />
 
+    <!-- Título da Tela -->
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="Gerenciar Jogos"
+        android:text="Gerenciar Aluguéis de Jogos"
         android:textColor="@color/unifor_marinho_dark"
         android:textSize="20sp"
         android:fontFamily="@font/satoshi_bold"
@@ -43,18 +47,113 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/iv_unifor_logo" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Módulo de Gestão de Jogos de Tabuleiro"
-        android:textColor="#888888"
-        android:textSize="14sp"
-        android:fontFamily="@font/satoshi_medium"
-        app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
+    <!-- Barra de Busca -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cv_search"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="12dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="2dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_title" />
+        app:layout_constraintTop_toBottomOf="@id/tv_title">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@android:drawable/ic_menu_search"
+                app:tint="@color/unifor_marinho_dark"
+                android:contentDescription="Buscar" />
+
+            <EditText
+                android:id="@+id/et_search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:background="@android:color/transparent"
+                android:hint="Pesquise por aluno, email ou jogo..."
+                android:inputType="text"
+                android:textSize="14sp"
+                android:fontFamily="@font/satoshi_regular" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Chips de Filtro -->
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chipGroupFiltros"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cv_search"
+        app:singleSelection="true">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_devolucao"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Para devolução"
+            app:chipIcon="@drawable/bg_circle_white"
+            app:chipIconTint="@color/success_green" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_retirar"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="A retirar"
+            app:chipIcon="@drawable/bg_circle_white"
+            app:chipIconTint="@color/unifor_anil_primary" />
+    </com.google.android.material.chip.ChipGroup>
+
+    <!-- RecyclerView de Itens -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/chipGroupFiltros"
+        app:layout_constraintBottom_toTopOf="@id/bottom_navigation" />
+
+    <!-- Indicator de Progresso -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:layout_constraintTop_toBottomOf="@id/chipGroupFiltros"
+        app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Texto de Lista Vazia (Empty State) -->
+    <TextView
+        android:id="@+id/tv_empty_state"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nenhum aluguel de jogo registrado."
+        android:textColor="#9E9E9E"
+        android:textSize="16sp"
+        android:visibility="gone"
+        android:fontFamily="@font/satoshi_regular"
+        app:layout_constraintTop_toBottomOf="@id/chipGroupFiltros"
+        app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Barra de Navegação Inferior -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"

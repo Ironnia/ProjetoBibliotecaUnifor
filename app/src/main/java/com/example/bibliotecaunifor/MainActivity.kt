@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Setup Navigation
-        NavigationUtils.navegacaoAluno(this, binding.bottomNavigation, R.id.navigation_home)
+        NavigationUtils.navegacaoAluno(this, binding.bottomNavigation, R.id.navigation_home_admin)
 
         configurarSecaoDevolucoes()
 

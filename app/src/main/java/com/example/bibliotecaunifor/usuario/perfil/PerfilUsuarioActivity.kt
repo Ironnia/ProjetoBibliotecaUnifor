@@ -35,7 +35,7 @@ class PerfilUsuarioActivity : AppCompatActivity() {
         binding.tvMatricula.text = "Email: ${pegarEmailUsuario()}"
 
 
-        NavigationUtils.navegacaoAluno(this, binding.bottomNavigation, com.example.bibliotecaunifor.R.id.navigation_perfil)
+        NavigationUtils.navegacaoAluno(this, binding.bottomNavigation, com.example.bibliotecaunifor.R.id.navigation_jogos_admin)
 
         binding.btnSettings.setOnClickListener {
             startActivity(Intent(this, ConfiguracoesUsuarioActivity::class.java))

@@ -7,13 +7,18 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.bibliotecaunifor.R
+import com.example.bibliotecaunifor.crud.Emprestimo
 import com.example.bibliotecaunifor.databinding.TelaAdminEmprestimosBinding
 import com.example.bibliotecaunifor.usuario.utils.NavigationUtils
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
 
 class AdminEmprestimosActivity : AppCompatActivity() {
     private lateinit var binding: TelaAdminEmprestimosBinding
     private lateinit var adapter: AdminEmprestimoAdapter
-    private var allItems = listOf<AdminEmprestimo>()
+    private var allLoans = listOf<Emprestimo>()
+
+    private val db = Firebase.firestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,23 +30,32 @@ class AdminEmprestimosActivity : AppCompatActivity() {
             finish()
         }
 
-        NavigationUtils.navegacaoAdmin(this, binding.bottomNavigation, R.id.navigation_home)
+        NavigationUtils.navegacaoAdmin(this, binding.bottomNavigation, R.id.navigation_home_admin)
 
         setupRecyclerView()
+        setupRealtimeListener()
         setupFilters()
     }
 
     private fun setupRecyclerView() {
-        allItems = listOf(
-            AdminEmprestimo("A Metamorfose", "Franz Kafka", "1234567", "15/04/2026 | 9:45", true),
-            AdminEmprestimo("O Espelho", "Machado de Assis", "1213145", "15/04/2026 | 9:45", true),
-            AdminEmprestimo("O Espelho", "Machado de Assis", "7465343", "15/04/2026 | 9:45", false),
-            AdminEmprestimo("Código da Vinci", "Dan Brown", "111213140", "15/04/2026 | 9:45", false)
-        )
-
-        adapter = AdminEmprestimoAdapter(listOf()) // Start empty
+        adapter = AdminEmprestimoAdapter(listOf())
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
+    }
+
+    private fun setupRealtimeListener() {
+        // Escuta real-time na coleção de emprestimos
+        db.collection("emprestimos")
+            .whereNotEqualTo("status", "devolvido")
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    return@addSnapshotListener
+                }
+                if (snapshot != null) {
+                    allLoans = snapshot.toObjects(Emprestimo::class.java)
+                    filterList()
+                }
+            }
     }
 
     private fun setupFilters() {
@@ -55,33 +69,44 @@ class AdminEmprestimosActivity : AppCompatActivity() {
     }
 
     private fun filterList() {
-        val query = binding.etSearch.text.toString().lowercase()
-        val isDevolucaoChecked = binding.chipDevolucao.isChecked
-        val isRetirarChecked = binding.chipRetirar.isChecked
+        val query = binding.etSearch.text.toString().trim().lowercase()
+        val isDevolucaoChecked = binding.chipDevolucao.isChecked // Ativos / Para Devolução
+        val isRetirarChecked = binding.chipRetirar.isChecked // Pendentes / A retirar
 
-        if (query.isEmpty()) {
-            binding.recyclerView.visibility = View.GONE
-            adapter.updateList(listOf())
-            return
-        }
-
-        binding.recyclerView.visibility = View.VISIBLE
-
-        val filteredItems = allItems.filter { item ->
-            val matchesQuery = item.titulo.lowercase().contains(query) ||
-                    item.autor.lowercase().contains(query) ||
-                    item.matricula.lowercase().contains(query)
-
-            val matchesChip = when {
-                isDevolucaoChecked && isRetirarChecked -> true // Both selected, show both (though group is singleSelection=true in XML, usually)
-                isDevolucaoChecked -> item.isParaDevolucao
-                isRetirarChecked -> !item.isParaDevolucao
-                else -> true // None selected, show both
+        // Filtra pela query de busca local (nome do aluno, matrícula ou título do livro)
+        val filteredQuery = if (query.isEmpty()) {
+            allLoans
+        } else {
+            allLoans.filter { item ->
+                item.nomeUsuario.lowercase().contains(query) ||
+                item.matriculaUsuario.lowercase().contains(query) ||
+                item.tituloLivro.lowercase().contains(query)
             }
-
-            matchesQuery && matchesChip
         }
 
-        adapter.updateList(filteredItems)
+        // Filtra pelo chip ativo no topo
+        val finalList = filteredQuery.filter { item ->
+            when {
+                isRetirarChecked -> item.status.equals("pendente", ignoreCase = true)
+                isDevolucaoChecked -> item.status.equals("ativo", ignoreCase = true) || item.status.equals("atrasado", ignoreCase = true)
+                else -> true // Caso nenhum esteja selecionado, exibe tudo
+            }
+        }
+
+        if (finalList.isEmpty()) {
+            binding.recyclerView.visibility = View.GONE
+            
+            val emptyText = when {
+                isRetirarChecked -> "Nenhuma reserva aguardando retirada."
+                isDevolucaoChecked -> "Nenhum livro fora da biblioteca no momento."
+                else -> "Nenhum empréstimo ativo no momento."
+            }
+            binding.tvEmptyState.text = emptyText
+            binding.tvEmptyState.visibility = View.VISIBLE
+        } else {
+            binding.recyclerView.visibility = View.VISIBLE
+            binding.tvEmptyState.visibility = View.GONE
+            adapter.updateList(finalList)
+        }
     }
 }

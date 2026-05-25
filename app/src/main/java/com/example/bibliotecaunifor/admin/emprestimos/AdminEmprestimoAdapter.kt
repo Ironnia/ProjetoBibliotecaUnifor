@@ -1,17 +1,29 @@
 package com.example.bibliotecaunifor.admin.emprestimos
 
+import android.graphics.Color
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bibliotecaunifor.R
+import com.example.bibliotecaunifor.crud.Emprestimo
+import com.example.bibliotecaunifor.crud.EmprestimosRepository
 import com.example.bibliotecaunifor.databinding.ItemAdminEmprestimoBinding
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
-class AdminEmprestimoAdapter(private var items: List<AdminEmprestimo>) :
+class AdminEmprestimoAdapter(private var items: List<Emprestimo>) :
     RecyclerView.Adapter<AdminEmprestimoAdapter.ViewHolder>() {
 
     class ViewHolder(val binding: ItemAdminEmprestimoBinding) : RecyclerView.ViewHolder(binding.root)
 
-    fun updateList(newItems: List<AdminEmprestimo>) {
+    fun updateList(newItems: List<Emprestimo>) {
         items = newItems
         notifyDataSetChanged()
     }
@@ -25,75 +37,112 @@ class AdminEmprestimoAdapter(private var items: List<AdminEmprestimo>) :
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = items[position]
-        with(holder.binding) {
-            tvBookTitle.text = "${item.titulo} | ${item.autor}"
-            tvUserId.text = "Matrícula: ${item.matricula}"
-            tvDate.text = item.dataHora
+        val context = holder.itemView.context
+        val status = item.status.lowercase()
 
+        with(holder.binding) {
+            tvBookTitle.text = "${item.tituloLivro} | ${item.autorLivro}"
+            tvUserId.text = "Aluno(a): ${item.nomeUsuario} (${item.matriculaUsuario})"
+            
+            // Formatação de data
+            val df = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            val dataPrevistaStr = item.dataDevolucaoPrevista?.let { df.format(it) } ?: "--/--/----"
+            tvDate.text = "Prazo: $dataPrevistaStr"
+
+            // 1. Estilização dinâmica de borda baseado no status
+            val estaAtrasado = item.status.equals("atrasado", ignoreCase = true) || 
+                    (item.status.equals("ativo", ignoreCase = true) && item.dataDevolucaoPrevista?.let { Date().after(it) } == true)
+
+            when {
+                status == "pendente" -> {
+                    root.strokeColor = Color.parseColor("#FFD54F") // Amarelo (Pendente)
+                }
+                estaAtrasado -> {
+                    root.strokeColor = Color.parseColor("#EF5350") // Vermelho (Atrasado)
+                }
+                status == "ativo" -> {
+                    root.strokeColor = Color.parseColor("#004AF7") // Azul (Ativo no prazo)
+                }
+                else -> {
+                    root.strokeColor = Color.parseColor("#EEEEEE") // Cinza neutro
+                }
+            }
+
+            // Exibe informações de detalhes em Toast
             ivInfo.setOnClickListener {
+                val dataInfo = if (status == "pendente") "Aguardando retirada no balcão." else "Em posse do aluno(a) com prazo até $dataPrevistaStr."
                 android.widget.Toast.makeText(
-                    holder.itemView.context,
-                    "Detalhes: Livro em posse do aluno(a) ${item.matricula}. Sem atrasos pendentes.",
-                    android.widget.Toast.LENGTH_SHORT
+                    context,
+                    "${item.tituloLivro}\nAluno: ${item.nomeUsuario}\nStatus: ${status.uppercase()}\nInfo: $dataInfo",
+                    android.widget.Toast.LENGTH_LONG
                 ).show()
             }
 
-            if (item.isParaDevolucao) {
-                btnRenovar.text = "Renovar"
-                btnRenovar.setBackgroundColor(holder.itemView.context.getColor(R.color.success_green))
-                btnRenovar.setTextColor(holder.itemView.context.getColor(R.color.unifor_marinho_dark))
-                
-                btnRenovar.setOnClickListener {
-                    com.google.android.material.dialog.MaterialAlertDialogBuilder(holder.itemView.context)
-                        .setTitle("Confirmar Renovação")
-                        .setMessage("Deseja renovar o empréstimo do livro \"${item.titulo}\" para o aluno ${item.matricula}?")
-                        .setPositiveButton("Confirmar") { _, _ ->
-                            com.google.android.material.snackbar.Snackbar.make(holder.binding.root, "Renovação realizada com sucesso!", com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show()
-                        }
-                        .setNegativeButton("Cancelar", null)
-                        .show()
-                }
-
-                btnAprovar.text = "Devolver"
-                btnAprovar.setBackgroundColor(holder.itemView.context.getColor(R.color.unifor_anil_primary))
-                btnAprovar.setTextColor(holder.itemView.context.getColor(R.color.white))
-                
-                btnAprovar.setOnClickListener {
-                    com.google.android.material.dialog.MaterialAlertDialogBuilder(holder.itemView.context)
-                        .setTitle("Confirmar Devolução")
-                        .setMessage("Deseja confirmar a devolução do livro \"${item.titulo}\"?")
-                        .setPositiveButton("Confirmar") { _, _ ->
-                            com.google.android.material.snackbar.Snackbar.make(holder.binding.root, "Devolução processada com sucesso!", com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show()
-                        }
-                        .setNegativeButton("Cancelar", null)
-                        .show()
-                }
-            } else {
+            // 2. Configuração de botões e ações baseado no status
+            if (status == "pendente") {
+                btnRenovar.visibility = View.VISIBLE
                 btnRenovar.text = "Cancelar"
-                btnRenovar.setBackgroundColor(holder.itemView.context.getColor(R.color.error_red))
-                btnRenovar.setTextColor(holder.itemView.context.getColor(R.color.white))
+                btnRenovar.setBackgroundColor(Color.parseColor("#EF5350"))
+                btnRenovar.setTextColor(Color.WHITE)
                 
                 btnRenovar.setOnClickListener {
-                    com.google.android.material.dialog.MaterialAlertDialogBuilder(holder.itemView.context)
+                    MaterialAlertDialogBuilder(context)
                         .setTitle("Cancelar Solicitação")
-                        .setMessage("Deseja realmente cancelar esta reserva de retirada?")
+                        .setMessage("Deseja realmente cancelar a reserva do livro \"${item.tituloLivro}\" para o aluno ${item.nomeUsuario}?")
                         .setPositiveButton("Confirmar") { _, _ ->
-                            com.google.android.material.snackbar.Snackbar.make(holder.binding.root, "Solicitação cancelada.", com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show()
+                            CoroutineScope(Dispatchers.Main).launch {
+                                EmprestimosRepository.cancelarReserva(item.id)
+                                Snackbar.make(root, "Reserva cancelada com sucesso.", Snackbar.LENGTH_SHORT).show()
+                            }
                         }
                         .setNegativeButton("Voltar", null)
                         .show()
                 }
 
+                btnAprovar.visibility = View.VISIBLE
                 btnAprovar.text = "Aprovar"
-                btnAprovar.setBackgroundColor(holder.itemView.context.getColor(R.color.success_green))
-                btnAprovar.setTextColor(holder.itemView.context.getColor(R.color.unifor_marinho_dark))
+                btnAprovar.setBackgroundColor(Color.parseColor("#4CAF50"))
+                btnAprovar.setTextColor(Color.WHITE)
                 
                 btnAprovar.setOnClickListener {
-                    com.google.android.material.dialog.MaterialAlertDialogBuilder(holder.itemView.context)
+                    MaterialAlertDialogBuilder(context)
                         .setTitle("Aprovar Retirada")
-                        .setMessage("Deseja confirmar a entrega do livro para o aluno ${item.matricula}?")
+                        .setMessage("Deseja confirmar a entrega do livro \"${item.tituloLivro}\" para o aluno ${item.nomeUsuario} (Exemplar: ${item.idExemplar})?")
                         .setPositiveButton("Confirmar") { _, _ ->
-                            com.google.android.material.snackbar.Snackbar.make(holder.binding.root, "Retirada aprovada com sucesso!", com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show()
+                            CoroutineScope(Dispatchers.Main).launch {
+                                EmprestimosRepository.aprovarRetirada(item.id, item.idLivro, item.idExemplar)
+                                Snackbar.make(root, "Retirada aprovada com sucesso!", Snackbar.LENGTH_SHORT).show()
+                            }
+                        }
+                        .setNegativeButton("Cancelar", null)
+                        .show()
+                }
+            } else { // "ativo" ou "atrasado"
+                // Ocultamos o botão esquerdo para empréstimos ativos/atrasados no balcão
+                btnRenovar.visibility = View.GONE
+
+                btnAprovar.visibility = View.VISIBLE
+                btnAprovar.text = "Devolver"
+                btnAprovar.setBackgroundColor(Color.parseColor("#004AF7"))
+                btnAprovar.setTextColor(Color.WHITE)
+                
+                btnAprovar.setOnClickListener {
+                    MaterialAlertDialogBuilder(context)
+                        .setTitle("Confirmar Devolução")
+                        .setMessage("Deseja registrar a devolução do livro \"${item.tituloLivro}\" entregue por ${item.nomeUsuario}?")
+                        .setPositiveButton("Confirmar") { _, _ ->
+                            CoroutineScope(Dispatchers.Main).launch {
+                                // Verifica se a devolução está no prazo (ou antes) para conceder pontos de gamificação
+                                val noPrazo = item.dataDevolucaoPrevista?.let { !Date().after(it) } ?: true
+                                EmprestimosRepository.registrarDevolucao(item.id, item.idLivro, item.idExemplar, item.idUsuario, noPrazo)
+                                
+                                val feedbackMsg = if (noPrazo) {
+                                    "Devolução processada! +10 pontos concedidos ao aluno."
+                                } else {
+                                    "Devolução processada com sucesso!"
+                                }
+                                Snackbar.make(root, feedbackMsg, Snackbar.LENGTH_SHORT).show()
+                            }
                         }
                         .setNegativeButton("Cancelar", null)
                         .show()

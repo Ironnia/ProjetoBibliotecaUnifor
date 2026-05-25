@@ -3,8 +3,10 @@ package com.example.bibliotecaunifor.usuario.jogos
 import android.os.Bundle
 import android.view.View
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.launch
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.bibliotecaunifor.R
 import com.example.bibliotecaunifor.databinding.TelaJogosTabuleiroBinding
@@ -12,6 +14,7 @@ import com.example.bibliotecaunifor.mostrarAviso
 import com.example.bibliotecaunifor.mostrarDialogoSimples
 import com.example.bibliotecaunifor.pegarEmailUsuario
 import com.example.bibliotecaunifor.usuario.utils.NavigationUtils
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
@@ -50,7 +53,7 @@ class JogosTabuleiroActivity : AppCompatActivity() {
 
         carregarJogos()
 
-        NavigationUtils.navegacaoAluno(this, binding.bottomNavigation, R.id.navigation_home)
+        NavigationUtils.navegacaoAluno(this, binding.bottomNavigation, R.id.navigation_perfil_aluno)
     }
 
     private fun setupRecyclerView() {

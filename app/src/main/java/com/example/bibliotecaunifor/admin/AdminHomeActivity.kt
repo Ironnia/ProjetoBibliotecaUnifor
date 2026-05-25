@@ -12,7 +12,6 @@ import com.example.bibliotecaunifor.admin.jogos.AdminJogosActivity
 import com.example.bibliotecaunifor.databinding.TelaAdminHomeBinding
 import com.example.bibliotecaunifor.pegarNomeUsuario
 import com.example.bibliotecaunifor.usuario.utils.NavigationUtils
-import com.example.bibliotecaunifor.usuario.utils.FirestoreSeedData
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -34,14 +33,12 @@ class AdminHomeActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // RODE UMA VEZ E APAGUE DEPOIS PARA POPULAR O FIRESTORE:
-        // FirestoreSeedData.popularTudo()
+       // FirestoreSeedData.popularTudo()
 
-        // Carregar Nome Real do Administrador para Saudação
         pegarNomeUsuario { nome ->
             binding.tvGreeting.text = "Olá $nome,\no que você quer fazer hoje?"
         }
 
-        // Logout com Confirmação
         binding.ivProfile.setOnClickListener {
             androidx.appcompat.app.AlertDialog.Builder(this)
                 .setTitle("Sair da Conta")
@@ -82,7 +79,7 @@ class AdminHomeActivity : AppCompatActivity() {
         }
 
         carregarPainelResumo()
-        NavigationUtils.navegacaoAdmin(this, binding.bottomNavigation, R.id.navigation_home)
+        NavigationUtils.navegacaoAdmin(this, binding.bottomNavigation, R.id.navigation_home_admin)
     }
 
     private fun carregarPainelResumo() {
@@ -120,6 +117,19 @@ class AdminHomeActivity : AppCompatActivity() {
             }
             .addOnFailureListener { e ->
                 FirebaseCrashlytics.getInstance().recordException(e)
+            }
+
+        // livros mais reservados.
+        db.collection("Acervo")
+            .orderBy("reservaCount", com.google.firebase.firestore.Query.Direction.DESCENDING)
+            .limit(3)
+            .get()
+            .addOnSuccessListener { result ->
+                val livros = result.toObjects(com.example.bibliotecaunifor.crud.Entrada::class.java)
+
+                if (livros.size >= 1) binding.tvTop1.text = "1. ${livros[0].titulo} - ${livros[0].reservaCount} vezes"
+                if (livros.size >= 2) binding.tvTop2.text = "2. ${livros[1].titulo} - ${livros[1].reservaCount} vezes"
+                if (livros.size >= 3) binding.tvTop3.text = "3. ${livros[2].titulo} - ${livros[2].reservaCount} vezes"
             }
     }
 }

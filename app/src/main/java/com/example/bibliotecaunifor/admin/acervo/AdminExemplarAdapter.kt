@@ -32,10 +32,17 @@ class AdminExemplarAdapter(private var exemplares: List<Exemplar> = emptyList())
         setupRow(holder.binding.rowSuporte, holder.binding.tvSuporte, exemplar.suporte)
         setupRow(holder.binding.rowLocalizacao, holder.binding.tvLocalizacao, exemplar.localizacao)
         setupRow(holder.binding.rowSituacao, holder.binding.tvSituacao, exemplar.situacao)
-        if (exemplar.situacao.equals("Alugado", ignoreCase = true)) {
-            holder.binding.tvSituacao.setTextColor(Color.RED)
-        } else if (exemplar.situacao.equals("Cativo", ignoreCase = true)){
-            holder.binding.tvSituacao.setTextColor(Color.YELLOW)
+        val situacao = exemplar.situacao
+        when {
+            situacao.equals("Disponivel", ignoreCase = true) || situacao.equals("Disponível", ignoreCase = true) -> {
+                holder.binding.tvSituacao.setTextColor(Color.parseColor("#4CAF50"))
+            }
+            situacao.equals("Alugado", ignoreCase = true) -> {
+                holder.binding.tvSituacao.setTextColor(Color.parseColor("#004AF7"))
+            }
+            else -> {
+                holder.binding.tvSituacao.setTextColor(Color.parseColor("#EF5350"))
+            }
         }
     }
 

@@ -66,7 +66,7 @@ class CatalogoActivity : AppCompatActivity() {
         }
 
 
-        NavigationUtils.navegacaoAluno(this, binding.bottomNavigation, com.example.bibliotecaunifor.R.id.navigation_catalogo)
+        NavigationUtils.navegacaoAluno(this, binding.bottomNavigation, com.example.bibliotecaunifor.R.id.navigation_catalogo_admin)
         
         loadEntries()
     }

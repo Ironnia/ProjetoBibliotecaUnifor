@@ -35,6 +35,6 @@ class ChatSuporteActivity : AppCompatActivity() {
             }
         }
 
-        NavigationUtils.navegacaoAluno(this, binding.bottomNavigation, R.id.navigation_perfil)
+        NavigationUtils.navegacaoAluno(this, binding.bottomNavigation, R.id.navigation_jogos_admin)
     }
 }

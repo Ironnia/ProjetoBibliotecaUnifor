@@ -13,7 +13,8 @@ class Entrada(
     val cdu: String = "",
     val cutter: String = "",
     val assuntos: List<String> = emptyList(),
-    val exemplares: List<Exemplar> = emptyList()
+    val exemplares: List<Exemplar> = emptyList(),
+    val reservaCount: Int = 0
 ) {
     val totalExemplares: Int get() = exemplares.size
     val exemplaresAlugados: Int get() = exemplares.count { it.situacao == "Alugado" }

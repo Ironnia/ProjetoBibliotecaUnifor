@@ -81,7 +81,7 @@ class DetalhesLivroActivity : AppCompatActivity() {
             }
         }
 
-        NavigationUtils.navegacaoAluno(this, binding.bottomNavigation, R.id.navigation_catalogo)
+        NavigationUtils.navegacaoAluno(this, binding.bottomNavigation, R.id.navigation_catalogo_admin)
     }
 
     private fun loadEntrada(id: String) {

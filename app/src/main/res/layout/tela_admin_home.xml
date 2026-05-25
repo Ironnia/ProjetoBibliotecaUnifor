@@ -97,7 +97,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="24dp">
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp"
+            android:paddingTop="24dp"
+            android:paddingBottom="80dp">
 
             <androidx.gridlayout.widget.GridLayout
                 android:layout_width="match_parent"
@@ -285,13 +288,16 @@
 
                         <TextView
                             android:id="@+id/tv_resumo_emprestimos"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
+                            android:layout_weight="1"
                             android:layout_marginStart="12dp"
-                            android:text="0 alugados | 0 atrasados"
+                            android:text="-- alugados | -- atrasados"
                             android:textColor="@color/unifor_marinho_dark"
                             android:textSize="14sp"
-                            android:fontFamily="@font/satoshi_medium" />
+                            android:fontFamily="@font/satoshi_medium"
+                            android:maxLines="1"
+                            app:autoSizeTextType="uniform" />
                     </LinearLayout>
 
                     <!-- Linha 2 (Salas) -->
@@ -309,13 +315,16 @@
 
                         <TextView
                             android:id="@+id/tv_resumo_salas"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
+                            android:layout_weight="1"
                             android:layout_marginStart="12dp"
-                            android:text="0 reservadas | 0 ocupadas"
+                            android:text="-- reservadas | -- ocupadas"
                             android:textColor="@color/unifor_marinho_dark"
                             android:textSize="14sp"
-                            android:fontFamily="@font/satoshi_medium" />
+                            android:fontFamily="@font/satoshi_medium"
+                            android:maxLines="1"
+                            app:autoSizeTextType="uniform" />
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -324,16 +333,25 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="Livros mais reservados:"
+                android:text="Livros mais reservados"
                 android:textColor="@color/unifor_marinho_dark"
                 android:textSize="18sp"
                 android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="*Dados demonstrativos de simulação"
+                android:textColor="#999999"
+                android:textSize="12sp"
+                android:fontFamily="@font/satoshi_regular" />
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:layout_marginBottom="100dp"
+                android:layout_marginBottom="16dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="2dp">
 

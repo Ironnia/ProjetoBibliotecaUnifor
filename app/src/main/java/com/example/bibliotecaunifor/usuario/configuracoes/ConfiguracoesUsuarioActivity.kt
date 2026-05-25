@@ -73,7 +73,7 @@ class ConfiguracoesUsuarioActivity : AppCompatActivity() {
             }
 
             // Navegação Inferior
-            NavigationUtils.navegacaoAluno(this@ConfiguracoesUsuarioActivity, bottomNavigation, R.id.navigation_perfil)
+            NavigationUtils.navegacaoAluno(this@ConfiguracoesUsuarioActivity, bottomNavigation, R.id.navigation_jogos_admin)
         }
     }
 }

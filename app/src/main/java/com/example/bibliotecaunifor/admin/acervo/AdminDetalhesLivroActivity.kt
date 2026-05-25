@@ -20,6 +20,7 @@ import kotlinx.coroutines.launch
 class AdminDetalhesLivroActivity : AppCompatActivity() {
     private lateinit var binding: TelaAdminDetalhesLivroBinding
     private var entrada: Entrada? = null
+    private var entradaId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,10 +28,7 @@ class AdminDetalhesLivroActivity : AppCompatActivity() {
         binding = TelaAdminDetalhesLivroBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val entradaId = intent.getStringExtra("entrada_id")
-        if (entradaId != null) {
-            loadEntrada(entradaId)
-        }
+        entradaId = intent.getStringExtra("entrada_id")
 
         binding.includeToolbar.btnBack.setOnClickListener {
             finish()
@@ -57,14 +55,6 @@ class AdminDetalhesLivroActivity : AppCompatActivity() {
                 val intent = Intent(this, AdminCriarEntradaActivity::class.java).apply {
                     putExtra("isEdit", true)
                     putExtra("entrada_id", it.id)
-                    putExtra("titulo", it.titulo)
-                    putExtra("autor", it.autor)
-                    putExtra("isbn", it.isbn)
-                    putExtra("edicao", it.edicao)
-                    putExtra("publicacao", it.publicacao)
-                    putExtra("cdu", it.cdu)
-                    putExtra("cutter", it.cutter)
-                    putStringArrayListExtra("assuntos", ArrayList(it.assuntos))
                 }
                 startActivity(intent)
             }
@@ -73,11 +63,11 @@ class AdminDetalhesLivroActivity : AppCompatActivity() {
         binding.btnExcluir.setOnClickListener {
             MaterialAlertDialogBuilder(this)
                 .setTitle("Confirmar Exclusão")
-                .setMessage("Deseja realmente excluir este livro do catálogo? Esta ação não pode ser desfeita.")
+                .setMessage("Deseja excluir este livro e todos os seus exemplares?")
                 .setPositiveButton("Excluir") { _, _ ->
-                    entrada?.let {
+                    entradaId?.let { id ->
                         lifecycleScope.launch {
-                            excluirEntrada(it.id)
+                            excluirEntrada(id)
                             Snackbar.make(binding.root, "Livro removido com sucesso!", Snackbar.LENGTH_SHORT).show()
                             binding.btnExcluir.postDelayed({ finish() }, 1000)
                         }
@@ -86,13 +76,25 @@ class AdminDetalhesLivroActivity : AppCompatActivity() {
                 .setNegativeButton("Cancelar", null)
                 .show()
         }
+    }
 
+    override fun onResume() {
+        super.onResume()
+        entradaId?.let { loadEntrada(it) }
     }
 
     private fun loadEntrada(id: String) {
         lifecycleScope.launch {
+            binding.progressBar.visibility = View.VISIBLE
+            // Oculta visualização técnica no carregamento
+            binding.layoutInfoTecnica.visibility = View.GONE
+            binding.btnDetalhes.strokeWidth = 1
+            binding.btnDetalhes.setBackgroundColor(getColor(android.R.color.transparent))
+            binding.btnDetalhes.setTextColor(getColor(R.color.unifor_anil_primary))
+
             entrada = buscarEntradaPorId(id)
             entrada?.let { updateUI(it) }
+            binding.progressBar.visibility = View.GONE
         }
     }
 

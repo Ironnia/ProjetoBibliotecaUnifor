@@ -8,7 +8,6 @@ import com.example.bibliotecaunifor.R
 import com.example.bibliotecaunifor.admin.AdminHomeActivity
 import com.example.bibliotecaunifor.admin.acervo.AdminAcervoActivity
 import com.example.bibliotecaunifor.admin.agendamentos.AdminAgendamentosActivity
-import com.example.bibliotecaunifor.admin.emprestimos.AdminEmprestimosActivity
 import com.example.bibliotecaunifor.admin.jogos.AdminJogosActivity
 import com.example.bibliotecaunifor.usuario.catalogo.CatalogoActivity
 import com.example.bibliotecaunifor.usuario.perfil.PerfilUsuarioActivity
@@ -35,20 +34,20 @@ object NavigationUtils {
 //          if (item.itemId == currentItemId) return@setOnItemSelectedListener true
                 // as telas "secundárias" estavam com o home desativado.
                 val estouNaTelaAtual = when (item.itemId) {
-                    R.id.navigation_home -> activity is MainActivity
-                    R.id.navigation_catalogo -> activity is CatalogoActivity
-                    R.id.navigation_salas -> activity is SalasActivity
-                    R.id.navigation_perfil -> activity is PerfilUsuarioActivity
+                    R.id.navigation_home_aluno -> activity is MainActivity
+                    R.id.navigation_catalogo_aluno -> activity is CatalogoActivity
+                    R.id.navigation_salas_aluno -> activity is SalasActivity
+                    R.id.navigation_perfil_aluno -> activity is PerfilUsuarioActivity
                     else -> false
                 }
 
                 if (estouNaTelaAtual) return@setOnItemSelectedListener true
 
                 val destino = when (item.itemId) {
-                    R.id.navigation_home -> MainActivity::class.java
-                    R.id.navigation_catalogo -> CatalogoActivity::class.java
-                    R.id.navigation_salas -> SalasActivity::class.java
-                    R.id.navigation_perfil -> PerfilUsuarioActivity::class.java
+                    R.id.navigation_home_aluno -> MainActivity::class.java
+                    R.id.navigation_catalogo_aluno -> CatalogoActivity::class.java
+                    R.id.navigation_salas_aluno -> SalasActivity::class.java
+                    R.id.navigation_perfil_aluno -> PerfilUsuarioActivity::class.java
                     else -> null
                 }
 
@@ -85,20 +84,20 @@ object NavigationUtils {
             setOnItemSelectedListener { item ->
                 //if (item.itemId == currentItemId) return@setOnItemSelectedListener true
                 val estouNaTelaAtual = when (item.itemId) {
-                    R.id.navigation_home -> activity is AdminHomeActivity
-                    R.id.navigation_catalogo -> activity is AdminAcervoActivity
-                    R.id.navigation_salas -> activity is AdminAgendamentosActivity
-                    R.id.navigation_perfil -> activity is AdminJogosActivity
+                    R.id.navigation_home_admin -> activity is AdminHomeActivity
+                    R.id.navigation_catalogo_admin -> activity is AdminAcervoActivity
+                    R.id.navigation_salas_admin -> activity is AdminAgendamentosActivity
+                    R.id.navigation_jogos_admin -> activity is AdminJogosActivity
                     else -> false
                 }
 
                 if (estouNaTelaAtual) return@setOnItemSelectedListener true
 
                 val destino = when (item.itemId) {
-                    R.id.navigation_home -> AdminHomeActivity::class.java
-                    R.id.navigation_catalogo -> AdminAcervoActivity::class.java
-                    R.id.navigation_salas -> AdminAgendamentosActivity::class.java
-                    R.id.navigation_perfil -> AdminJogosActivity::class.java
+                    R.id.navigation_home_admin -> AdminHomeActivity::class.java
+                    R.id.navigation_catalogo_admin -> AdminAcervoActivity::class.java
+                    R.id.navigation_salas_admin -> AdminAgendamentosActivity::class.java
+                    R.id.navigation_jogos_admin -> AdminJogosActivity::class.java
                     else -> null
                 }
 

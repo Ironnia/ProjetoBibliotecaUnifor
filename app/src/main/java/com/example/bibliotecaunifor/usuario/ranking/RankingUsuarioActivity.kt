@@ -31,7 +31,7 @@ class RankingUsuarioActivity : AppCompatActivity() {
             finish()
         }
 
-        NavigationUtils.navegacaoAluno(this, binding.bottomNavigation, R.id.navigation_home)
+        NavigationUtils.navegacaoAluno(this, binding.bottomNavigation, R.id.navigation_home_admin)
     }
 
     private fun setupRecyclerView() {

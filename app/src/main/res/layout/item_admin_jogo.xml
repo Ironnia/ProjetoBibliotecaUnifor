@@ -21,15 +21,16 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/tv_book_title"
+                android:id="@+id/tv_game_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_toStartOf="@+id/iv_info"
-                android:text="A Metamorfose | Franz Kafka"
+                android:text="Catan | Devir"
                 android:textColor="@color/unifor_marinho_dark"
                 android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:fontFamily="@font/satoshi_bold" />
 
             <ImageView
                 android:id="@+id/iv_info"
@@ -58,9 +59,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:text="Matrícula: 1234567"
+                android:text="Aluno(a): gabriel@unifor.br"
                 android:textColor="#666666"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                android:fontFamily="@font/satoshi_regular" />
         </LinearLayout>
 
         <LinearLayout
@@ -81,9 +83,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:text="15/04/2026 | 9:45"
+                android:text="Prazos: 15/04/2026 | 9:45"
                 android:textColor="#666666"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                android:fontFamily="@font/satoshi_regular" />
         </LinearLayout>
 
         <LinearLayout
@@ -94,19 +97,20 @@
             android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_renovar"
+                android:id="@+id/btn_cancelar"
                 style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="120dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
-                android:text="Renovar"
+                android:text="Cancelar"
                 android:textSize="12sp"
-                android:textColor="@color/unifor_marinho_dark"
-                app:backgroundTint="#A5D6A7"
-                app:cornerRadius="8dp" />
+                android:textColor="@color/white"
+                app:backgroundTint="#EF5350"
+                app:cornerRadius="8dp"
+                android:fontFamily="@font/satoshi_medium" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_aprovar"
+                android:id="@+id/btn_acao"
                 style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="120dp"
                 android:layout_height="wrap_content"
@@ -114,7 +118,8 @@
                 android:textSize="12sp"
                 android:textColor="@color/white"
                 app:backgroundTint="@color/unifor_anil_primary"
-                app:cornerRadius="8dp" />
+                app:cornerRadius="8dp"
+                android:fontFamily="@font/satoshi_medium" />
         </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

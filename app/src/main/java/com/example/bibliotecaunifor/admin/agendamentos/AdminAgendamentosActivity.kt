@@ -58,7 +58,7 @@ class AdminAgendamentosActivity : AppCompatActivity() {
 
         binding.includeToolbar.btnBack.setOnClickListener { finish() }
 
-        NavigationUtils.navegacaoAdmin(this, binding.bottomNavigation, R.id.navigation_salas)
+        NavigationUtils.navegacaoAdmin(this, binding.bottomNavigation, R.id.navigation_salas_admin)
 
         setupEstacoes()
         setupCalendario()

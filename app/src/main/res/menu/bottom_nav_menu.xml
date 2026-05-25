@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/navigation_home"
+        android:id="@+id/navigation_home_aluno"
         android:icon="@drawable/home_24"
         android:title="Início" />
     <item
-        android:id="@+id/navigation_catalogo"
+        android:id="@+id/navigation_catalogo_aluno"
         android:icon="@drawable/menu_book_24"
         android:title="Catálogo" />
     <item
-        android:id="@+id/navigation_salas"
+        android:id="@+id/navigation_salas_aluno"
         android:icon="@drawable/calendar_clock_24"
         android:title="Salas" />
     <item
-        android:id="@+id/navigation_perfil"
+        android:id="@+id/navigation_perfil_aluno"
         android:icon="@drawable/ic_profile_tab"
         android:title="Perfil" />
 </menu>

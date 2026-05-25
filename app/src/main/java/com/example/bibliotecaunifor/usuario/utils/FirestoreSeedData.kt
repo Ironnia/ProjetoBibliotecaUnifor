@@ -26,6 +26,7 @@ object FirestoreSeedData {
         val livros = listOf(
             mapOf(
                 "titulo" to "O Pequeno Príncipe",
+                "reservaCount" to 25,
                 "autor" to "Antoine de Saint-Exupéry",
                 "isbn" to "9788575037133",
                 "edicao" to "Especial",
@@ -48,6 +49,41 @@ object FirestoreSeedData {
                 "totalExemplares" to 1,
                 "exemplaresAlugados" to 1,
                 "exemplaresDisponiveis" to 0
+            ),
+            mapOf(
+                "titulo" to "O Pequeno Príncipe",
+                "autor" to "Antoine de Saint-Exupéry",
+                "reservaCount" to 42,
+                "isbn" to "9788575037133",
+                "exemplaresAlugados" to 1
+            ),
+            mapOf(
+                "titulo" to "Dom Casmurro",
+                "autor" to "Machado de Assis",
+                "reservaCount" to 38,
+                "status" to "atrasado",
+                "exemplaresAlugados" to 1
+            ),
+            mapOf(
+                "titulo" to "Memórias Póstumas de Brás Cubas",
+                "autor" to "Machado de Assis",
+                "reservaCount" to 55, // Este será o TOP 1
+                "isbn" to "9788572327581",
+                "exemplaresAlugados" to 0
+            ),
+            mapOf(
+                "titulo" to "O Cortiço",
+                "autor" to "Aluísio Azevedo",
+                "reservaCount" to 12,
+                "isbn" to "9788572327437",
+                "exemplaresAlugados" to 1
+            ),
+            mapOf(
+                "titulo" to "Vidas Secas",
+                "autor" to "Graciliano Ramos",
+                "reservaCount" to 29,
+                "isbn" to "9788501014528",
+                "exemplaresAlugados" to 0
             )
         )
 
@@ -82,9 +118,11 @@ object FirestoreSeedData {
     private fun popularSalas() {
         val hoje = SimpleDateFormat("dd/MM", Locale.getDefault()).format(Date())
         val salas = listOf(
-            mapOf("nome" to "Sala 01", "andar" to "1º", "status" to "reservado", "data" to hoje),
-            mapOf("nome" to "Sala 02", "andar" to "1º", "status" to "ocupada", "data" to hoje),
-            mapOf("nome" to "Sala 03", "andar" to "2º", "status" to "reservado", "data" to hoje)
+            mapOf("nome" to "Sala 01", "status" to "reservado", "data" to hoje),
+            mapOf("nome" to "Sala 02", "status" to "ocupada", "data" to hoje),
+            mapOf("nome" to "Sala 03", "status" to "reservado", "data" to hoje),
+            mapOf("nome" to "Sala 04", "status" to "reservado", "data" to hoje),
+            mapOf("nome" to "Sala 05", "status" to "disponivel", "data" to hoje)
         )
         salas.forEach { sala ->
             db.collection("agendamentos").add(sala)
@@ -99,8 +137,41 @@ object FirestoreSeedData {
 
     private fun popularJogos() {
         val jogos = listOf(
-            mapOf("nome" to "Catan", "disponivel" to true, "jogadores" to "3-4"),
-            mapOf("nome" to "Dixit", "disponivel" to false, "jogadores" to "3-6")
+            mapOf(
+                "nome" to "Catan",
+                "descricao" to "Um jogo de estratégia sobre colonização de uma ilha.",
+                "jogadores" to "3-4",
+                "tempoMinutos" to 90, // Campo que estava faltando
+                "disponivel" to true
+            ),
+            mapOf(
+                "nome" to "Dixit",
+                "descricao" to "Um jogo de cartas ilustradas focado em imaginação.",
+                "jogadores" to "3-6",
+                "tempoMinutos" to 30,
+                "disponivel" to false
+            ),
+            mapOf(
+                "nome" to "War",
+                "descricao" to "O clássico jogo de estratégia e conquista de territórios.",
+                "jogadores" to "3-6",
+                "tempoMinutos" to 120,
+                "disponivel" to true
+            ),
+            mapOf(
+                "nome" to "Banco Imobiliário",
+                "descricao" to "Gerencie suas propriedades e leve seus oponentes à falência.",
+                "jogadores" to "2-6",
+                "tempoMinutos" to 60,
+                "disponivel" to true
+            ),
+            mapOf(
+                "nome" to "Ticket to Ride",
+                "descricao" to "Uma aventura ferroviária cruzando o país.",
+                "jogadores" to "2-5",
+                "tempoMinutos" to 45,
+                "disponivel" to false
+            )
         )
         jogos.forEach { jogo ->
             db.collection("jogos").add(jogo)

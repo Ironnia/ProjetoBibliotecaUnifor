@@ -34,6 +34,13 @@ class AdminEntradaAdapter(
             tvBookTitle.text = "${item.titulo} | ${item.autor}"
             tvCopiesInfo.text = "${item.totalExemplares} exemplares | ${item.exemplaresAlugados} alugados"
 
+            holder.itemView.setOnClickListener {
+                val intent = Intent(holder.itemView.context, AdminDetalhesLivroActivity::class.java).apply {
+                    putExtra("entrada_id", item.id)
+                }
+                holder.itemView.context.startActivity(intent)
+            }
+
             ivInfo.setOnClickListener {
                 val intent = Intent(holder.itemView.context, AdminDetalhesLivroActivity::class.java).apply {
                     putExtra("entrada_id", item.id)
@@ -45,14 +52,6 @@ class AdminEntradaAdapter(
                 val intent = Intent(holder.itemView.context, AdminCriarEntradaActivity::class.java).apply {
                     putExtra("isEdit", true)
                     putExtra("entrada_id", item.id)
-                    putExtra("titulo", item.titulo)
-                    putExtra("autor", item.autor)
-                    putExtra("isbn", item.isbn)
-                    putExtra("edicao", item.edicao)
-                    putExtra("publicacao", item.publicacao)
-                    putExtra("cdu", item.cdu)
-                    putExtra("cutter", item.cutter)
-                    putStringArrayListExtra("assuntos", ArrayList(item.assuntos))
                 }
                 holder.itemView.context.startActivity(intent)
             }
