@@ -74,16 +74,19 @@ class AdminMesaAdapter(
 
             // Botão para liberar a sessão atual (caso o aluno saia mais cedo) ou limpar o dia
             btnLiberar.setOnClickListener {
+                /*
                 val titulo = if (isOcupada) "Encerrar Sessão" else "Liberar Mesa"
                 val msg = if (isOcupada) 
                     "O aluno saiu mais cedo? Isso liberará a mesa ${sala.nome} imediatamente para outros." 
                     else "Deseja limpar todas as reservas de hoje para esta mesa?"
+                */
 
                 MaterialAlertDialogBuilder(context)
-                    .setTitle(titulo)
-                    .setMessage(msg)
+                    .setTitle("Liberar Mesa")
+                    .setMessage("Deseja limpar todas as reservas de hoje para esta mesa?")
                     .setPositiveButton("Confirmar") { _, _ ->
                         CoroutineScope(Dispatchers.Main).launch {
+                            /*
                             if (isOcupada) {
                                 // Libera apenas a sessão que está acontecendo agora
                                 agendamentoAtivo?.id?.let { id -> SalasRepository.liberarHorario(id) }
@@ -91,6 +94,8 @@ class AdminMesaAdapter(
                                 // Caso não tenha ninguém agora, limpa o dia todo
                                 SalasRepository.liberarMesaCompleta(sala.id, dataHoje)
                             }
+                            */
+                            SalasRepository.liberarMesaCompleta(sala.id, dataHoje)
                             Snackbar.make(root, "Mesa liberada!", Snackbar.LENGTH_SHORT).show()
                             layoutAcoes.visibility = View.GONE
                         }

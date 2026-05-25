@@ -28,6 +28,7 @@ class JogosTabuleiroActivity : AppCompatActivity() {
     private val db = Firebase.firestore
     private val auth = Firebase.auth
     private lateinit var adapter: JogoAdapter
+    private var alugueisListener: com.google.firebase.firestore.ListenerRegistration? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,13 +60,43 @@ class JogosTabuleiroActivity : AppCompatActivity() {
     private fun setupRecyclerView() {
         adapter = JogoAdapter(emptyList()) { jogo ->
             if (showingMeusJogos) {
+                /*
                 confirmarDevolucaoJogo(jogo)
+                */
+                if (jogo.status == "pendente") {
+                    cancelarReservaJogo(jogo)
+                } else {
+                    confirmarDevolucaoJogo(jogo)
+                }
             } else {
                 verificarLimiteEReservar(jogo)
             }
         }
         binding.rvJogos.layoutManager = LinearLayoutManager(this)
         binding.rvJogos.adapter = adapter
+    }
+
+    private fun cancelarReservaJogo(item: Jogo) {
+        val idDoJogoReal = item.idUsuarioComJogo
+        AlertDialog.Builder(this)
+            .setTitle("Cancelar Reserva")
+            .setMessage("Deseja realmente cancelar a reserva do jogo \"${item.nome}\"?")
+            .setPositiveButton("Sim, Cancelar") { _, _ ->
+                db.collection("alugueis").document(item.id).delete()
+                    .addOnSuccessListener {
+                        idDoJogoReal?.let { idReal ->
+                            db.collection("jogos").document(idReal).update("disponivel", true)
+                                .addOnSuccessListener {
+                                    mostrarAviso("Reserva de jogo cancelada com sucesso.")
+                                }
+                        }
+                    }
+                    .addOnFailureListener {
+                        mostrarAviso("Erro ao cancelar reserva.")
+                    }
+            }
+            .setNegativeButton("Voltar", null)
+            .show()
     }
 
     private fun verificarLimiteEReservar(jogo: Jogo) {
@@ -93,7 +124,10 @@ class JogosTabuleiroActivity : AppCompatActivity() {
         binding.tvEmptyStateJogos.visibility = View.GONE
         binding.rvJogos.visibility = View.GONE
 
+        alugueisListener?.remove()
+
         if (showingMeusJogos) {
+            /*
             db.collection("alugueis")
                 .whereEqualTo("idUsuario", uid)
                 .whereEqualTo("tipoItem", "jogo")
@@ -114,6 +148,8 @@ class JogosTabuleiroActivity : AppCompatActivity() {
                             id = doc.id,
                             nome = doc.getString("tituloItem") ?: "",
                             descricao = desc,
+                            jogadores = doc.getString("jogadores") ?: "",
+                            tempoMinutos = doc.getLong("tempoMinutos")?.toInt() ?: 0,
                             idUsuarioComJogo = doc.getString("idItem") ?: "",
                             disponivel = false
                         )
@@ -132,7 +168,50 @@ class JogosTabuleiroActivity : AppCompatActivity() {
                     binding.progressBarJogos.visibility = View.GONE
                     mostrarAviso("Erro ao carregar dados.")
                 }
+            */
+            alugueisListener = db.collection("alugueis")
+                .whereEqualTo("idUsuario", uid)
+                .whereEqualTo("tipoItem", "jogo")
+                .whereIn("status", listOf("pendente", "ativo"))
+                .addSnapshotListener { snapshot, error ->
+                    binding.progressBarJogos.visibility = View.GONE
+                    if (error != null) {
+                        mostrarAviso("Erro ao carregar dados.")
+                        return@addSnapshotListener
+                    }
+                    if (snapshot == null) return@addSnapshotListener
+                    val lista = snapshot.map { doc ->
+                        val status = doc.getString("status") ?: ""
+                        val dataEmprestimo = doc.getLong("dataEmprestimo") ?: 0L
+                        val desc = if (status == "pendente") {
+                            val horaLimite = java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault()).format(java.util.Date(dataEmprestimo + 15 * 60 * 1000))
+                            "Reservado (Retirar até: $horaLimite)"
+                        } else {
+                            "Em uso"
+                        }
+                        Jogo(
+                            id = doc.id,
+                            nome = doc.getString("tituloItem") ?: "",
+                            descricao = desc,
+                            jogadores = doc.getString("jogadores") ?: "",
+                            tempoMinutos = doc.getLong("tempoMinutos")?.toInt() ?: 0,
+                            idUsuarioComJogo = doc.getString("idItem") ?: "",
+                            disponivel = false,
+                            status = status
+                        )
+                    }
+                    adapter.atualizarLista(lista, true)
+                    if (lista.isEmpty()) {
+                        binding.tvEmptyStateJogos.text = "Você não possui jogos alugados."
+                        binding.tvEmptyStateJogos.visibility = View.VISIBLE
+                        binding.rvJogos.visibility = View.GONE
+                    } else {
+                        binding.tvEmptyStateJogos.visibility = View.GONE
+                        binding.rvJogos.visibility = View.VISIBLE
+                    }
+                }
         } else {
+            /*
             db.collection("jogos")
                 .get()
                 .addOnSuccessListener { result ->
@@ -152,23 +231,46 @@ class JogosTabuleiroActivity : AppCompatActivity() {
                     binding.progressBarJogos.visibility = View.GONE
                     mostrarAviso("Erro ao carregar dados.")
                 }
+            */
+            alugueisListener = db.collection("jogos")
+                .addSnapshotListener { snapshot, error ->
+                    binding.progressBarJogos.visibility = View.GONE
+                    if (error != null) {
+                        mostrarAviso("Erro ao carregar dados.")
+                        return@addSnapshotListener
+                    }
+                    if (snapshot == null) return@addSnapshotListener
+                    val lista = snapshot.toObjects<Jogo>()
+                    adapter.atualizarLista(lista, false)
+                    if (lista.isEmpty()) {
+                        binding.tvEmptyStateJogos.text = "Nenhum jogo disponível no momento."
+                        binding.tvEmptyStateJogos.visibility = View.VISIBLE
+                        binding.rvJogos.visibility = View.GONE
+                    } else {
+                        binding.tvEmptyStateJogos.visibility = View.GONE
+                        binding.rvJogos.visibility = View.VISIBLE
+                    }
+                }
         }
     }
 
     private fun confirmarReservaJogo(item: Jogo) {
-        AlertDialog.Builder(this)
+        val dialog = AlertDialog.Builder(this)
             .setTitle("Confirmar Reserva")
             .setMessage("Deseja reservar o jogo \"${item.nome}\" por 2 horas?")
-            .setPositiveButton("Confirmar") { _, _ ->
-                    salvarReservaNoFirebase(item)
-//                AlertDialog.Builder(this)
-//                    .setTitle("Reserva Realizada")
-//                    .setMessage("O jogo foi reservado. Retire no balcão em até 15 minutos.")
-//                    .setPositiveButton("Ok", null)
-//                    .show()
-            }
+            .setPositiveButton("Confirmar", null)
             .setNegativeButton("Cancelar", null)
-            .show()
+            .create()
+
+        dialog.setOnShowListener {
+            val button = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            button.setOnClickListener {
+                button.isEnabled = false // Evita cliques múltiplos
+                dialog.dismiss()
+                salvarReservaNoFirebase(item)
+            }
+        }
+        dialog.show()
     }
     private fun salvarReservaNoFirebase(jogo: Jogo) {
         val uid = auth.currentUser?.uid ?: return
@@ -182,9 +284,10 @@ class JogosTabuleiroActivity : AppCompatActivity() {
             "tituloItem" to jogo.nome,
             "tipoItem" to "jogo",
             "status" to "pendente",
+            "jogadores" to jogo.jogadores,
+            "tempoMinutos" to jogo.tempoMinutos,
             "dataEmprestimo" to System.currentTimeMillis(),
             "dataDevolucao" to System.currentTimeMillis() + (2 * 60 * 60 * 1000) // Isso é 2 horas. Firestore é assim emsmo.
-
         )
 
         // 2. Salvar no Firestore e atualizar o status do jogo
@@ -235,4 +338,8 @@ class JogosTabuleiroActivity : AppCompatActivity() {
     }
 
     // data class Jogo(val nome: String, val descricao: String, val status: String, val acao: String)
+    override fun onDestroy() {
+        super.onDestroy()
+        alugueisListener?.remove()
+    }
 }

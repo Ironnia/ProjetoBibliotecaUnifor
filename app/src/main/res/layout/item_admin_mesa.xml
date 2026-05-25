@@ -85,6 +85,7 @@
             android:orientation="horizontal"
             android:visibility="gone">
 
+            <!-- antigo: android:text="Liberar" -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_liberar"
                 style="@style/Widget.Material3.Button.TonalButton"
@@ -92,7 +93,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:layout_weight="1"
-                android:text="Liberar"
+                android:text="Liberar tudo"
                 android:textColor="@color/white"
                 android:textSize="12sp"
                 app:backgroundTint="@color/success_green"

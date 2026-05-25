@@ -111,6 +111,8 @@ class AdminDetalhesLivroActivity : AppCompatActivity() {
             val chip = Chip(this)
             chip.text = assunto
             chip.chipStrokeWidth = 2f
+            chip.isClickable = false
+            chip.isCheckable = false
             chip.setChipBackgroundColorResource(android.R.color.white)
             binding.chipGroupAssuntos.addView(chip)
         }

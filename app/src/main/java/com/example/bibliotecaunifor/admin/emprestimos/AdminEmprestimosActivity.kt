@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.bibliotecaunifor.R
 import com.example.bibliotecaunifor.crud.Emprestimo
@@ -59,37 +58,20 @@ class AdminEmprestimosActivity : AppCompatActivity() {
     }
 
     private fun setupFilters() {
-        binding.etSearch.addTextChangedListener {
-            filterList()
-        }
-
         binding.chipGroupFiltros.setOnCheckedStateChangeListener { _, _ ->
             filterList()
         }
     }
 
     private fun filterList() {
-        val query = binding.etSearch.text.toString().trim().lowercase()
         val isDevolucaoChecked = binding.chipDevolucao.isChecked // Ativos / Para Devolução
         val isRetirarChecked = binding.chipRetirar.isChecked // Pendentes / A retirar
 
-        // Filtra pela query de busca local (nome do aluno, matrícula ou título do livro)
-        val filteredQuery = if (query.isEmpty()) {
-            allLoans
-        } else {
-            allLoans.filter { item ->
-                item.nomeUsuario.lowercase().contains(query) ||
-                item.matriculaUsuario.lowercase().contains(query) ||
-                item.tituloLivro.lowercase().contains(query)
-            }
-        }
-
-        // Filtra pelo chip ativo no topo
-        val finalList = filteredQuery.filter { item ->
+        val finalList = allLoans.filter { item ->
             when {
                 isRetirarChecked -> item.status.equals("pendente", ignoreCase = true)
                 isDevolucaoChecked -> item.status.equals("ativo", ignoreCase = true) || item.status.equals("atrasado", ignoreCase = true)
-                else -> true // Caso nenhum esteja selecionado, exibe tudo
+                else -> true
             }
         }
 

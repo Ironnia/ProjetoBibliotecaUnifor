@@ -37,32 +37,49 @@ class AdminHorarioPopupAdapter(
         with(holder.binding) {
             tvHorario.text = item.horario
             
-            if (item.isOcupado) {
+            val isPast = try {
+                val horaInicioStr = item.horario.split(" - ")[0]
+                val horaInicio = java.time.LocalTime.parse(horaInicioStr)
+                java.time.LocalTime.now().isAfter(horaInicio)
+            } catch (e: Exception) {
+                false
+            }
+
+            if (isPast) {
+                ivStatusDot.setBackgroundResource(R.drawable.bg_circle_red)
+                btnAcao.text = "Expirado"
+                btnAcao.isEnabled = false
+                btnAcao.backgroundTintList = android.content.res.ColorStateList.valueOf(0xFFE0E0E0.toInt())
+                btnAcao.setTextColor(0xFF757575.toInt())
+            } else if (item.isOcupado) {
+                btnAcao.isEnabled = true
                 ivStatusDot.setBackgroundResource(R.drawable.bg_circle_red)
                 btnAcao.text = "Liberar"
                 // Fundo verde claro, texto verde escuro
                 btnAcao.backgroundTintList = android.content.res.ColorStateList.valueOf(0xFFE8F5E9.toInt())
                 btnAcao.setTextColor(0xFF2E7D32.toInt())
+                btnAcao.setOnClickListener {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        item.idAgendamento?.let { id ->
+                            SalasRepository.liberarHorario(id)
+                            Toast.makeText(context, "Mesa liberada para o horário ${item.horario}!", Toast.LENGTH_SHORT).show()
+                        }
+                        onActionTriggered() // Notifica a Activity para recarregar
+                    }
+                }
             } else {
+                btnAcao.isEnabled = true
                 ivStatusDot.setBackgroundResource(R.drawable.bg_circle_green)
                 btnAcao.text = "Ocupar"
                 // Fundo vermelho claro, texto vermelho escuro
                 btnAcao.backgroundTintList = android.content.res.ColorStateList.valueOf(0xFFFFEBEE.toInt())
                 btnAcao.setTextColor(0xFFC62828.toInt())
-            }
-
-            btnAcao.setOnClickListener {
-                CoroutineScope(Dispatchers.Main).launch {
-                    if (item.isOcupado) {
-                        item.idAgendamento?.let { id ->
-                            SalasRepository.liberarHorario(id)
-                            Toast.makeText(context, "Mesa liberada para o horário ${item.horario}!", Toast.LENGTH_SHORT).show()
-                        }
-                    } else {
+                btnAcao.setOnClickListener {
+                    CoroutineScope(Dispatchers.Main).launch {
                         SalasRepository.ocuparHorarioADM(item.idSala, item.nomeSala, item.data, item.horario)
                         Toast.makeText(context, "Mesa reservada para o horário ${item.horario}!", Toast.LENGTH_SHORT).show()
+                        onActionTriggered() // Notifica a Activity para recarregar
                     }
-                    onActionTriggered() // Notifica a Activity para recarregar
                 }
             }
         }

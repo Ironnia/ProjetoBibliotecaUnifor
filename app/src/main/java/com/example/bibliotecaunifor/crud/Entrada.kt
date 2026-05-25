@@ -2,7 +2,7 @@ package com.example.bibliotecaunifor.crud
 
 import com.google.firebase.firestore.DocumentId
 
-class Entrada(
+data class Entrada(
     @DocumentId
     val id: String= "",
     val isbn: String = "",
@@ -14,7 +14,8 @@ class Entrada(
     val cutter: String = "",
     val assuntos: List<String> = emptyList(),
     val exemplares: List<Exemplar> = emptyList(),
-    val reservaCount: Int = 0
+    val reservaCount: Int = 0,
+    val imageUrl: String = ""
 ) {
     val totalExemplares: Int get() = exemplares.size
     val exemplaresAlugados: Int get() = exemplares.count { it.situacao == "Alugado" }

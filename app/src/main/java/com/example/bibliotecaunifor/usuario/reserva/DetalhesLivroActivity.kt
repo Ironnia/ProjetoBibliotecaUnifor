@@ -81,7 +81,7 @@ class DetalhesLivroActivity : AppCompatActivity() {
             }
         }
 
-        NavigationUtils.navegacaoAluno(this, binding.bottomNavigation, R.id.navigation_catalogo_admin)
+        NavigationUtils.navegacaoAluno(this, binding.bottomNavigation, R.id.navigation_catalogo_aluno)
     }
 
     private fun loadEntrada(id: String) {
@@ -97,19 +97,22 @@ class DetalhesLivroActivity : AppCompatActivity() {
             tvTitle.text = entrada.titulo
             tvAuthor.text = entrada.autor
 
-            //fazer o botão de reservar não ser clicavel se  não tiver algo para reservar.
-            val temExemplares = entrada.exemplaresDisponiveis > 0
-            btnReservar.apply {
-                isEnabled = temExemplares
-                if (temExemplares) {
-                    text = "Reservar"
-                    backgroundTintList = android.content.res.ColorStateList.valueOf(getColor(R.color.success_green))
-                } else {
-                    text = "Indisponível no momento"
-                    backgroundTintList = android.content.res.ColorStateList.valueOf(getColor(android.R.color.darker_gray))
-                }
-            }
+            btnReservar.visibility = android.view.View.GONE
 
+            if (entrada.imageUrl.isNotEmpty()) {
+                try {
+                    com.bumptech.glide.Glide.with(this@DetalhesLivroActivity)
+                        .load(entrada.imageUrl)
+                        .into(ivBookCover)
+                    tvBookCoverPlaceholder.visibility = android.view.View.GONE
+                } catch (e: Exception) {
+                    ivBookCover.setImageDrawable(null)
+                    tvBookCoverPlaceholder.visibility = android.view.View.VISIBLE
+                }
+            } else {
+                ivBookCover.setImageDrawable(null)
+                tvBookCoverPlaceholder.visibility = android.view.View.VISIBLE
+            }
 
             cgAssuntos.removeAllViews()
             entrada.assuntos.forEach { assunto ->
@@ -119,7 +122,8 @@ class DetalhesLivroActivity : AppCompatActivity() {
                     setTextColor(getColor(R.color.unifor_anil_primary))
                     chipStrokeColor =
                         android.content.res.ColorStateList.valueOf(getColor(R.color.unifor_anil_primary))
-
+                    isClickable = false
+                    isFocusable = false
                 }
                 cgAssuntos.addView(chip)
             }
@@ -149,8 +153,17 @@ class DetalhesLivroActivity : AppCompatActivity() {
                     setPadding(36, 36, 36, 36)
                     setBackgroundResource(R.drawable.bg_border)
                     textSize = 12f
-                    val isDisponivel = exemplar.situacao == "Disponivel"
-                    setTextColor(if (isDisponivel) getColor(R.color.success_green) else getColor(R.color.error_red))
+                    
+                    val isDisponivel = exemplar.situacao.equals("Disponivel", ignoreCase = true) || exemplar.situacao.equals("Disponível", ignoreCase = true)
+                    val isAlugado = exemplar.situacao.equals("Alugado", ignoreCase = true)
+                    if (isDisponivel) {
+                        setTextColor(getColor(R.color.success_green))
+                    } else if (isAlugado) {
+                        setTextColor(getColor(R.color.unifor_anil_primary))
+                    } else {
+                        setTextColor(getColor(R.color.error_red))
+                    }
+                    
                     setTypeface(null, android.graphics.Typeface.BOLD)
                     layoutParams =
                         LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
@@ -181,25 +194,28 @@ class DetalhesLivroActivity : AppCompatActivity() {
             .setMessage("Título: ${entry.titulo}\nAutor: ${entry.autor}\nISBN: ${entry.isbn}\n\nDeseja confirmar a reserva deste item?")
             .setPositiveButton("Confirmar") { _, _ ->
                 val uid = Firebase.auth.currentUser?.uid ?: return@setPositiveButton
+                
+                val calendarDevolucao = java.util.Calendar.getInstance()
+                calendarDevolucao.add(java.util.Calendar.DAY_OF_YEAR, 15)
+                val devolucaoMillis = calendarDevolucao.timeInMillis
+
                 val novoAluguel = hashMapOf(
                     "idUsuario" to uid,
-                    "titulo" to entry.titulo,
-                    "autor" to entry.autor,
-                    "dataDevolucao" to devolucaoDate, // Variável que você já calculou
+                    "idItem" to entry.id,
+                    "tituloItem" to entry.titulo,
+                    "autorItem" to entry.autor,
+                    "dataEmprestimo" to System.currentTimeMillis(),
+                    "dataDevolucao" to devolucaoMillis,
                     "status" to "pendente",
-                    "dataReserva" to java.util.Calendar.getInstance().time
+                    "tipoItem" to "livro"
                 )
-                // Usando o bloco atomico
-                //https://firebase.google.com/docs/firestore/manage-data/transactions?hl=pt-br
-                // O chat da documentação complicou demais como se precissasse mas funciona. Antes era mais simples:
                 db.runTransaction { transaction ->
-                    val livroRef = db.collection("entradas").document(entry.id)
+                    val livroRef = db.collection("Acervo").document(entry.id)
                     val snapshot = transaction.get(livroRef)
                     val qtdAtual = snapshot.getLong("exemplaresDisponiveis") ?: 0
 
                     if (qtdAtual > 0) {
-                        // cria o novo aluguel e dá dá baixa no estoque
-                        val aluguelRef = db.collection("alugueis").document()
+                        val aluguelRef = db.collection("emprestimos").document()
                         transaction.set(aluguelRef, novoAluguel)
 
                         transaction.update(livroRef, "exemplaresDisponiveis", qtdAtual - 1)

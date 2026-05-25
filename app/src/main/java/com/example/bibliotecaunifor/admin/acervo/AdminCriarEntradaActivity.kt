@@ -6,6 +6,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import android.net.Uri
+import androidx.activity.result.contract.ActivityResultContracts
+import com.bumptech.glide.Glide
 import com.example.bibliotecaunifor.crud.Entrada
 import com.example.bibliotecaunifor.crud.Exemplar
 import com.example.bibliotecaunifor.crud.adicionarEntrada
@@ -14,13 +17,17 @@ import com.example.bibliotecaunifor.crud.editarEntrada
 import com.example.bibliotecaunifor.databinding.TelaAdminEditarLivroBinding
 import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 class AdminCriarEntradaActivity : AppCompatActivity() {
     private lateinit var binding: TelaAdminEditarLivroBinding
     private var entradaId: String? = null
     private lateinit var exemplarAdapter: AdminExemplarEditAdapter
     private var reservaCount: Int = 0
+    private var selectedImageUri: Uri? = null
+    private var currentImageUrl: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +36,17 @@ class AdminCriarEntradaActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setupRecyclerView()
+
+        val pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            if (uri != null) {
+                selectedImageUri = uri
+                Glide.with(this).load(uri).into(binding.ivCapaPreview)
+            }
+        }
+
+        binding.btnSelecionarFoto.setOnClickListener {
+            pickImageLauncher.launch("image/*")
+        }
 
         val isEdit = intent.getBooleanExtra("isEdit", false)
         entradaId = intent.getStringExtra("entrada_id")
@@ -53,6 +71,13 @@ class AdminCriarEntradaActivity : AppCompatActivity() {
                     
                     reservaCount = entrada.reservaCount
                     exemplarAdapter.setExemplares(entrada.exemplares)
+                    
+                    currentImageUrl = entrada.imageUrl
+                    if (currentImageUrl.isNotEmpty()) {
+                        Glide.with(this@AdminCriarEntradaActivity)
+                            .load(currentImageUrl)
+                            .into(binding.ivCapaPreview)
+                    }
                 }
                 
                 binding.progressBar.visibility = View.GONE
@@ -156,13 +181,35 @@ class AdminCriarEntradaActivity : AppCompatActivity() {
             cutter = cutter,
             assuntos = assuntos,
             exemplares = exemplares,
-            reservaCount = reservaCount
+            reservaCount = reservaCount,
+            imageUrl = currentImageUrl
         )
 
-        lifecycleScope.launch {
-            binding.progressBar.visibility = View.VISIBLE
-            binding.btnConcluir.isEnabled = false
+        binding.progressBar.visibility = View.VISIBLE
+        binding.btnConcluir.isEnabled = false
 
+        if (selectedImageUri != null) {
+            val storageRef = FirebaseStorage.getInstance().reference
+            val fileName = UUID.randomUUID().toString() + ".jpg"
+            val imageRef = storageRef.child("capas_livros/$fileName")
+            
+            imageRef.putFile(selectedImageUri!!).addOnSuccessListener {
+                imageRef.downloadUrl.addOnSuccessListener { uri ->
+                    salvarNoFirestore(uri.toString(), isEdit, novaEntrada)
+                }
+            }.addOnFailureListener {
+                binding.progressBar.visibility = View.GONE
+                binding.btnConcluir.isEnabled = true
+                Snackbar.make(binding.root, "Erro ao enviar imagem", Snackbar.LENGTH_SHORT).show()
+            }
+        } else {
+            salvarNoFirestore(currentImageUrl, isEdit, novaEntrada)
+        }
+    }
+
+    private fun salvarNoFirestore(url: String, isEdit: Boolean, entradaBase: Entrada) {
+        val novaEntrada = entradaBase.copy(imageUrl = url)
+        lifecycleScope.launch {
             if (isEdit && entradaId != null) {
                 editarEntrada(novaEntrada, entradaId!!)
                 Snackbar.make(binding.root, "Livro atualizado com sucesso!", Snackbar.LENGTH_SHORT).show()

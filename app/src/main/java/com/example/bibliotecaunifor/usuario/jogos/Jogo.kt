@@ -10,5 +10,6 @@ data class Jogo(
     val tempoMinutos: Int = 0,
     val disponivel: Boolean = true,
 // Isso preciso ver como fazer quando chegar na parte de mexer com os jogos
-    val idUsuarioComJogo: String? = null
+    val idUsuarioComJogo: String? = null,
+    val status: String = ""
 )

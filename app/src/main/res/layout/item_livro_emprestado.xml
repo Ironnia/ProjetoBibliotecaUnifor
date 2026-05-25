@@ -60,6 +60,19 @@
             app:layout_constraintTop_toBottomOf="@id/tvLivroAutor" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCancelarReserva"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:text="Cancelar"
+            android:textColor="#F44336"
+            android:visibility="gone"
+            app:layout_constraintEnd_toStartOf="@id/btnAcaoLivro"
+            app:layout_constraintTop_toBottomOf="@id/tvPrazo" />
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnAcaoLivro"
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"

@@ -42,7 +42,7 @@ class AdminEmprestimoAdapter(private var items: List<Emprestimo>) :
 
         with(holder.binding) {
             tvBookTitle.text = "${item.tituloLivro} | ${item.autorLivro}"
-            tvUserId.text = "Aluno(a): ${item.nomeUsuario} (${item.matriculaUsuario})"
+            tvUserId.text = "Aluno(a): ${item.nomeUsuario}"
             
             // Formatação de data
             val df = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
@@ -68,14 +68,15 @@ class AdminEmprestimoAdapter(private var items: List<Emprestimo>) :
                 }
             }
 
-            // Exibe informações de detalhes em Toast
+            // Botão "i" abre a tela de detalhes do livro (visão do aluno) para o admin consultar
             ivInfo.setOnClickListener {
-                val dataInfo = if (status == "pendente") "Aguardando retirada no balcão." else "Em posse do aluno(a) com prazo até $dataPrevistaStr."
-                android.widget.Toast.makeText(
+                val intent = android.content.Intent(
                     context,
-                    "${item.tituloLivro}\nAluno: ${item.nomeUsuario}\nStatus: ${status.uppercase()}\nInfo: $dataInfo",
-                    android.widget.Toast.LENGTH_LONG
-                ).show()
+                    com.example.bibliotecaunifor.usuario.reserva.DetalhesLivroActivity::class.java
+                ).apply {
+                    putExtra("idLivro", item.idLivro)
+                }
+                context.startActivity(intent)
             }
 
             // 2. Configuração de botões e ações baseado no status

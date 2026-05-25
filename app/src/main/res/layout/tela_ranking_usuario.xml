@@ -42,32 +42,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/iv_unifor_logo" />
 
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/chipGroupRanking"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_title"
-        app:singleSelection="true">
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chipGeral"
-            style="@style/Widget.MaterialComponents.Chip.Choice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="Ranking Geral" />
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chipMensal"
-            style="@style/Widget.MaterialComponents.Chip.Choice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Ranking Mensal" />
-    </com.google.android.material.chip.ChipGroup>
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvRanking"
         android:layout_width="match_parent"
@@ -75,7 +49,7 @@
         android:layout_marginTop="8dp"
         android:paddingHorizontal="16dp"
         app:layout_constraintBottom_toTopOf="@+id/card_meu_ranking"
-        app:layout_constraintTop_toBottomOf="@id/chipGroupRanking"
+        app:layout_constraintTop_toBottomOf="@id/tv_title"
         tools:listitem="@layout/item_ranking_usuario" />
 
     <!-- Card Fixo: Minha Posição -->

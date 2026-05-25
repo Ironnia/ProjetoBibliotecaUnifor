@@ -48,57 +48,9 @@
             android:id="@+id/et_search"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="Digite o título, autor, isbn..."
+            android:hint="Digite o título..."
             android:padding="0dp" />
     </com.google.android.material.textfield.TextInputLayout>
-
-    <HorizontalScrollView
-        android:id="@+id/hsv_chips"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="8dp"
-        android:scrollbars="none"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/til_search">
-
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/cg_filters"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:singleLine="true">
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip_livros"
-                style="@style/Widget.Material3.Chip.Filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Livros"
-                android:checked="true" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip_artigos"
-                style="@style/Widget.Material3.Chip.Filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Artigos" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip_revistas"
-                style="@style/Widget.Material3.Chip.Filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Revistas" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip_teses"
-                style="@style/Widget.Material3.Chip.Filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Teses" />
-        </com.google.android.material.chip.ChipGroup>
-    </HorizontalScrollView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_books"
@@ -109,7 +61,7 @@
         app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/hsv_chips"
+        app:layout_constraintTop_toBottomOf="@+id/til_search"
         tools:listitem="@layout/item_book_catalog" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView

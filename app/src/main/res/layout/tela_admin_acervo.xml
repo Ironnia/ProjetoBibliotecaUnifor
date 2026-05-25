@@ -40,45 +40,20 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
                 android:background="@android:color/transparent"
-                android:hint="Digite o titulo, autor, isbn..."
+                android:hint="Digite o título..."
                 android:inputType="text"
                 android:textSize="14sp" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/chipGroupFiltros"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:layout_marginStart="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cv_search"
-        app:singleSelection="true">
 
-        <com.google.android.material.chip.Chip
-            style="@style/Widget.Material3.Chip.Filter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Alugados"
-            app:chipIcon="@drawable/bg_circle_white"
-            app:chipIconTint="@color/success_green" />
-
-        <com.google.android.material.chip.Chip
-            style="@style/Widget.Material3.Chip.Filter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="A retirar"
-            app:chipIcon="@drawable/bg_circle_white"
-            app:chipIconTint="@color/unifor_anil_primary" />
-    </com.google.android.material.chip.ChipGroup>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/chipGroupFiltros"
+        app:layout_constraintTop_toBottomOf="@id/cv_search"
         app:layout_constraintBottom_toTopOf="@id/bottom_navigation" />
 
     <ProgressBar

@@ -33,9 +33,14 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        // teste do crashlytics:
-//        // https://firebase.google.com/docs/crashlytics/android/get-started?hl=pt-br#force-test-crash
-//        throw RuntimeException("Test Crash") // Force a crash
+        
+        if (Firebase.auth.currentUser == null) {
+            val intent = Intent(this, com.example.bibliotecaunifor.auth.LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()
+            return
+        }
 
         // enableEdgeToEdge()
         binding = TelaHomeUsuarioBinding.inflate(layoutInflater)
@@ -59,7 +64,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Setup Navigation
-        NavigationUtils.navegacaoAluno(this, binding.bottomNavigation, R.id.navigation_home_admin)
+        NavigationUtils.navegacaoAluno(this, binding.bottomNavigation, R.id.navigation_home_aluno)
 
         configurarSecaoDevolucoes()
 
@@ -86,9 +91,16 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, JogosTabuleiroActivity::class.java))
         }
 
-        // Search Bar fake enter
+        // Search Bar enter
         binding.etSearch.setOnEditorActionListener { _, _, _ ->
-            startActivity(Intent(this, CatalogoActivity::class.java))
+            val query = binding.etSearch.text.toString().trim()
+            val intent = Intent(this, CatalogoActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+                if (query.isNotEmpty()) {
+                    putExtra("QUERY", query)
+                }
+            }
+            startActivity(intent)
             true
         }
 
@@ -118,7 +130,7 @@ class MainActivity : AppCompatActivity() {
         binding.tvDevolucoesList.text = "Buscando suas devoluções..."
 
         // Ajuda da documentação, montado junto com o chat da documentação:
-        db.collection("alugueis")
+        db.collection("emprestimos")
             .whereEqualTo("idUsuario", uid) // fitra os livros só para o aluno.
             .whereEqualTo("status", "ativo") // mos
             .get()

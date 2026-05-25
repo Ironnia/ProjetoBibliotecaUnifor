@@ -1,23 +1,28 @@
 package com.example.bibliotecaunifor.admin.acervo
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.view.inputmethod.EditorInfo
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
-import com.example.bibliotecaunifor.R
-import com.example.bibliotecaunifor.databinding.TelaAdminAcervoBinding
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.bibliotecaunifor.crud.listarEntradas
-import com.example.bibliotecaunifor.crud.buscarEntrada
+import com.example.bibliotecaunifor.R
+import com.example.bibliotecaunifor.crud.Entrada
+import com.example.bibliotecaunifor.databinding.TelaAdminAcervoBinding
 import com.example.bibliotecaunifor.usuario.utils.NavigationUtils
-import kotlinx.coroutines.launch
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
+
+import com.example.bibliotecaunifor.crud.removerAcentos
 
 class AdminAcervoActivity : AppCompatActivity() {
     private lateinit var binding: TelaAdminAcervoBinding
     private lateinit var adapter: AdminEntradaAdapter
-    private var termoBuscaInicial: String? = null
+
+    /** Cache da lista completa carregada via SnapshotListener */
+    private var todasEntradas = listOf<Entrada>()
+
+    private val db = Firebase.firestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,79 +31,91 @@ class AdminAcervoActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // Recupera busca inicial da Home (se houver)
-        termoBuscaInicial = intent.getStringExtra("BUSCA")
+        val termoBuscaInicial = intent.getStringExtra("BUSCA")
         if (!termoBuscaInicial.isNullOrEmpty()) {
             binding.etSearch.setText(termoBuscaInicial)
         }
 
-        binding.includeToolbar.btnBack.setOnClickListener {
-            finish()
-        }
+        binding.includeToolbar.btnBack.setOnClickListener { finish() }
 
         NavigationUtils.navegacaoAdmin(this, binding.bottomNavigation, R.id.navigation_catalogo_admin)
 
         setupRecyclerView()
-
-        // Configura campo de busca rápida local
-        binding.etSearch.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_ACTION_DONE) {
-                val texto = binding.etSearch.text.toString().trim()
-                realizarBusca(texto)
-                true
-            } else {
-                false
-            }
-        }
-
-        // Habilita busca em tempo real com mudança de texto
-        binding.etSearch.addTextChangedListener(object : android.text.TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val texto = s.toString().trim()
-                if (texto.isEmpty()) {
-                    realizarBusca("")
-                }
-            }
-            override fun afterTextChanged(s: android.text.Editable?) {}
-        })
+        setupRealtimeListener()
+        setupSearch()
 
         binding.fabAdd.setOnClickListener {
-            val intent = android.content.Intent(this, AdminCriarEntradaActivity::class.java)
+            val intent = Intent(this, AdminCriarEntradaActivity::class.java)
             intent.putExtra("isEdit", false)
             startActivity(intent)
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        // Se houver busca inicial, faz a busca. Senão, carrega a lista completa
-        val texto = binding.etSearch.text.toString().trim()
-        realizarBusca(texto)
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        val busca = intent.getStringExtra("BUSCA")
+        if (!busca.isNullOrEmpty()) {
+            binding.etSearch.setText(busca)
+        }
     }
 
     private fun setupRecyclerView() {
         adapter = AdminEntradaAdapter(emptyList()) {
-            val texto = binding.etSearch.text.toString().trim()
-            realizarBusca(texto)
+            // Callback ao deletar: o SnapshotListener vai atualizar automaticamente
         }
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
     }
 
-    private fun realizarBusca(pesquisa: String) {
-        lifecycleScope.launch {
-            binding.progressBar.visibility = View.VISIBLE
-            binding.recyclerView.visibility = View.GONE
+    /**
+     * Escuta em tempo real o acervo. Qualquer CRUD feito pelo admin
+     * reflete instantaneamente na lista sem precisar sair e voltar.
+     */
+    private fun setupRealtimeListener() {
+        binding.progressBar.visibility = View.VISIBLE
+        binding.recyclerView.visibility = View.GONE
 
-            val items = if (pesquisa.isEmpty()) {
-                listarEntradas()
-            } else {
-                buscarEntrada(pesquisa)
+        db.collection("Acervo")
+            .addSnapshotListener { snapshot, error ->
+                binding.progressBar.visibility = View.GONE
+                binding.recyclerView.visibility = View.VISIBLE
+
+                if (error != null || snapshot == null) return@addSnapshotListener
+
+                todasEntradas = snapshot.toObjects(Entrada::class.java)
+                filtrarLocalmente()
             }
+    }
 
-            adapter.updateData(items)
-            binding.progressBar.visibility = View.GONE
-            binding.recyclerView.visibility = View.VISIBLE
+    /**
+     * Configura busca local em tempo real por título, autor ou ISBN
+     * (case-insensitive e sem necessidade de índice no Firestore).
+     */
+    private fun setupSearch() {
+        binding.etSearch.addTextChangedListener(object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                filtrarLocalmente()
+            }
+            override fun afterTextChanged(s: android.text.Editable?) {}
+        })
+    }
+
+    /** Filtra a lista em memória por título, autor ou ISBN (case-insensitive e tolerante a acentos). */
+    private fun filtrarLocalmente() {
+        val termo = binding.etSearch.text.toString().trim().removerAcentos()
+
+        val resultado = if (termo.isEmpty()) {
+            todasEntradas
+        } else {
+            todasEntradas.filter { entrada ->
+                entrada.titulo.removerAcentos().contains(termo) ||
+                        entrada.autor.removerAcentos().contains(termo) ||
+                        entrada.isbn.removerAcentos().contains(termo)
+            }
         }
+
+        adapter.updateData(resultado)
     }
 }

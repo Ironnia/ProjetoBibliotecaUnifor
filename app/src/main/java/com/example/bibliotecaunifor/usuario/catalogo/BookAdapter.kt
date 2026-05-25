@@ -14,9 +14,9 @@ import com.example.bibliotecaunifor.databinding.TelaCatalogoBinding
 
 class BookAdapter(
     private var entries: List<Entrada>,
+    private var reservedBookIds: Set<String> = emptySet(),
     private val onBookClicked: (Entrada) -> Unit,
     private val onReserveClicked: (Entrada) -> Unit
-
 ) : RecyclerView.Adapter<BookAdapter.BookViewHolder>() {
 
 //    class BookViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -52,11 +52,27 @@ class BookAdapter(
             val available = entry.exemplaresDisponiveis
             tvAvailability.text = "Disponibilidade: $available exemplares"
 
-            if (available > 0) {
+            if (entry.imageUrl.isNotEmpty()) {
+                com.bumptech.glide.Glide.with(root.context)
+                    .load(entry.imageUrl)
+                    .placeholder(R.drawable.menu_book_24)
+                    .into(ivIcon)
+            } else {
+                ivIcon.setImageResource(R.drawable.menu_book_24)
+            }
+
+            val jaReservado = reservedBookIds.contains(entry.id)
+            if (jaReservado) {
+                btnAction.text = "Reservado"
+                btnAction.isEnabled = false
+                btnAction.backgroundTintList = ContextCompat.getColorStateList(root.context, android.R.color.darker_gray)
+            } else if (available > 0) {
                 btnAction.text = "Reservar"
+                btnAction.isEnabled = true
                 btnAction.backgroundTintList = ContextCompat.getColorStateList(root.context, R.color.success_green)
             } else {
                 btnAction.text = "Indisponível"
+                btnAction.isEnabled = false
                 btnAction.backgroundTintList = ContextCompat.getColorStateList(root.context, R.color.error_red)
             }
 
@@ -86,8 +102,9 @@ class BookAdapter(
 
     override fun getItemCount() = entries.size
     
-    fun updateData(newEntries: List<Entrada>) {
+    fun updateData(newEntries: List<Entrada>, newReservedIds: Set<String> = emptySet()) {
         entries = newEntries
+        reservedBookIds = newReservedIds
         notifyDataSetChanged()
     }
 }

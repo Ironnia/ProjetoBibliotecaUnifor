@@ -51,7 +51,14 @@
                 app:cardCornerRadius="16dp"
                 app:cardElevation="4dp">
 
+                <ImageView
+                    android:id="@+id/iv_book_cover"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop" />
+
                 <TextView
+                    android:id="@+id/tv_book_cover_placeholder"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
@@ -152,6 +159,7 @@
                 android:layout_marginTop="24dp"
                 android:text="Reservar"
                 android:textSize="16sp"
+                android:visibility="gone"
                 app:backgroundTint="@color/success_green"
                 app:cornerRadius="12dp" />
 

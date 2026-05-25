@@ -22,6 +22,8 @@ import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ListenerRegistration
 
+import android.view.View
+
 class PerfilUsuarioActivity : AppCompatActivity() {
     private lateinit var binding: TelaPerfilUsuarioBinding
     private val db = Firebase.firestore
@@ -83,41 +85,73 @@ class PerfilUsuarioActivity : AppCompatActivity() {
         }
 
         binding.btnPendencias.setOnClickListener {
-            AlertDialog.Builder(this)
-                .setTitle("Pendências Financeiras")
-                .setMessage("Você não possui multas ou pendências no momento. Parabéns!")
-                .setPositiveButton("Ok", null)
-                .show()
-        }
+            val uid = auth.currentUser?.uid ?: return@setOnClickListener
+            db.collection("emprestimos")
+                .whereEqualTo("idUsuario", uid)
+                .whereEqualTo("status", "ativo")
+                .get()
+                .addOnSuccessListener { result ->
+                    var totalMulta = 0.0
+                    val listaAtrasados = mutableListOf<String>()
+                    val agora = System.currentTimeMillis()
 
-        binding.btnTags.setOnClickListener {
-            val dialogView = layoutInflater.inflate(R.layout.dialog_tags_preferencia, null)
-            val dialog = AlertDialog.Builder(this)
-                .setView(dialogView)
-                .create()
+                    result.forEach { doc ->
+                        val titulo = doc.getString("tituloItem") ?: "Livro"
+                        val dataDevolucao = doc.getLong("dataDevolucao") ?: 0L
+                        if (dataDevolucao > 0 && agora > dataDevolucao) {
+                            val diffMillis = agora - dataDevolucao
+                            val diasAtraso = Math.ceil(diffMillis.toDouble() / (1000 * 60 * 60 * 24)).toInt()
+                            if (diasAtraso > 0) {
+                                val multaLivro = diasAtraso * 2.0
+                                totalMulta += multaLivro
+                                listaAtrasados.add("- $titulo: $diasAtraso dias de atraso (Multa: R$ ${String.format("%.2f", multaLivro)})")
+                            }
+                        }
+                    }
 
-            dialogView.findViewById<MaterialButton>(R.id.btn_salvar_tags).setOnClickListener {
-                dialog.dismiss()
-                Snackbar.make(binding.root, "Preferências atualizadas!", Snackbar.LENGTH_SHORT).show()
-            }
+                    val builder = AlertDialog.Builder(this)
+                        .setTitle("Pendências Financeiras")
 
-            dialog.show()
+                    if (totalMulta > 0.0) {
+                        val msg = "Você possui pendências de devolução em atraso!\n\n" +
+                                listaAtrasados.joinToString("\n") + "\n\n" +
+                                "Total acumulado de Multas: R$ ${String.format("%.2f", totalMulta)}\n\n" +
+                                "Regularize entregando os livros no balcão da biblioteca."
+                        builder.setMessage(msg)
+                    } else {
+                        builder.setMessage("Você não possui multas ou pendências no momento. Parabéns!")
+                    }
+                    builder.setPositiveButton("Ok", null).show()
+                }
+                .addOnFailureListener {
+                    AlertDialog.Builder(this)
+                        .setTitle("Pendências Financeiras")
+                        .setMessage("Você não possui multas ou pendências no momento. Parabéns!")
+                        .setPositiveButton("Ok", null)
+                        .show()
+                }
         }
     }
 
     private fun setupListeners() {
         val uid = auth.currentUser?.uid ?: return
 
-        // 1. Escuta em tempo real os dados do usuário para preencher pontos
+        // 1. Escuta em tempo real os dados do usuário para preencher pontos e medalha de ouro
         userListener = db.collection("usuario").document(uid)
             .addSnapshotListener { snapshot, error ->
                 if (error == null && snapshot != null) {
                     val pontos = snapshot.getLong("pontos")?.toInt() ?: 0
                     binding.tvCountPontos.text = String.format("%,d", pontos)
+                    
+                    if (pontos >= 100) {
+                        binding.llMedalOuro.visibility = View.VISIBLE
+                    } else {
+                        binding.llMedalOuro.visibility = View.GONE
+                    }
                 }
             }
 
-        // 2. Escuta em tempo real todos os usuários ordenados para calcular a posição no ranking
+        // 2. Escuta em tempo real todos os usuários ordenados para calcular a posição no ranking e medalha Top 5
         rankingListener = db.collection("usuario")
             .orderBy("pontos", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshot, error ->
@@ -125,9 +159,17 @@ class PerfilUsuarioActivity : AppCompatActivity() {
                     val usersList = snapshot.documents
                     val posicao = usersList.indexOfFirst { it.id == uid }
                     if (posicao != -1) {
-                        binding.tvCountRanking.text = "${posicao + 1}º"
+                        val pos = posicao + 1
+                        binding.tvCountRanking.text = "${pos}º"
+                        
+                        if (pos <= 5) {
+                            binding.llMedalTop5.visibility = View.VISIBLE
+                        } else {
+                            binding.llMedalTop5.visibility = View.GONE
+                        }
                     } else {
                         binding.tvCountRanking.text = "-"
+                        binding.llMedalTop5.visibility = View.GONE
                     }
                 }
             }

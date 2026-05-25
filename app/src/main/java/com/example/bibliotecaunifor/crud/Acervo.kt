@@ -40,15 +40,21 @@ suspend fun excluirEntrada(id: String) {
     }
 }
 
+fun String.removerAcentos(): String {
+    val temp = java.text.Normalizer.normalize(this, java.text.Normalizer.Form.NFD)
+    return "\\p{InCombiningDiacriticalMarks}+".toRegex().replace(temp, "").lowercase(java.util.Locale.getDefault())
+}
+
 suspend fun buscarEntrada(pesquisa: String): List<Entrada> {
     try {
-        val snapshot = db.collection("Acervo")
-            .orderBy("titulo")
-            .startAt(pesquisa)
-            .endAt(pesquisa+ "\uf8ff")
-            .get()
-            .await()
-        return snapshot.toObjects(Entrada::class.java)
+        val todas = listarEntradas()
+        if (pesquisa.trim().isEmpty()) return todas
+        val termo = pesquisa.trim().removerAcentos()
+        return todas.filter { entrada ->
+            entrada.titulo.removerAcentos().contains(termo) ||
+                    entrada.autor.removerAcentos().contains(termo) ||
+                    entrada.isbn.removerAcentos().contains(termo)
+        }
     } catch (e: Exception) {
         println("Erro ao pesquisar entradas: ${e.message}")
         return emptyList()

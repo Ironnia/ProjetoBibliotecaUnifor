@@ -34,6 +34,14 @@ class AdminEntradaAdapter(
             tvBookTitle.text = "${item.titulo} | ${item.autor}"
             tvCopiesInfo.text = "${item.totalExemplares} exemplares | ${item.exemplaresAlugados} alugados"
 
+            if (item.imageUrl.isNotEmpty()) {
+                com.bumptech.glide.Glide.with(holder.itemView.context)
+                    .load(item.imageUrl)
+                    .into(ivBookCover)
+            } else {
+                ivBookCover.setImageResource(com.example.bibliotecaunifor.R.drawable.menu_book_24)
+            }
+
             holder.itemView.setOnClickListener {
                 val intent = Intent(holder.itemView.context, AdminDetalhesLivroActivity::class.java).apply {
                     putExtra("entrada_id", item.id)

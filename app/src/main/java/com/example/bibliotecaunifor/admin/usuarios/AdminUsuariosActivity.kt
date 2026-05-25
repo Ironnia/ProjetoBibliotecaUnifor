@@ -27,7 +27,7 @@ class AdminUsuariosActivity : AppCompatActivity() {
         binding.fabAdd.setOnClickListener {
             com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
                 .setTitle("Atribuir Livro")
-                .setMessage("Informe a matrícula do aluno e o livro que deseja atribuir diretamente.")
+                .setMessage("Informe o e-mail do aluno e o livro que deseja atribuir diretamente.")
                 .setPositiveButton("Confirmar") { _, _ ->
                     com.google.android.material.snackbar.Snackbar.make(
                         binding.root, "Livro atribuído com sucesso!", com.google.android.material.snackbar.Snackbar.LENGTH_SHORT

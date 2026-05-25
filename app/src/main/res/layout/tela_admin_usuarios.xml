@@ -39,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
                 android:background="@android:color/transparent"
-                android:hint="Digite o titulo, autor, isbn..."
+                android:hint="Digite o título..."
                 android:inputType="text"
                 android:textSize="14sp" />
         </LinearLayout>

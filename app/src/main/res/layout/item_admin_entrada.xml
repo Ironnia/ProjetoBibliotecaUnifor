@@ -16,29 +16,50 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/tv_book_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_toStartOf="@+id/iv_info"
-                android:text="A Metamorfose | Franz Kafka"
-                android:textColor="@color/unifor_marinho_dark"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
             <ImageView
-                android:id="@+id/iv_info"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_alignParentEnd="true"
-                android:src="@android:drawable/ic_dialog_info"
-                app:tint="#666666" />
-        </RelativeLayout>
+                android:id="@+id/iv_book_cover"
+                android:layout_width="60dp"
+                android:layout_height="85dp"
+                android:layout_marginEnd="16dp"
+                android:scaleType="centerCrop"
+                android:background="#EEEEEE"
+                android:src="@drawable/menu_book_24"
+                app:tint="@color/unifor_anil_primary" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/tv_book_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_toStartOf="@+id/iv_info"
+                        android:text="A Metamorfose | Franz Kafka"
+                        android:textColor="@color/unifor_marinho_dark"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:id="@+id/iv_info"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentEnd="true"
+                        android:src="@android:drawable/ic_dialog_info"
+                        app:tint="#666666" />
+                </RelativeLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -93,5 +114,8 @@
                 app:backgroundTint="#EF5350"
                 app:cornerRadius="8dp" />
         </LinearLayout>
-    </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+        </LinearLayout>
+
 </com.google.android.material.card.MaterialCardView>

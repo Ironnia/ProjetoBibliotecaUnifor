@@ -29,6 +29,15 @@ class AdminHomeActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        if (auth.currentUser == null) {
+            val intent = Intent(this, com.example.bibliotecaunifor.auth.LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()
+            return
+        }
+
         enableEdgeToEdge()
         binding = TelaAdminHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -72,8 +81,10 @@ class AdminHomeActivity : AppCompatActivity() {
         binding.etSearch.setOnEditorActionListener { _, _, _ ->
             val busca = binding.etSearch.text.toString().trim()
             if (busca.isNotEmpty()) {
-                val intent = Intent(this, AdminAcervoActivity::class.java)
-                intent.putExtra("BUSCA", busca)
+                val intent = Intent(this, AdminAcervoActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+                    putExtra("BUSCA", busca)
+                }
                 startActivity(intent)
             }
             true
@@ -95,12 +106,8 @@ class AdminHomeActivity : AppCompatActivity() {
                 val atrasados = result.documents.count { it.getString("status") == "atrasado" }
 
                 binding.tvResumoEmprestimos.text = "$ativos alugados | $atrasados atrasados"
-
-                if (atrasados > 0) {
-                    binding.tvResumoEmprestimos.setTextColor(android.graphics.Color.parseColor("#FF0000"))
-                } else {
-                    binding.tvResumoEmprestimos.setTextColor(getColor(R.color.unifor_marinho_dark))
-                }
+                // Mantém sempre azul institucional para consistência com o card de Salas
+                binding.tvResumoEmprestimos.setTextColor(getColor(R.color.unifor_anil_primary))
             }
             .addOnFailureListener { e ->
                 FirebaseCrashlytics.getInstance().recordException(e)

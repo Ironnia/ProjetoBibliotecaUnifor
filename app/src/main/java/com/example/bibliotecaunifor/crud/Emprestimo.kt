@@ -10,7 +10,6 @@ data class Emprestimo(
     val idExemplar: String = "", // registro do exemplar físico
     val idUsuario: String = "",
     val nomeUsuario: String = "",
-    val matriculaUsuario: String = "",
     val tituloLivro: String = "",
     val autorLivro: String = "",
     val status: String = "pendente", // "pendente", "ativo", "devolvido", "atrasado"

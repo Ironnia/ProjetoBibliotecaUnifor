@@ -41,9 +41,6 @@ class RankingUsuarioActivity : AppCompatActivity() {
         setupRecyclerView()
         observeRanking()
         carregarMinhaPosicao()
-
-        binding.chipGeral.setOnClickListener { observeRanking() }
-        binding.chipMensal.setOnClickListener { observeRanking() }
     }
 
     private fun setupRecyclerView() {
