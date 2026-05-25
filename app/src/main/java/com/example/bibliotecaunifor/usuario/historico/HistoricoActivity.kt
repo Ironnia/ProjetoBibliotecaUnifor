@@ -17,6 +17,11 @@ class HistoricoActivity : AppCompatActivity() {
     private val db = Firebase.firestore
     private val auth = Firebase.auth
 
+    // Listas globais para cada categoria
+    private val listaLivros = mutableListOf<HistoryItem>()
+    private val listaJogos = mutableListOf<HistoryItem>()
+    private val listaSalas = mutableListOf<HistoryItem>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -34,104 +39,49 @@ class HistoricoActivity : AppCompatActivity() {
 
     private fun setupHistoryList() {
         val uid = auth.currentUser?.uid ?: return
-        val list = mutableListOf<HistoryItem>()
-        var pendingQueries = 3
-
-        val sdfParse = java.text.SimpleDateFormat("dd/MM", java.util.Locale.getDefault())
         val sdfDisplay = java.text.SimpleDateFormat("dd MMM", java.util.Locale("pt", "BR"))
 
-        // Decodifica datas resilientes de forma compatível com Long e com objetos Timestamp do Firebase
+        // Limpa as listas para a nova consulta
+        listaLivros.clear()
+        listaJogos.clear()
+        listaSalas.clear()
+
+        // Configuração do comportamento dos Chips de Filtro
+        binding.chipGroupFilter.setOnCheckedStateChangeListener { _, checkedIds ->
+            when (checkedIds.firstOrNull()) {
+                R.id.chip_livros -> atualizarRecyclerView(listaLivros)
+                R.id.chip_jogos -> atualizarRecyclerView(listaJogos)
+                R.id.chip_salas -> atualizarRecyclerView(listaSalas)
+            }
+        }
+
+        // Decodifica datas de forma ultra-resiliente (aceita Long, Timestamp, Date e String)
         fun obterTimestamp(doc: com.google.firebase.firestore.DocumentSnapshot, campos: List<String>): Long {
             for (campo in campos) {
-                val longVal = doc.getLong(campo)
-                if (longVal != null) return longVal
-                
-                val tsVal = doc.getTimestamp(campo)
-                if (tsVal != null) return tsVal.toDate().time
-            }
-            return System.currentTimeMillis()
-        }
+                val valor = doc.get(campo) ?: continue // Pega o objeto genérico e pula se for nulo
 
-        fun checkAndPublish() {
-            pendingQueries--
-            if (pendingQueries == 0) {
-                list.sortByDescending { it.timestamp }
-                
-                binding.rvHistory.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this@HistoricoActivity)
-                binding.rvHistory.adapter = object : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
-                    inner class HistoryViewHolder(view: android.view.View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
-                        val icon: android.widget.ImageView = view.findViewById(R.id.iv_type_icon)
-                        val title: android.widget.TextView = view.findViewById(R.id.tv_item_title)
-                        val desc: android.widget.TextView = view.findViewById(R.id.tv_item_description)
-                        val date: android.widget.TextView = view.findViewById(R.id.tv_item_date)
-                        val type: android.widget.TextView = view.findViewById(R.id.tv_item_type)
-                    }
-
-                    override fun onCreateViewHolder(parent: android.view.ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
-                        val view = android.view.LayoutInflater.from(parent.context).inflate(R.layout.item_history, parent, false)
-                        return HistoryViewHolder(view)
-                    }
-
-                    override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
-                        val item = list[position]
-                        (holder as HistoryViewHolder).apply {
-                            title.text = item.title
-                            desc.text = item.description
-                            date.text = item.date
-                            type.text = item.type
-                            icon.setImageResource(item.iconRes)
-                            
-                            val isErrorStatus = item.description.contains("expirada", ignoreCase = true) || 
-                                                item.description.contains("recusada", ignoreCase = true) || 
-                                                item.description.contains("cancelada", ignoreCase = true) ||
-                                                item.description.contains("recusado", ignoreCase = true) || 
-                                                item.description.contains("cancelado", ignoreCase = true) ||
-                                                item.description.contains("expirado", ignoreCase = true)
-                            if (isErrorStatus) {
-                                icon.imageTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE)
-                                icon.setBackgroundResource(R.drawable.bg_circle_red)
-                            } else {
-                                icon.imageTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#004AF7"))
-                                icon.setBackgroundResource(R.drawable.bg_circle_white)
-                            }
-                            
-                            itemView.setOnClickListener {
-                                when (item.type) {
-                                    "LIVRO" -> {
-                                        val intent = Intent(this@HistoricoActivity, com.example.bibliotecaunifor.usuario.reserva.DetalhesLivroActivity::class.java).apply {
-                                            putExtra("entrada_id", item.itemId)
-                                        }
-                                        startActivity(intent)
-                                    }
-                                    "JOGO" -> {
-                                        val intent = Intent(this@HistoricoActivity, com.example.bibliotecaunifor.usuario.jogos.JogosTabuleiroActivity::class.java)
-                                        startActivity(intent)
-                                    }
-                                    "SALA" -> {
-                                        val intent = Intent(this@HistoricoActivity, com.example.bibliotecaunifor.usuario.salas.SalasActivity::class.java)
-                                        startActivity(intent)
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    override fun getItemCount() = list.size
+                when (valor) {
+                    is Number -> return valor.toLong()
+                    is com.google.firebase.Timestamp -> return valor.toDate().time
+                    is java.util.Date -> return valor.time
+                    is String -> return valor.toLongOrNull() ?: 0L
                 }
             }
+            return 0L
         }
 
-        // 1. Livros
+        // 1. Carregar Empréstimos de Livros devolvidos/cancelados
         db.collection("emprestimos")
             .whereEqualTo("idUsuario", uid)
             .whereIn("status", listOf("devolvido", "recusado", "cancelado", "expirado"))
             .get()
             .addOnSuccessListener { result ->
+                listaLivros.clear()
                 result.forEach { doc ->
-                    val titulo = doc.getString("tituloItem") ?: "Livro"
+                    val titulo = doc.getString("tituloLivro") ?: doc.getString("tituloItem") ?: doc.getString("titulo") ?: "Livro"
                     val status = doc.getString("status") ?: ""
-                    val itemId = doc.getString("idItem") ?: ""
-                    val timestamp = obterTimestamp(doc, listOf("dataEmprestimo"))
+                    val itemId = doc.getString("idItem") ?: doc.getString("idLivro") ?: ""
+                    val timestamp = obterTimestamp(doc, listOf("dataDevolucaoReal", "dataStatus", "dataDevolucao", "dataEmprestimo", "dataRetirada"))
                     val desc = when (status) {
                         "devolvido" -> "Empréstimo finalizado"
                         "recusado" -> "Reserva recusada"
@@ -139,54 +89,60 @@ class HistoricoActivity : AppCompatActivity() {
                         "expirado" -> "Reserva expirada"
                         else -> "Histórico"
                     }
-                    val dateStr = sdfDisplay.format(java.util.Date(timestamp))
-                    list.add(HistoryItem(titulo, desc, dateStr, "LIVRO", R.drawable.menu_book_24, timestamp, itemId))
+                    val dateStr = if (timestamp > 0) sdfDisplay.format(java.util.Date(timestamp)) else "--/--"
+                    listaLivros.add(HistoryItem(titulo, desc, dateStr, "LIVRO", R.drawable.menu_book_24, timestamp, itemId))
                 }
-                checkAndPublish()
-            }
-            .addOnFailureListener {
-                checkAndPublish()
+                listaLivros.sortByDescending { it.timestamp }
+                
+                // Se o chip de Livros for o ativo, atualiza a tela
+                if (binding.chipLivros.isChecked) {
+                    atualizarRecyclerView(listaLivros)
+                }
             }
 
-        // 2. Jogos
+        // 2. Carregar Aluguéis de Jogos finalizados
         db.collection("alugueis")
             .whereEqualTo("idUsuario", uid)
             .whereIn("status", listOf("devolvido", "recusado", "cancelado", "expirado"))
             .get()
             .addOnSuccessListener { result ->
+                listaJogos.clear()
                 result.forEach { doc ->
-                    val titulo = doc.getString("tituloItem") ?: doc.getString("nomeJogo") ?: "Jogo"
+                    val titulo = doc.getString("tituloItem") ?: doc.getString("nomeJogo") ?: doc.getString("titulo") ?: "Jogo"
                     val status = doc.getString("status") ?: ""
                     val itemId = doc.getString("idItem") ?: ""
-                    val timestamp = obterTimestamp(doc, listOf("dataEmprestimo", "dataAluguel"))
+                    val timestamp = obterTimestamp(doc, listOf("dataDevolucaoReal", "dataStatus", "dataDevolucao", "dataAluguel", "dataEmprestimo"))
                     val desc = when (status) {
                         "devolvido" -> "Devolvido no balcão"
                         "recusado" -> "Aluguel recusado"
-                        "cancelado" -> "Aluguel cancelada"
+                        "cancelado" -> "Aluguel cancelado"
                         "expirado" -> "Reserva expirada"
                         else -> "Histórico"
                     }
-                    val dateStr = sdfDisplay.format(java.util.Date(timestamp))
-                    list.add(HistoryItem(titulo, desc, dateStr, "JOGO", R.drawable.casino_24, timestamp, itemId))
+                    val dateStr = if (timestamp > 0) sdfDisplay.format(java.util.Date(timestamp)) else "--/--"
+                    listaJogos.add(HistoryItem(titulo, desc, dateStr, "JOGO", R.drawable.casino_24, timestamp, itemId))
                 }
-                checkAndPublish()
-            }
-            .addOnFailureListener {
-                checkAndPublish()
+                listaJogos.sortByDescending { it.timestamp }
+
+                // Se o chip de Jogos for o ativo, atualiza a tela
+                if (binding.chipJogos.isChecked) {
+                    atualizarRecyclerView(listaJogos)
+                }
             }
 
-        // 3. Salas
+        // 3. Carregar Agendamentos de Salas/Mesas concluídos
         db.collection("agendamentos")
             .whereEqualTo("idUsuario", uid)
             .whereIn("status", listOf("expirado", "concluido", "finalizado", "cancelado"))
             .get()
             .addOnSuccessListener { result ->
+                listaSalas.clear()
                 result.forEach { doc ->
-                    val sala = doc.getString("nomeSala") ?: "Sala/Mesa"
+                    val sala = doc.getString("nomeSala") ?: doc.getString("sala") ?: "Sala/Mesa"
                     val status = doc.getString("status") ?: ""
                     val idSala = doc.getString("idSala") ?: ""
                     val dataStr = doc.getString("data") ?: ""
-                    var timestamp = System.currentTimeMillis()
+                    var timestamp = 0L
                     var dateStr = dataStr
                     if (dataStr.isNotEmpty()) {
                         try {
@@ -211,7 +167,7 @@ class HistoricoActivity : AppCompatActivity() {
                                 dateStr = sdfDisplay.format(parsedDate)
                             }
                         } catch (e: Exception) {
-                            // Keep default
+                            // Mantém o padrão do Firestore se falhar
                         }
                     }
                     val desc = when (status) {
@@ -220,13 +176,80 @@ class HistoricoActivity : AppCompatActivity() {
                         "cancelado" -> "Agendamento cancelado"
                         else -> "Histórico"
                     }
-                    list.add(HistoryItem(sala, desc, dateStr, "SALA", R.drawable.calendar_clock_24, timestamp, idSala))
+                    listaSalas.add(HistoryItem(sala, desc, dateStr, "SALA", R.drawable.calendar_clock_24, timestamp, idSala))
                 }
-                checkAndPublish()
+                listaSalas.sortByDescending { it.timestamp }
+
+                // Se o chip de Salas for o ativo, atualiza a tela
+                if (binding.chipSalas.isChecked) {
+                    atualizarRecyclerView(listaSalas)
+                }
             }
-            .addOnFailureListener {
-                checkAndPublish()
+    }
+
+    // Função de preenchimento e vinculação do RecyclerView com a lista selecionada
+    private fun atualizarRecyclerView(itens: List<HistoryItem>) {
+        binding.rvHistory.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this@HistoricoActivity)
+        binding.rvHistory.adapter = object : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
+            inner class HistoryViewHolder(view: android.view.View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+                val icon: android.widget.ImageView = view.findViewById(R.id.iv_type_icon)
+                val title: android.widget.TextView = view.findViewById(R.id.tv_item_title)
+                val desc: android.widget.TextView = view.findViewById(R.id.tv_item_description)
+                val date: android.widget.TextView = view.findViewById(R.id.tv_item_date)
+                val type: android.widget.TextView = view.findViewById(R.id.tv_item_type)
             }
+
+            override fun onCreateViewHolder(parent: android.view.ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
+                val view = android.view.LayoutInflater.from(parent.context).inflate(R.layout.item_history, parent, false)
+                return HistoryViewHolder(view)
+            }
+
+            override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
+                val item = itens[position]
+                (holder as HistoryViewHolder).apply {
+                    title.text = item.title
+                    desc.text = item.description
+                    date.text = item.date
+                    type.text = item.type
+                    icon.setImageResource(item.iconRes)
+                    
+                    val isErrorStatus = item.description.contains("expirada", ignoreCase = true) || 
+                                        item.description.contains("recusada", ignoreCase = true) || 
+                                        item.description.contains("cancelada", ignoreCase = true) ||
+                                        item.description.contains("recusado", ignoreCase = true) || 
+                                        item.description.contains("cancelado", ignoreCase = true) ||
+                                        item.description.contains("expirado", ignoreCase = true)
+                    if (isErrorStatus) {
+                        icon.imageTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE)
+                        icon.setBackgroundResource(R.drawable.bg_circle_red)
+                    } else {
+                        icon.imageTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#004AF7"))
+                        icon.setBackgroundResource(R.drawable.bg_circle_white)
+                    }
+                    
+                    itemView.setOnClickListener {
+                        when (item.type) {
+                            "LIVRO" -> {
+                                val intent = Intent(this@HistoricoActivity, com.example.bibliotecaunifor.usuario.reserva.DetalhesLivroActivity::class.java).apply {
+                                    putExtra("entrada_id", item.itemId)
+                                }
+                                startActivity(intent)
+                            }
+                            "JOGO" -> {
+                                val intent = Intent(this@HistoricoActivity, com.example.bibliotecaunifor.usuario.jogos.JogosTabuleiroActivity::class.java)
+                                startActivity(intent)
+                            }
+                            "SALA" -> {
+                                val intent = Intent(this@HistoricoActivity, com.example.bibliotecaunifor.usuario.salas.SalasActivity::class.java)
+                                startActivity(intent)
+                            }
+                        }
+                    }
+                }
+            }
+
+            override fun getItemCount() = itens.size
+        }
     }
 
     data class HistoryItem(

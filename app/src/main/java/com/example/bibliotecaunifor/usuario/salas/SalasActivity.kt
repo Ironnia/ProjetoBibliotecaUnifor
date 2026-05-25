@@ -84,8 +84,8 @@ class SalasActivity : AppCompatActivity() {
         { ag -> mostrarSalaCancela(ag) }     // Cancela
         )
 
-        binding.rvSalas.layoutManager = LinearLayoutManager(this)
-        binding.rvSalas.adapter = salaAdapter
+        binding.rvMesas.layoutManager = LinearLayoutManager(this)
+        binding.rvMesas.adapter = salaAdapter
     }
 
     private fun carregarSalas() {
@@ -102,15 +102,15 @@ class SalasActivity : AppCompatActivity() {
             }
             val lista = snapshot?.toObjects<Sala>() ?: emptyList()
             salaAdapter.atualizarLista(lista)
-            binding.rvSalas.adapter = salaAdapter
+            binding.rvMesas.adapter = salaAdapter
 
             if (lista.isEmpty()) {
-                binding.tvEmptyStateSalas.text = "Nenhuma sala disponível no momento."
-                binding.tvEmptyStateSalas.visibility = View.VISIBLE
-                binding.rvSalas.visibility = View.GONE
+                binding.tvEmptyStateMesas.text = "Nenhuma sala disponível no momento."
+                binding.tvEmptyStateMesas.visibility = View.VISIBLE
+                binding.rvMesas.visibility = View.GONE
             } else {
-                binding.tvEmptyStateSalas.visibility = View.GONE
-                binding.rvSalas.visibility = View.VISIBLE
+                binding.tvEmptyStateMesas.visibility = View.GONE
+                binding.rvMesas.visibility = View.VISIBLE
             }
         }
         */
@@ -140,15 +140,15 @@ class SalasActivity : AppCompatActivity() {
                     
                     // Passamos a lista de agendamentos para o adapter
                     salaAdapter.atualizarLista(listaSalas, ags)
-                    binding.rvSalas.adapter = salaAdapter
+                    binding.rvMesas.adapter = salaAdapter
 
                     if (listaSalas.isEmpty()) {
-                        binding.tvEmptyStateSalas.text = "Nenhuma sala disponível no momento."
-                        binding.tvEmptyStateSalas.visibility = View.VISIBLE
-                        binding.rvSalas.visibility = View.GONE
+                        binding.tvEmptyStateMesas.text = "Nenhuma sala disponível no momento."
+                        binding.tvEmptyStateMesas.visibility = View.VISIBLE
+                        binding.rvMesas.visibility = View.GONE
                     } else {
-                        binding.tvEmptyStateSalas.visibility = View.GONE
-                        binding.rvSalas.visibility = View.VISIBLE
+                        binding.tvEmptyStateMesas.visibility = View.GONE
+                        binding.rvMesas.visibility = View.VISIBLE
                     }
                     */
 
@@ -195,15 +195,15 @@ class SalasActivity : AppCompatActivity() {
                 // Filtra para não mostrar expirados na lista ativa do aluno
                 val listaFiltrada = listaTotal.filter { it.status == "pendente" || it.status == "reservado" }
                 agendamentoAdapter.atualizarLista(listaFiltrada)
-                binding.rvSalas.adapter = agendamentoAdapter
+                binding.rvMesas.adapter = agendamentoAdapter
 
                 if (listaFiltrada.isEmpty()) {
-                    binding.tvEmptyStateSalas.text = "Você não possui agendamentos no momento."
-                    binding.tvEmptyStateSalas.visibility = View.VISIBLE
-                    binding.rvSalas.visibility = View.GONE
+                    binding.tvEmptyStateMesas.text = "Você não possui agendamentos no momento."
+                    binding.tvEmptyStateMesas.visibility = View.VISIBLE
+                    binding.rvMesas.visibility = View.GONE
                 } else {
-                    binding.tvEmptyStateSalas.visibility = View.GONE
-                    binding.rvSalas.visibility = View.VISIBLE
+                    binding.tvEmptyStateMesas.visibility = View.GONE
+                    binding.rvMesas.visibility = View.VISIBLE
                 }
             }
     }
@@ -454,18 +454,18 @@ class SalasActivity : AppCompatActivity() {
         salaAdapter.atualizarLista(filtradas, todosOsAgendamentos)
         
         // Garante que o adapter correto seja reatribuído ao voltar de "Meus Agendamentos"
-        if (binding.rvSalas.adapter != salaAdapter) {
-            binding.rvSalas.adapter = salaAdapter
+        if (binding.rvMesas.adapter != salaAdapter) {
+            binding.rvMesas.adapter = salaAdapter
         }
         
         if (filtradas.isEmpty()) {
             val termoText = if (todasAsSalas.isEmpty()) "Nenhuma sala disponível no momento." else "Nenhuma mesa disponível com este filtro."
-            binding.tvEmptyStateSalas.text = termoText
-            binding.tvEmptyStateSalas.visibility = View.VISIBLE
-            binding.rvSalas.visibility = View.GONE
+            binding.tvEmptyStateMesas.text = termoText
+            binding.tvEmptyStateMesas.visibility = View.VISIBLE
+            binding.rvMesas.visibility = View.GONE
         } else {
-            binding.tvEmptyStateSalas.visibility = View.GONE
-            binding.rvSalas.visibility = View.VISIBLE
+            binding.tvEmptyStateMesas.visibility = View.GONE
+            binding.rvMesas.visibility = View.VISIBLE
         }
     }
 }

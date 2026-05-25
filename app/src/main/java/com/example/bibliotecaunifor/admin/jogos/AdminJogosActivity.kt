@@ -17,6 +17,7 @@ class AdminJogosActivity : AppCompatActivity() {
     private lateinit var binding: TelaAdminJogosBinding
     private lateinit var adapter: AdminJogosAdapter
     private var allLeases = listOf<AluguelJogo>()
+    private var jogosListener: com.google.firebase.firestore.ListenerRegistration? = null
 
     private val db = Firebase.firestore
 
@@ -50,7 +51,7 @@ class AdminJogosActivity : AppCompatActivity() {
         binding.tvEmptyState.visibility = View.GONE
 
         // Escuta real-time na coleção de alugueis
-        db.collection("alugueis")
+        jogosListener = db.collection("alugueis")
             .whereEqualTo("tipoItem", "jogo")
             .addSnapshotListener { snapshot, error ->
                 binding.progressBar.visibility = View.GONE
@@ -66,6 +67,11 @@ class AdminJogosActivity : AppCompatActivity() {
                     filterList()
                 }
             }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        jogosListener?.remove()
     }
 
     /*

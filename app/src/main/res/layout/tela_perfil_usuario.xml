@@ -321,22 +321,7 @@
                         app:icon="@drawable/ic_history"
                         app:iconTint="@color/unifor_anil_primary" />
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginHorizontal="16dp"
-                        android:background="#F0F0F0" />
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_pendencias"
-                        style="@style/Widget.Material3.Button.TextButton"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="start|center_vertical"
-                        android:text="Pendências Financeiras ($0.00)"
-                        android:textColor="@color/unifor_marinho_dark"
-                        app:icon="@drawable/ic_finance"
-                        app:iconTint="@color/error_red" />
 
                     <!-- SEÇÃO DE TAGS REMOVIDA/COMENTADA CONFORME PEDIDO
                     <View

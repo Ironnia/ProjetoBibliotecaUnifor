@@ -61,6 +61,16 @@ class AdminDetalhesLivroActivity : AppCompatActivity() {
         }
 
         binding.btnExcluir.setOnClickListener {
+            val livro = entrada
+            if (livro != null && livro.exemplares.any { it.situacao == "Alugado" }) {
+                MaterialAlertDialogBuilder(this)
+                    .setTitle("Exclusão Negada")
+                    .setMessage("Não é possível excluir este livro porque existem exemplares alugados ativos. Realize a devolução antes de excluir.")
+                    .setPositiveButton("Entendido", null)
+                    .show()
+                return@setOnClickListener
+            }
+
             MaterialAlertDialogBuilder(this)
                 .setTitle("Confirmar Exclusão")
                 .setMessage("Deseja excluir este livro e todos os seus exemplares?")

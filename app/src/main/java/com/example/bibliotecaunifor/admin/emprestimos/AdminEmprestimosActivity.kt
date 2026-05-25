@@ -16,6 +16,7 @@ class AdminEmprestimosActivity : AppCompatActivity() {
     private lateinit var binding: TelaAdminEmprestimosBinding
     private lateinit var adapter: AdminEmprestimoAdapter
     private var allLoans = listOf<Emprestimo>()
+    private var emprestimosListener: com.google.firebase.firestore.ListenerRegistration? = null
 
     private val db = Firebase.firestore
 
@@ -34,6 +35,7 @@ class AdminEmprestimosActivity : AppCompatActivity() {
         setupRecyclerView()
         setupRealtimeListener()
         setupFilters()
+        binding.chipRetirar.isChecked = true // Força o primeiro filtro a iniciar ativo
     }
 
     private fun setupRecyclerView() {
@@ -44,7 +46,7 @@ class AdminEmprestimosActivity : AppCompatActivity() {
 
     private fun setupRealtimeListener() {
         // Escuta real-time na coleção de emprestimos
-        db.collection("emprestimos")
+        emprestimosListener = db.collection("emprestimos")
             .whereNotEqualTo("status", "devolvido")
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
@@ -57,6 +59,11 @@ class AdminEmprestimosActivity : AppCompatActivity() {
             }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        emprestimosListener?.remove()
+    }
+
     private fun setupFilters() {
         binding.chipGroupFiltros.setOnCheckedStateChangeListener { _, _ ->
             filterList()
@@ -67,11 +74,21 @@ class AdminEmprestimosActivity : AppCompatActivity() {
         val isDevolucaoChecked = binding.chipDevolucao.isChecked // Ativos / Para Devolução
         val isRetirarChecked = binding.chipRetirar.isChecked // Pendentes / A retirar
 
+        // Se o usuário tentar desmarcar ambos (caso não use selectionRequired), 
+        // nós forçamos uma lista vazia ou mostramos um aviso
+        if (!isDevolucaoChecked && !isRetirarChecked) {
+            adapter.updateList(emptyList())
+            binding.tvEmptyState.text = "Selecione um filtro acima para gerenciar."
+            binding.tvEmptyState.visibility = View.VISIBLE
+            binding.recyclerView.visibility = View.GONE
+            return
+        }
+
         val finalList = allLoans.filter { item ->
             when {
                 isRetirarChecked -> item.status.equals("pendente", ignoreCase = true)
                 isDevolucaoChecked -> item.status.equals("ativo", ignoreCase = true) || item.status.equals("atrasado", ignoreCase = true)
-                else -> true
+                else -> false // Se cair aqui por qualquer outro status, não mostra (evita itens fantasmas)
             }
         }
 

@@ -35,7 +35,7 @@ class DetalhesLivroActivity : AppCompatActivity() {
         binding = TelaDetalhesLivroBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val entradaId = intent.getStringExtra("entrada_id")
+        val entradaId = intent.getStringExtra("idLivro") ?: intent.getStringExtra("entrada_id")
         if (entradaId != null) {
             loadEntrada(entradaId)
         }

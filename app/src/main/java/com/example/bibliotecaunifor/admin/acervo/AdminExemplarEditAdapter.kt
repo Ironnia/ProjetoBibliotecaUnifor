@@ -32,6 +32,7 @@ class AdminExemplarEditAdapter(
             etSuporte.setText(exemplar.suporte)
             etLocalizacao.setText(exemplar.localizacao)
             etSituacao.setText(exemplar.situacao)
+            etSituacao.isEnabled = false // Evita edicao manual e erros de digitacao
 
             etRegistro.doAfterTextChanged { exemplares[position] = exemplares[position].copy(registro = it.toString()) }
             etEdicaoExemplar.doAfterTextChanged { exemplares[position] = exemplares[position].copy(edicao = it.toString()) }
@@ -42,6 +43,15 @@ class AdminExemplarEditAdapter(
 
             btnExcluirExemplar.setOnClickListener {
                 if (position != RecyclerView.NO_POSITION) {
+                    val ex = exemplares[position]
+                    if (ex.situacao.equals("Alugado", ignoreCase = true)) {
+                        com.google.android.material.dialog.MaterialAlertDialogBuilder(holder.itemView.context)
+                            .setTitle("Remoção Negada")
+                            .setMessage("Não é possível remover este exemplar porque ele está atualmente alugado por um aluno.")
+                            .setPositiveButton("Ok", null)
+                            .show()
+                        return@setOnClickListener
+                    }
                     exemplares.removeAt(position)
                     notifyItemRemoved(position)
                     notifyItemRangeChanged(position, exemplares.size)

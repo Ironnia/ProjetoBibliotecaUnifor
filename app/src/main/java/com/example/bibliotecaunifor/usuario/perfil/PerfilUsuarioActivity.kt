@@ -74,53 +74,7 @@ class PerfilUsuarioActivity : AppCompatActivity() {
                 .show()
         }
 
-        binding.btnPendencias.setOnClickListener {
-            val uid = auth.currentUser?.uid ?: return@setOnClickListener
-            db.collection("emprestimos")
-                .whereEqualTo("idUsuario", uid)
-                .whereEqualTo("status", "ativo")
-                .get()
-                .addOnSuccessListener { result ->
-                    var totalMulta = 0.0
-                    val listaAtrasados = mutableListOf<String>()
-                    val agora = System.currentTimeMillis()
 
-                    result.forEach { doc ->
-                        val titulo = doc.getString("tituloItem") ?: "Livro"
-                        val dataDevolucao = doc.getLong("dataDevolucao") ?: 0L
-                        if (dataDevolucao > 0 && agora > dataDevolucao) {
-                            val diffMillis = agora - dataDevolucao
-                            val diasAtraso = Math.ceil(diffMillis.toDouble() / (1000 * 60 * 60 * 24)).toInt()
-                            if (diasAtraso > 0) {
-                                val multaLivro = diasAtraso * 2.0
-                                totalMulta += multaLivro
-                                listaAtrasados.add("- $titulo: $diasAtraso dias de atraso (Multa: R$ ${String.format("%.2f", totalMulta)})")
-                            }
-                        }
-                    }
-
-                    val builder = AlertDialog.Builder(this)
-                        .setTitle("Pendências Financeiras")
-
-                    if (totalMulta > 0.0) {
-                        val msg = "Você possui pendências de devolução em atraso!\n\n" +
-                                listaAtrasados.joinToString("\n") + "\n\n" +
-                                "Total acumulado de Multas: R$ ${String.format("%.2f", totalMulta)}\n\n" +
-                                "Regularize entregando os livros no balcão da biblioteca."
-                        builder.setMessage(msg)
-                    } else {
-                        builder.setMessage("Você não possui multas ou pendências no momento. Parabéns!")
-                    }
-                    builder.setPositiveButton("Ok", null).show()
-                }
-                .addOnFailureListener {
-                    AlertDialog.Builder(this)
-                        .setTitle("Pendências Financeiras")
-                        .setMessage("Você não possui multas ou pendências no momento. Parabéns!")
-                        .setPositiveButton("Ok", null)
-                        .show()
-                }
-        }
     }
 
     private fun setupListeners() {
@@ -130,7 +84,12 @@ class PerfilUsuarioActivity : AppCompatActivity() {
         userListener = db.collection("usuario").document(uid)
             .addSnapshotListener { snapshot, error ->
                 if (error == null && snapshot != null) {
-                    val pontos = snapshot.getLong("pontos")?.toInt() ?: 0
+                    val pontosRaw = snapshot.get("pontos")
+                    val pontos = when (pontosRaw) {
+                        is Number -> pontosRaw.toInt()
+                        is String -> pontosRaw.toIntOrNull() ?: 0
+                        else -> 0
+                    }
                     binding.tvCountPontos.text = String.format("%,d", pontos)
                     binding.llMedalOuro.visibility = if (pontos >= 100) View.VISIBLE else View.GONE
 

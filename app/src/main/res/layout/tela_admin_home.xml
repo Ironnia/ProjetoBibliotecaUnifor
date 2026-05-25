@@ -4,13 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#F8F9FA"
     tools:context=".admin.AdminHomeActivity">
 
-    <!-- Header Section -->
+    <!-- Header Azul Original -->
     <View
         android:id="@+id/header_bg"
         android:layout_width="0dp"
-        android:layout_height="150dp"
+        android:layout_height="160dp"
         android:background="@drawable/bg_header_gradient"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -20,12 +21,11 @@
         android:id="@+id/tv_greeting"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="40dp"
         android:text="Olá Admin,\no que você quer fazer hoje?"
         android:textColor="@color/white"
-        android:textSize="18sp"
+        android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -33,9 +33,9 @@
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/iv_profile"
-        android:layout_width="44dp"
-        android:layout_height="44dp"
-        android:layout_marginEnd="20dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="24dp"
         android:background="@color/white"
         android:padding="6dp"
         android:src="@drawable/ic_profile_tab"
@@ -45,15 +45,15 @@
         app:shapeAppearanceOverlay="@style/CircleImageView"
         app:tint="@color/unifor_marinho_dark" />
 
-    <!-- Search Bar -->
+    <!-- Barra de Pesquisa -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cv_search"
         android:layout_width="0dp"
-        android:layout_height="46dp"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="16dp"
-        app:cardCornerRadius="23dp"
-        app:cardElevation="3dp"
+        android:layout_height="50dp"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="20dp"
+        app:cardCornerRadius="25dp"
+        app:cardElevation="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_greeting">
@@ -81,8 +81,6 @@
                 android:textColorHint="#888888"
                 android:textColor="@color/unifor_marinho_dark"
                 android:inputType="text"
-                android:maxLines="1"
-                android:imeOptions="actionSearch"
                 android:textSize="14sp" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
@@ -98,292 +96,183 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:paddingTop="4dp"
-            android:paddingBottom="8dp">
+            android:padding="20dp">
 
             <androidx.gridlayout.widget.GridLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                app:columnCount="2"
-                app:rowCount="2">
+                app:columnCount="2">
 
-                <!-- Atalho 1 -->
+                <!-- Cards com altura aumentada para 140dp para preencher melhor -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/card_acervo"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="4dp"
-                    android:minHeight="85dp"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="2dp"
+                    android:layout_height="140dp"
+                    android:layout_margin="8dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="3dp"
                     app:layout_columnWeight="1">
-                    
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="8dp">
-                        
+                        android:orientation="vertical">
                         <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:src="@drawable/menu_book_24"
                             app:tint="@color/unifor_anil_primary" />
-                            
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
+                            android:layout_marginTop="8dp"
                             android:text="Gerenciar\nAcervo"
                             android:textAlignment="center"
                             android:textColor="@color/unifor_marinho_dark"
-                            android:textSize="12sp"
                             android:textStyle="bold" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Atalho 2 -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/card_emprestimos"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="4dp"
-                    android:minHeight="85dp"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="2dp"
+                    android:layout_height="140dp"
+                    android:layout_margin="8dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="3dp"
                     app:layout_columnWeight="1">
-                    
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="8dp">
-                        
+                        android:orientation="vertical">
                         <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:src="@drawable/calendar_clock_24"
                             app:tint="@color/unifor_anil_primary" />
-                            
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
+                            android:layout_marginTop="8dp"
                             android:text="Gerenciar\nEmpréstimos"
                             android:textAlignment="center"
                             android:textColor="@color/unifor_marinho_dark"
-                            android:textSize="12sp"
                             android:textStyle="bold" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Atalho 3 -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/card_jogos"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="4dp"
-                    android:minHeight="85dp"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="2dp"
+                    android:layout_height="140dp"
+                    android:layout_margin="8dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="3dp"
                     app:layout_columnWeight="1">
-                    
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="8dp">
-                        
+                        android:orientation="vertical">
                         <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:src="@drawable/casino_24"
                             app:tint="@color/unifor_anil_primary" />
-                            
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
+                            android:layout_marginTop="8dp"
                             android:text="Gerenciar\nJogos"
                             android:textAlignment="center"
                             android:textColor="@color/unifor_marinho_dark"
-                            android:textSize="12sp"
                             android:textStyle="bold" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Atalho 4 -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/card_salas"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="4dp"
-                    android:minHeight="85dp"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="2dp"
+                    android:layout_height="140dp"
+                    android:layout_margin="8dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="3dp"
                     app:layout_columnWeight="1">
-                    
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="8dp">
-                        
+                        android:orientation="vertical">
                         <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:src="@drawable/room_preferences_24px"
                             app:tint="@color/unifor_anil_primary" />
-                            
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
+                            android:layout_marginTop="8dp"
                             android:text="Gerenciar\nSalas"
                             android:textAlignment="center"
                             android:textColor="@color/unifor_marinho_dark"
-                            android:textSize="12sp"
                             android:textStyle="bold" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
             </androidx.gridlayout.widget.GridLayout>
 
+            <!-- Seção de Ranking mais robusta para ocupar espaço -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:text="Resumo do Sistema"
-                android:textColor="@color/unifor_marinho_dark"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_resumo_stats"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="2dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="8dp">
-
-                    <!-- Linha 1 (Empréstimos) -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:layout_marginBottom="4dp">
-
-                        <ImageView
-                            android:layout_width="16dp"
-                            android:layout_height="16dp"
-                            android:src="@drawable/menu_book_24"
-                            app:tint="@color/unifor_anil_primary" />
-
-                        <TextView
-                            android:id="@+id/tv_resumo_emprestimos"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:layout_marginStart="8dp"
-                            android:text="-- alugados | -- atrasados"
-                            android:textColor="@color/unifor_marinho_dark"
-                            android:textSize="12sp"
-                            android:fontFamily="@font/satoshi_medium"
-                            android:maxLines="1"
-                            app:autoSizeTextType="uniform" />
-                    </LinearLayout>
-
-                    <!-- Linha 2 (Salas) -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:layout_width="16dp"
-                            android:layout_height="16dp"
-                            android:src="@drawable/calendar_clock_24"
-                            app:tint="@color/unifor_anil_primary" />
-
-                        <TextView
-                            android:id="@+id/tv_resumo_salas"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:layout_marginStart="8dp"
-                            android:text="-- reservadas | -- ocupadas"
-                            android:textColor="@color/unifor_marinho_dark"
-                            android:textSize="12sp"
-                            android:fontFamily="@font/satoshi_medium"
-                            android:maxLines="1"
-                            app:autoSizeTextType="uniform" />
-                    </LinearLayout>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="8dp"
                 android:text="Livros mais reservados"
                 android:textColor="@color/unifor_marinho_dark"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 android:textStyle="bold" />
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                app:cardCornerRadius="12dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginHorizontal="8dp"
+                app:cardCornerRadius="16dp"
                 app:cardElevation="2dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="8dp">
+                    android:padding="16dp">
 
                     <TextView
                         android:id="@+id/tv_top_1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="1. Dom Casmurro - 20 vezes"
-                        android:textSize="12sp"
-                        android:textColor="#666666"
+                        android:text="1. Carregando..."
+                        android:textSize="14sp"
+                        android:textColor="@color/black"
                         android:fontFamily="@font/satoshi_medium"
-                        android:layout_marginBottom="2dp" />
+                        android:layout_marginBottom="8dp" />
 
                     <TextView
                         android:id="@+id/tv_top_2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="2. A Metamorfose - 18 vezes"
-                        android:textSize="12sp"
-                        android:textColor="#666666"
+                        android:text="2. Carregando..."
+                        android:textSize="14sp"
+                        android:textColor="@color/black"
                         android:fontFamily="@font/satoshi_medium"
-                        android:layout_marginBottom="2dp" />
+                        android:layout_marginBottom="8dp" />
 
                     <TextView
                         android:id="@+id/tv_top_3"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="3. O Código da Vinci - 10 vezes"
-                        android:textSize="12sp"
-                        android:textColor="#666666"
+                        android:text="3. Carregando..."
+                        android:textSize="14sp"
+                        android:textColor="@color/black"
                         android:fontFamily="@font/satoshi_medium" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -402,4 +291,3 @@
         app:menu="@menu/bottom_nav_admin_menu" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-

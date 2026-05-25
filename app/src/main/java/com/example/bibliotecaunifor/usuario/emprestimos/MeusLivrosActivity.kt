@@ -19,6 +19,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObjects
+import com.google.firebase.firestore.ListenerRegistration
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -33,6 +34,8 @@ class MeusLivrosActivity : AppCompatActivity() {
     private val db = Firebase.firestore
     private val auth = Firebase.auth
 
+
+    private var emprestimosListener: ListenerRegistration? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,27 +64,10 @@ class MeusLivrosActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        // agora vamos usar o adapter que lima legal.
-        /*
-        adapter = EmprestimoAdapter(
-            lista = emptyList(), onAcaoClick = { emprestimo ->
-                if (statusFiltro == "ativo") showRenovacaoDialog(emprestimo)
-                else showCancelamentoDialog(emprestimo) // Cancela reserva pendente
-            },
-            onItemClick = { emprestimo ->
-                val intent = Intent(this, DetalhesLivroActivity::class.java).apply {
-                    putExtra("idLivro", emprestimo.idItem)
-                }
-                startActivity(intent)
-            }
-        )
-        */
         adapter = EmprestimoAdapter(
             lista = emptyList(),
             onAcaoClick = { emprestimo ->
-                if (statusFiltro == "ativo") {
-                    showRenovacaoDialog(emprestimo)
-                } else {
+                if (statusFiltro == "pendente") {
                     showQrCodeDialog(emprestimo) // "Ver QR Code"
                 }
             },
@@ -99,111 +85,6 @@ class MeusLivrosActivity : AppCompatActivity() {
         binding.rvEmprestimos.adapter = adapter
     }
 
-    /*
-    private fun showRenovacaoDialog(item: Emprestimo) {
-        db.collection("emprestimos")
-            .whereEqualTo("idItem", item.idItem)
-            .whereEqualTo("status", "pendente")
-            .get()
-            .addOnSuccessListener { query ->
-                if (!query.isEmpty) {
-                    mostrarAviso("Não é possível renovar este empréstimo")
-                } else {
-                    processarRenovacao(item)
-                }
-            }
-            .addOnFailureListener {
-                processarRenovacao(item)
-            }
-    }
-    */
-    private fun showRenovacaoDialog(item: Emprestimo) {
-        db.collection("emprestimos")
-            .whereEqualTo("idLivro", item.idLivro)
-            .whereEqualTo("status", "pendente")
-            .get()
-            .addOnSuccessListener { query ->
-                if (!query.isEmpty) {
-                    mostrarAviso("Não é possível renovar este empréstimo")
-                } else {
-                    processarRenovacao(item)
-                }
-            }
-            .addOnFailureListener {
-                processarRenovacao(item)
-            }
-    }
-
-    /*
-    private fun processarRenovacao(item: Emprestimo) {
-        val seteDiasEmMillis = 7 * 24 * 60 * 60 * 1000L
-        val novaDataMillis = item.dataDevolucao + seteDiasEmMillis
-        val dataFormatada = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(novaDataMillis))
-
-        AlertDialog.Builder(this)
-            .setTitle("Renovar Empréstimo")
-            .setMessage("Deseja estender o prazo de \"${item.tituloItem}\" até o dia $dataFormatada?")
-            .setPositiveButton("Confirmar Renovação") { _, _ ->
-                db.collection("emprestimos").document(item.id)
-                    .update("dataDevolucao", novaDataMillis)
-                    .addOnSuccessListener {
-                        mostrarAviso("Renovação solicitada com sucesso!")
-                        carregarEmprestimos()
-                    }
-            }
-            .setNegativeButton("Agora não", null)
-            .show()
-    }
-    */
-    private fun processarRenovacao(item: Emprestimo) {
-        val seteDiasEmMillis = 7 * 24 * 60 * 60 * 1000L
-        val dataDevolucaoTime = item.dataDevolucaoPrevista?.time ?: 0L
-        val novaDataMillis = dataDevolucaoTime + seteDiasEmMillis
-        val novaDataDate = Date(novaDataMillis)
-        val dataFormatada = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(novaDataDate)
-
-        AlertDialog.Builder(this)
-            .setTitle("Renovar Empréstimo")
-            .setMessage("Deseja estender o prazo de \"${item.tituloLivro}\" até o dia $dataFormatada?")
-            .setPositiveButton("Confirmar Renovação") { _, _ ->
-                db.collection("emprestimos").document(item.id)
-                    .update("dataDevolucaoPrevista", novaDataDate)
-                    .addOnSuccessListener {
-                        mostrarAviso("Renovação solicitada com sucesso!")
-                        carregarEmprestimos()
-                    }
-            }
-            .setNegativeButton("Agora não", null)
-            .show()
-    }
-
-    /**
-     * Exibe diálogo de confirmação para cancelar uma reserva com status "pendente".
-     * Ao confirmar, cancela o empréstimo no Firestore e libera o exemplar no acervo.
-     */
-    /*
-    private fun showCancelamentoDialog(item: Emprestimo) {
-        com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
-            .setTitle("Cancelar Reserva")
-            .setMessage("Deseja cancelar a reserva do livro \"${item.tituloItem}\"?\n\nO livro voltará ao acervo imediatamente.")
-            .setPositiveButton("Cancelar Reserva") { _, _ ->
-                db.collection("emprestimos").document(item.id)
-                    .update("status", "cancelado")
-                    .addOnSuccessListener {
-                        // Libera o exemplar no acervo (+1 disponível)
-                        db.collection("Acervo").document(item.idItem)
-                            .update("exemplaresDisponiveis", com.google.firebase.firestore.FieldValue.increment(1))
-                        mostrarAviso("Reserva cancelada. O livro está disponível novamente.")
-                        carregarEmprestimos()
-                    }
-                    .addOnFailureListener {
-                        mostrarAviso("Erro ao cancelar reserva. Tente novamente.")
-                    }
-            }
-            .setNegativeButton("Manter Reserva", null)
-            .show()
-    }
-    */
     private fun showCancelamentoDialog(item: Emprestimo) {
         com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
             .setTitle("Cancelar Reserva")
@@ -230,7 +111,6 @@ class MeusLivrosActivity : AppCompatActivity() {
                     null
                 }.addOnSuccessListener {
                     mostrarAviso("Reserva cancelada. O livro está disponível novamente.")
-                    carregarEmprestimos()
                 }.addOnFailureListener { e ->
                     mostrarAviso("Erro ao cancelar reserva: ${e.message}")
                 }
@@ -256,19 +136,24 @@ class MeusLivrosActivity : AppCompatActivity() {
 
     private fun carregarEmprestimos() {
         val uid = auth.currentUser?.uid ?: return
-        // pegar os livros do aluno e o status correto.
+        
+        emprestimosListener?.remove()
+
         binding.progressBar.visibility = View.VISIBLE
         binding.tvEmptyState.visibility = View.GONE
-        binding.rvEmprestimos.visibility = View.GONE
 
-        db.collection("emprestimos")
+        emprestimosListener = db.collection("emprestimos")
             .whereEqualTo("idUsuario", uid)
             .whereEqualTo("status", statusFiltro)
             .whereEqualTo("tipoItem", "livro")
-            .get()
-            .addOnSuccessListener { result ->
+            .addSnapshotListener { result, error ->
                 binding.progressBar.visibility = View.GONE
-                val lista = result.toObjects<Emprestimo>()
+                if (error != null) {
+                    mostrarAviso("Erro ao carregar dados.")
+                    return@addSnapshotListener
+                }
+
+                val lista = result?.toObjects<Emprestimo>() ?: emptyList()
                 adapter.atualizarLista(lista)
                 if (lista.isEmpty()) {
                     binding.tvEmptyState.visibility = View.VISIBLE
@@ -278,9 +163,10 @@ class MeusLivrosActivity : AppCompatActivity() {
                     binding.rvEmprestimos.visibility = View.VISIBLE
                 }
             }
-            .addOnFailureListener {
-                binding.progressBar.visibility = View.GONE
-                mostrarAviso("Erro ao carregar dados.")
-            }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        emprestimosListener?.remove()
     }
 }

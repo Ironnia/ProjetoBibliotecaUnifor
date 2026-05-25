@@ -19,6 +19,7 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import java.util.UUID
 
 class AdminCriarEntradaActivity : AppCompatActivity() {
@@ -169,6 +170,14 @@ class AdminCriarEntradaActivity : AppCompatActivity() {
         }
 
         val exemplares = exemplarAdapter.getExemplares()
+        if (exemplares.isEmpty()) {
+            Snackbar.make(binding.root, "O livro deve conter pelo menos 1 exemplar cadastrado.", Snackbar.LENGTH_SHORT).show()
+            return
+        }
+        if (exemplares.any { it.registro.isBlank() }) {
+            Snackbar.make(binding.root, "Todos os exemplares devem possuir o código de Registro preenchido.", Snackbar.LENGTH_SHORT).show()
+            return
+        }
 
         val novaEntrada = Entrada(
             id = entradaId ?: "",
@@ -188,22 +197,25 @@ class AdminCriarEntradaActivity : AppCompatActivity() {
         binding.progressBar.visibility = View.VISIBLE
         binding.btnConcluir.isEnabled = false
 
-        if (selectedImageUri != null) {
-            val storageRef = FirebaseStorage.getInstance().reference
-            val fileName = UUID.randomUUID().toString() + ".jpg"
-            val imageRef = storageRef.child("capas_livros/$fileName")
-            
-            imageRef.putFile(selectedImageUri!!).addOnSuccessListener {
-                imageRef.downloadUrl.addOnSuccessListener { uri ->
-                    salvarNoFirestore(uri.toString(), isEdit, novaEntrada)
+        lifecycleScope.launch {
+            try {
+                val url = if (selectedImageUri != null) {
+                    val storageRef = FirebaseStorage.getInstance().reference
+                    val fileName = UUID.randomUUID().toString() + ".jpg"
+                    val imageRef = storageRef.child("capas_livros/$fileName")
+                    
+                    imageRef.putFile(selectedImageUri!!).await()
+                    val downloadUri = imageRef.downloadUrl.await()
+                    downloadUri.toString()
+                } else {
+                    currentImageUrl
                 }
-            }.addOnFailureListener {
+                salvarNoFirestore(url, isEdit, novaEntrada)
+            } catch (e: Exception) {
                 binding.progressBar.visibility = View.GONE
                 binding.btnConcluir.isEnabled = true
-                Snackbar.make(binding.root, "Erro ao enviar imagem", Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(binding.root, "Erro ao enviar imagem: ${e.message}", Snackbar.LENGTH_SHORT).show()
             }
-        } else {
-            salvarNoFirestore(currentImageUrl, isEdit, novaEntrada)
         }
     }
 

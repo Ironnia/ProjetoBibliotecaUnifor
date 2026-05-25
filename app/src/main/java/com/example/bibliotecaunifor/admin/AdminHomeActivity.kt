@@ -43,7 +43,7 @@ class AdminHomeActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // RODE UMA VEZ E APAGUE DEPOIS PARA POPULAR O FIRESTORE:
-      // FirestoreSeedData.popularTudo()
+       // FirestoreSeedData.popularTudo()
 
         pegarNomeUsuario { nome ->
             binding.tvGreeting.text = "Olá $nome,\no que você quer fazer hoje?"
@@ -95,49 +95,29 @@ class AdminHomeActivity : AppCompatActivity() {
     }
 
     private fun carregarPainelResumo() {
-        val hoje = SimpleDateFormat("dd/MM", Locale.getDefault()).format(Date())
-        
-        // Contagem de Empréstimos Ativos e Atrasados
-        db.collection("emprestimos")
-            .whereIn("status", listOf("ativo", "atrasado"))
-            .get()
-            .addOnSuccessListener { result ->
-                val ativos = result.documents.count { it.getString("status") == "ativo" }
-                val atrasados = result.documents.count { it.getString("status") == "atrasado" }
-
-                binding.tvResumoEmprestimos.text = "$ativos alugados | $atrasados atrasados"
-                // Mantém sempre azul institucional para consistência com o card de Salas
-                binding.tvResumoEmprestimos.setTextColor(getColor(R.color.unifor_anil_primary))
-            }
-            .addOnFailureListener { e ->
-                FirebaseCrashlytics.getInstance().recordException(e)
-            }
-
-        // Salas Reservadas e Ocupadas Hoje
-        db.collection("agendamentos")
-            .whereEqualTo("data", hoje)
-            .get()
-            .addOnSuccessListener { result ->
-                val reservadas = result.documents.count { it.getString("status") == "reservado" }
-                val ocupadas = result.documents.count { it.getString("status") == "ocupada" }
-
-                binding.tvResumoSalas.text = "$reservadas reservadas | $ocupadas ocupadas"
-            }
-            .addOnFailureListener { e ->
-                FirebaseCrashlytics.getInstance().recordException(e)
-            }
-
-        // livros mais reservados.
         db.collection("Acervo")
             .orderBy("reservaCount", com.google.firebase.firestore.Query.Direction.DESCENDING)
             .limit(3)
             .get()
             .addOnSuccessListener { result ->
-                val livros = result.toObjects(com.example.bibliotecaunifor.crud.Entrada::class.java)
+                val livros = result.documents.mapNotNull { doc ->
+                    val titulo = doc.getString("titulo") ?: "Livro"
+                    val rRaw = doc.get("reservaCount")
+                    val count = when (rRaw) {
+                        is Number -> rRaw.toInt()
+                        is String -> rRaw.toIntOrNull() ?: 0
+                        else -> 0
+                    }
+                    Pair(titulo, count)
+                }
 
-                if (livros.size >= 1) binding.tvTop1.text = "1. ${livros[0].titulo} - ${livros[0].reservaCount} vezes"
-                if (livros.size >= 2) binding.tvTop2.text = "2. ${livros[1].titulo} - ${livros[1].reservaCount} vezes"
-                if (livros.size >= 3) binding.tvTop3.text = "3. ${livros[2].titulo} - ${livros[2].reservaCount} vezes"
+                if (livros.size >= 1) binding.tvTop1.text = "1. ${livros[0].first} - ${livros[0].second} vezes"
+                if (livros.size >= 2) binding.tvTop2.text = "2. ${livros[1].first} - ${livros[1].second} vezes"
+                if (livros.size >= 3) binding.tvTop3.text = "3. ${livros[2].first} - ${livros[2].second} vezes"
+            }
+            .addOnFailureListener { e ->
+                FirebaseCrashlytics.getInstance().recordException(e)
+                binding.tvTop1.text = "Erro ao carregar ranking"
             }
     }
 }

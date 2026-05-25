@@ -21,6 +21,7 @@ class AdminAcervoActivity : AppCompatActivity() {
 
     /** Cache da lista completa carregada via SnapshotListener */
     private var todasEntradas = listOf<Entrada>()
+    private var acervoListener: com.google.firebase.firestore.ListenerRegistration? = null
 
     private val db = Firebase.firestore
 
@@ -76,7 +77,7 @@ class AdminAcervoActivity : AppCompatActivity() {
         binding.progressBar.visibility = View.VISIBLE
         binding.recyclerView.visibility = View.GONE
 
-        db.collection("Acervo")
+        acervoListener = db.collection("Acervo")
             .addSnapshotListener { snapshot, error ->
                 binding.progressBar.visibility = View.GONE
                 binding.recyclerView.visibility = View.VISIBLE
@@ -86,6 +87,11 @@ class AdminAcervoActivity : AppCompatActivity() {
                 todasEntradas = snapshot.toObjects(Entrada::class.java)
                 filtrarLocalmente()
             }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        acervoListener?.remove()
     }
 
     /**

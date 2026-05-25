@@ -15,6 +15,7 @@ import com.example.bibliotecaunifor.usuario.emprestimos.MeusLivrosActivity
 import com.example.bibliotecaunifor.usuario.historico.HistoricoActivity
 import com.example.bibliotecaunifor.usuario.jogos.JogosTabuleiroActivity
 import com.bumptech.glide.Glide
+import com.example.bibliotecaunifor.usuario.utils.FirestoreSeedData
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -29,6 +30,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: TelaHomeUsuarioBinding
 
     private val db = Firebase.firestore
+    private var devolucoesListener: com.google.firebase.firestore.ListenerRegistration? = null
 
 
 
@@ -44,6 +46,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // enableEdgeToEdge()
+        // FirestoreSeedData.popularTudo()
         binding = TelaHomeUsuarioBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -144,41 +147,56 @@ class MainActivity : AppCompatActivity() {
     private fun configurarSecaoDevolucoes() {
         val uid = Firebase.auth.currentUser?.uid ?: return
 
-        // esperar o carregar do firestore:
         binding.tvDevolucoesList.text = "Buscando suas devoluções..."
 
-        // Ajuda da documentação, montado junto com o chat da documentação:
-        db.collection("emprestimos")
-            .whereEqualTo("idUsuario", uid) // fitra os livros só para o aluno.
-            .whereEqualTo("status", "ativo") // mos
-            .get()
-            .addOnSuccessListener { result ->
-                if (result.isEmpty) {
+        devolucoesListener?.remove()
+
+        devolucoesListener = db.collection("emprestimos")
+            .whereEqualTo("idUsuario", uid)
+            .whereEqualTo("status", "ativo")
+            .whereEqualTo("tipoItem", "livro")
+            .addSnapshotListener { result, error ->
+                if (error != null) {
+                    binding.tvDevolucoesList.text = "Erro ao carregar devoluções."
+                    return@addSnapshotListener
+                }
+
+                if (result == null || result.isEmpty) {
                     binding.tvDevolucoesList.text =
                         "Tudo em dia! \nVocê não tem devoluções para esta semana."
                 } else {
-                    // 3. Mapeamento dos dados
-                    val livros = result.map { doc ->
-                        val titulo = doc.getString("tituloItem") ?: "Livro"
-                        val dataLong = doc.getLong("dataDevolucao") ?: 0L
-                        val dataStr = if (dataLong > 0) {
-                            SimpleDateFormat("dd/MM", Locale.getDefault()).format(Date(dataLong))
-                        } else "??/??"
+                    val sdf = SimpleDateFormat("dd/MM", Locale.getDefault())
+                    val livros = result.mapNotNull { doc ->
+                        val titulo = doc.getString("tituloLivro") ?: "Livro"
+                        val dataTimestamp = doc.getTimestamp("dataDevolucaoPrevista")
 
-                        "• $titulo ($dataStr)"
+                        if (dataTimestamp != null) {
+                            val dataDate = dataTimestamp.toDate()
+                            val dataStr = sdf.format(dataDate)
+                            val hoje = System.currentTimeMillis()
+
+                            if (hoje > dataDate.time) {
+                                "• $titulo (Atrasado: $dataStr) ⚠️"
+                            } else {
+                                "• $titulo (Devolver até: $dataStr)"
+                            }
+                        } else {
+                            "• $titulo (Data não definida)"
+                        }
                     }
                     binding.tvDevolucoesList.text = livros.joinToString("\n")
                 }
             }
-            .addOnFailureListener {
-                binding.tvDevolucoesList.text = "Erro ao carregar devoluções."
-            }
-        // Agora dá para clicar ir para telda de alugueis
+
         binding.cardAlertaDevolucoes.setOnClickListener {
-            // Fazendo animação ser diferente para padrozinar a animação do menu inferior (besteira minha)
             val options = ActivityOptions.makeCustomAnimation(this, 0, 0)
             val intent = Intent(this, MeusLivrosActivity::class.java)
             startActivity(intent, options.toBundle())
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        devolucoesListener?.remove()
     }
 }

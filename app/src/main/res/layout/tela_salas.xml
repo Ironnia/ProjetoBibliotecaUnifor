@@ -74,11 +74,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"
-            android:text="Todas as salas" />
+            android:text="Todas" />
     </com.google.android.material.chip.ChipGroup>
 
     <TextView
-        android:id="@+id/tvEmptyStateSalas"
+        android:id="@+id/tvEmptyStateMesas"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="32dp"
@@ -88,14 +88,14 @@
         android:textSize="16sp"
         android:fontFamily="@font/satoshi_medium"
         android:visibility="gone"
-        app:layout_constraintTop_toTopOf="@id/rvSalas"
-        app:layout_constraintBottom_toBottomOf="@id/rvSalas"
+        app:layout_constraintTop_toTopOf="@id/rvMesas"
+        app:layout_constraintBottom_toBottomOf="@id/rvMesas"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Lista de Salas / Meus Agendamentos -->
+    <!-- Lista de Mesas / Meus Agendamentos -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvSalas"
+        android:id="@+id/rvMesas"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"

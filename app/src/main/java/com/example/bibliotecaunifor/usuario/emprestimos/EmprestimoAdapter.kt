@@ -41,10 +41,6 @@ class EmprestimoAdapter(
             val isPendente = item.status == "pendente"
 
             with(binding) {
-                /*
-                tvLivroTitulo.text = item.tituloItem
-                tvLivroAutor.text = item.autorItem
-                */
                 tvLivroTitulo.text = item.tituloLivro
                 tvLivroAutor.text = item.autorLivro
 
@@ -57,22 +53,24 @@ class EmprestimoAdapter(
                 tvPrazo.text = if (isPendente) "Retirar até: $data" else "Prazo: $data"
                 tvPrazo.setTextColor(root.context.getColor(corAlerta))
 
-                btnAcaoLivro.isEnabled = true
-                btnAcaoLivro.alpha = 1.0f
-                btnAcaoLivro.text = if (isPendente) "Ver QR Code" else "Renovar"
-
+                // Configuração de botões condicionados ao status do empréstimo
                 if (isPendente) {
+                    btnAcaoLivro.visibility = android.view.View.VISIBLE
+                    btnAcaoLivro.text = "Ver QR Code"
+                    btnAcaoLivro.isEnabled = true
+                    btnAcaoLivro.alpha = 1.0f
                     btnCancelarReserva.visibility = android.view.View.VISIBLE
                     btnCancelarReserva.setOnClickListener { onCancelarClick?.invoke(item) }
-                } else {
-                    btnCancelarReserva.visibility = android.view.View.GONE
-                }
-
-                // vai desabilitar a renovação por causa do aluno ter atrasado.
-                if (item.status == "atrasado") {
-                    btnAcaoLivro.isEnabled = false
+                } else if (item.status == "atrasado") {
+                    btnAcaoLivro.visibility = android.view.View.VISIBLE
                     btnAcaoLivro.text = "Procure a biblioteca"
+                    btnAcaoLivro.isEnabled = false
                     btnAcaoLivro.alpha = 0.5f
+                    btnCancelarReserva.visibility = android.view.View.GONE
+                } else {
+                    // Para status "ativo" (alugado no prazo), ocultamos os botões pois a renovação foi expurgada do MVP
+                    btnAcaoLivro.visibility = android.view.View.GONE
+                    btnCancelarReserva.visibility = android.view.View.GONE
                 }
 
                 btnAcaoLivro.setOnClickListener { onAcaoClick(item) }

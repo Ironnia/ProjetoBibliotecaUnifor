@@ -26,6 +26,8 @@ class AdminAgendamentosActivity : AppCompatActivity() {
 
     private var allSalas = listOf<Sala>()
     private var allAgendamentos = listOf<AgendamentoDb>()
+    private var salasListener: com.google.firebase.firestore.ListenerRegistration? = null
+    private var agendamentosListener: com.google.firebase.firestore.ListenerRegistration? = null
 
     private val db = Firebase.firestore
 
@@ -56,7 +58,7 @@ class AdminAgendamentosActivity : AppCompatActivity() {
 
     private fun setupRealtimeListeners() {
         // 1. Escuta em tempo real nas Salas/Mesas
-        db.collection("salas").addSnapshotListener { snapshot, error ->
+        salasListener = db.collection("salas").addSnapshotListener { snapshot, error ->
             if (error == null && snapshot != null) {
                 allSalas = snapshot.toObjects(Sala::class.java)
                 updateUI()
@@ -64,7 +66,7 @@ class AdminAgendamentosActivity : AppCompatActivity() {
         }
 
         // 2. Escuta em tempo real nos Agendamentos com AUTO-CLEANUP (tolerância de 15 minutos)
-        db.collection("agendamentos").addSnapshotListener { snapshot, error ->
+        agendamentosListener = db.collection("agendamentos").addSnapshotListener { snapshot, error ->
             if (error == null && snapshot != null) {
                 val listaBruta = snapshot.toObjects(AgendamentoDb::class.java)
                 
@@ -89,6 +91,12 @@ class AdminAgendamentosActivity : AppCompatActivity() {
                 updateUI()
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        salasListener?.remove()
+        agendamentosListener?.remove()
     }
 
     private fun setupFilters() {

@@ -53,13 +53,24 @@ class RankingUsuarioActivity : AppCompatActivity() {
     private fun observeRanking() {
         rankingListener?.remove()
         
-        // Escuta em tempo real os 10 usuários com maior pontuação
+        // Escuta em tempo real os 10 usuários com maior pontuação de forma resiliente
         rankingListener = db.collection("usuario")
             .orderBy("pontos", Query.Direction.DESCENDING)
             .limit(10)
             .addSnapshotListener { snapshot, error ->
                 if (error == null && snapshot != null) {
-                    val list = snapshot.toObjects(Usuario::class.java)
+                    val list = snapshot.documents.mapNotNull { doc ->
+                        val nome = doc.getString("nome") ?: ""
+                        val email = doc.getString("email") ?: ""
+                        val tipo = doc.getString("tipo") ?: "usuario"
+                        val pRaw = doc.get("pontos")
+                        val pontos = when (pRaw) {
+                            is Number -> pRaw.toInt()
+                            is String -> pRaw.toIntOrNull() ?: 0
+                            else -> 0
+                        }
+                        Usuario(nome, email, tipo, pontos)
+                    }
                     rankAdapter.updateList(list)
                 }
             }
@@ -69,10 +80,15 @@ class RankingUsuarioActivity : AppCompatActivity() {
         val emailLogado = com.example.bibliotecaunifor.pegarEmailUsuario()
         val uid = auth.currentUser?.uid ?: return
 
-        // 1. Pega meus pontos em tempo real
+        // 1. Pega meus pontos em tempo real de forma resiliente
         db.collection("usuario").document(uid).addSnapshotListener { doc, err ->
             if (err == null && doc != null) {
-                val meusPontos = doc.getLong("pontos") ?: 0L
+                val pRaw = doc.get("pontos")
+                val meusPontos = when (pRaw) {
+                    is Number -> pRaw.toLong()
+                    is String -> pRaw.toLongOrNull() ?: 0L
+                    else -> 0L
+                }
                 val meuNome = doc.getString("nome") ?: "Eu"
                 
                 binding.tvMeusPontos.text = "${meusPontos} pts"
