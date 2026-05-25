@@ -37,9 +37,20 @@ class HistoricoActivity : AppCompatActivity() {
         val list = mutableListOf<HistoryItem>()
         var pendingQueries = 3
 
-        // val sdfParse = java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault())
         val sdfParse = java.text.SimpleDateFormat("dd/MM", java.util.Locale.getDefault())
         val sdfDisplay = java.text.SimpleDateFormat("dd MMM", java.util.Locale("pt", "BR"))
+
+        // Decodifica datas resilientes de forma compatível com Long e com objetos Timestamp do Firebase
+        fun obterTimestamp(doc: com.google.firebase.firestore.DocumentSnapshot, campos: List<String>): Long {
+            for (campo in campos) {
+                val longVal = doc.getLong(campo)
+                if (longVal != null) return longVal
+                
+                val tsVal = doc.getTimestamp(campo)
+                if (tsVal != null) return tsVal.toDate().time
+            }
+            return System.currentTimeMillis()
+        }
 
         fun checkAndPublish() {
             pendingQueries--
@@ -120,7 +131,7 @@ class HistoricoActivity : AppCompatActivity() {
                     val titulo = doc.getString("tituloItem") ?: "Livro"
                     val status = doc.getString("status") ?: ""
                     val itemId = doc.getString("idItem") ?: ""
-                    val timestamp = doc.getLong("dataEmprestimo") ?: System.currentTimeMillis()
+                    val timestamp = obterTimestamp(doc, listOf("dataEmprestimo"))
                     val desc = when (status) {
                         "devolvido" -> "Empréstimo finalizado"
                         "recusado" -> "Reserva recusada"
@@ -147,11 +158,11 @@ class HistoricoActivity : AppCompatActivity() {
                     val titulo = doc.getString("tituloItem") ?: doc.getString("nomeJogo") ?: "Jogo"
                     val status = doc.getString("status") ?: ""
                     val itemId = doc.getString("idItem") ?: ""
-                    val timestamp = doc.getLong("dataEmprestimo") ?: doc.getLong("dataAluguel") ?: System.currentTimeMillis()
+                    val timestamp = obterTimestamp(doc, listOf("dataEmprestimo", "dataAluguel"))
                     val desc = when (status) {
                         "devolvido" -> "Devolvido no balcão"
                         "recusado" -> "Aluguel recusado"
-                        "cancelado" -> "Aluguel cancelado"
+                        "cancelado" -> "Aluguel cancelada"
                         "expirado" -> "Reserva expirada"
                         else -> "Histórico"
                     }
@@ -179,9 +190,24 @@ class HistoricoActivity : AppCompatActivity() {
                     var dateStr = dataStr
                     if (dataStr.isNotEmpty()) {
                         try {
-                            val parsedDate = sdfParse.parse(dataStr)
+                            val anoAtual = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR)
+                            val dataCompleta = "$dataStr/$anoAtual"
+                            val sdfParseCompleto = java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault())
+                            val parsedDate = sdfParseCompleto.parse(dataCompleta)
                             if (parsedDate != null) {
-                                timestamp = parsedDate.time
+                                val horarioStr = doc.getString("horario") ?: "" // Ex: "07:10 - 08:00"
+                                var extraMillis = 0L
+                                if (horarioStr.isNotEmpty()) {
+                                    try {
+                                        val horaInicio = horarioStr.substringBefore(" ").trim() // Ex: "07:10"
+                                        val partes = horaInicio.split(":")
+                                        if (partes.size == 2) {
+                                            val minTotal = partes[0].toInt() * 60 + partes[1].toInt()
+                                            extraMillis = minTotal * 60 * 1000L
+                                        }
+                                    } catch (e: Exception) {}
+                                }
+                                timestamp = parsedDate.time + extraMillis
                                 dateStr = sdfDisplay.format(parsedDate)
                             }
                         } catch (e: Exception) {

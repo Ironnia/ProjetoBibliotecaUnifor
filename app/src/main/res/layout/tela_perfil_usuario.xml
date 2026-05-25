@@ -36,19 +36,26 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:tint="@color/white" />
 
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/iv_profile"
-                android:layout_width="110dp"
-                android:layout_height="110dp"
-                android:layout_marginTop="125dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_profile_tab"
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cv_profile_container"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_marginTop="120dp"
+                app:cardCornerRadius="60dp"
+                app:strokeColor="@color/white"
+                app:strokeWidth="4dp"
+                app:cardElevation="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
-                app:strokeColor="@color/white"
-                app:strokeWidth="4dp" />
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/iv_profile"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_profile_tab" />
+            </com.google.android.material.card.MaterialCardView>
 
             <TextView
                 android:id="@+id/tv_name"
@@ -61,7 +68,7 @@
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/iv_profile" />
+                app:layout_constraintTop_toBottomOf="@+id/cv_profile_container" />
 
             <TextView
                 android:id="@+id/tv_matricula"
@@ -243,7 +250,7 @@
                             android:textSize="10sp" />
                     </LinearLayout>
 
-                    <!-- Medalha 3 -->
+                    <!-- Medalha 3 COMENTADA CONFORME PEDIDO
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -262,8 +269,9 @@
                             android:text="Pontual"
                             android:textSize="10sp" />
                     </LinearLayout>
+                    -->
 
-                    <!-- Medalha 4 -->
+                    <!-- Medalha 4 COMENTADA CONFORME PEDIDO
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -282,6 +290,7 @@
                             android:text="Veterano"
                             android:textSize="10sp" />
                     </LinearLayout>
+                    -->
                 </LinearLayout>
             </HorizontalScrollView>
 
@@ -329,6 +338,7 @@
                         app:icon="@drawable/ic_finance"
                         app:iconTint="@color/error_red" />
 
+                    <!-- SEÇÃO DE TAGS REMOVIDA/COMENTADA CONFORME PEDIDO
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
@@ -345,6 +355,7 @@
                         android:textColor="@color/unifor_marinho_dark"
                         app:icon="@drawable/ic_tag"
                         app:iconTint="@color/unifor_anil_primary" />
+                    -->
 
                     <View
                         android:layout_width="match_parent"

@@ -14,6 +14,7 @@ import com.example.bibliotecaunifor.usuario.ranking.RankingUsuarioActivity
 import com.example.bibliotecaunifor.usuario.emprestimos.MeusLivrosActivity
 import com.example.bibliotecaunifor.usuario.historico.HistoricoActivity
 import com.example.bibliotecaunifor.usuario.jogos.JogosTabuleiroActivity
+import com.bumptech.glide.Glide
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -65,6 +66,23 @@ class MainActivity : AppCompatActivity() {
 
         // Setup Navigation
         NavigationUtils.navegacaoAluno(this, binding.bottomNavigation, R.id.navigation_home_aluno)
+
+        // Carrega a foto de perfil do usuário em tempo real
+        val userUid = Firebase.auth.currentUser?.uid
+        if (userUid != null) {
+            db.collection("usuario").document(userUid)
+                .addSnapshotListener { snapshot, error ->
+                    if (error == null && snapshot != null) {
+                        val fotoUrl = snapshot.getString("fotoUrl")
+                        if (!fotoUrl.isNullOrEmpty()) {
+                            Glide.with(this@MainActivity)
+                                .load(fotoUrl)
+                                .circleCrop()
+                                .into(binding.ivProfile)
+                        }
+                    }
+                }
+        }
 
         configurarSecaoDevolucoes()
 
