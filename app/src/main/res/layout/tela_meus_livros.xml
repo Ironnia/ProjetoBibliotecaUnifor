@@ -81,6 +81,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+<!--    carregamento tipo o do login hehe-->
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"

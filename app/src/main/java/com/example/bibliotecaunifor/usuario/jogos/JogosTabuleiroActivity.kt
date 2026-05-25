@@ -19,6 +19,8 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObjects
+import com.example.bibliotecaunifor.crud.JogosRepository
+import kotlinx.coroutines.launch
 
 class JogosTabuleiroActivity : AppCompatActivity() {
     private lateinit var binding: TelaJogosTabuleiroBinding
@@ -77,23 +79,19 @@ class JogosTabuleiroActivity : AppCompatActivity() {
     }
 
     private fun cancelarReservaJogo(item: Jogo) {
-        val idDoJogoReal = item.idUsuarioComJogo
+        val idDoJogoReal = item.idUsuarioComJogo ?: return
         AlertDialog.Builder(this)
             .setTitle("Cancelar Reserva")
             .setMessage("Deseja realmente cancelar a reserva do jogo \"${item.nome}\"?")
             .setPositiveButton("Sim, Cancelar") { _, _ ->
-                db.collection("alugueis").document(item.id).delete()
-                    .addOnSuccessListener {
-                        idDoJogoReal?.let { idReal ->
-                            db.collection("jogos").document(idReal).update("disponivel", true)
-                                .addOnSuccessListener {
-                                    mostrarAviso("Reserva de jogo cancelada com sucesso.")
-                                }
-                        }
-                    }
-                    .addOnFailureListener {
+                lifecycleScope.launch {
+                    try {
+                        JogosRepository.cancelarReservaJogo(item.id, idDoJogoReal)
+                        mostrarAviso("Reserva de jogo cancelada com sucesso.")
+                    } catch (e: Exception) {
                         mostrarAviso("Erro ao cancelar reserva.")
                     }
+                }
             }
             .setNegativeButton("Voltar", null)
             .show()
@@ -310,31 +308,11 @@ class JogosTabuleiroActivity : AppCompatActivity() {
 
 
     private fun confirmarDevolucaoJogo(item: Jogo) {
-        val idDoJogoReal = item.idUsuarioComJogo // firebase não aceita poss´pivel nulo em .document
-        AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setTitle("Devolver Jogo")
-            .setMessage("Deseja confirmar a devolução de \"${item.nome}\"?")
-            .setPositiveButton("Confirmar") { _, _ ->
-                //atualizar no firestore
-                db.collection("alugueis").document(item.id).update("status", "devolvido")
-                    .addOnSuccessListener {
-                        //libera o jogo no acervo
-                        idDoJogoReal?.let { idReal ->
-                            db.collection("jogos").document(idReal).update("disponivel", true)
-                                .addOnSuccessListener {
-                                    mostrarAviso("Jogo devolvido! Agora você pode alugar outro.")
-                                    carregarJogos()
-                                }
-                        }
-                    }
-            }
-            .setNegativeButton("Cancelar", null)
+            .setMessage("Apresente o jogo no balcão para confirmar a devolução com o bibliotecário.")
+            .setPositiveButton("Ok", null)
             .show()
-//        AlertDialog.Builder(this)
-//            .setTitle("Devolver Jogo")
-//            .setMessage("Apresente o jogo no balcão para confirmar a devolução.")
-//            .setPositiveButton("Ok", null)
-//            .show()
     }
 
     // data class Jogo(val nome: String, val descricao: String, val status: String, val acao: String)

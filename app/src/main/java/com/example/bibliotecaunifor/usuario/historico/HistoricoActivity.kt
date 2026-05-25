@@ -11,11 +11,18 @@ import com.example.bibliotecaunifor.usuario.utils.NavigationUtils
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
+import android.view.View
+import android.view.ViewGroup
+import android.view.LayoutInflater
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.LinearLayoutManager
 
 class HistoricoActivity : AppCompatActivity() {
     private lateinit var binding: TelaHistoricoBinding
     private val db = Firebase.firestore
     private val auth = Firebase.auth
+
+    private lateinit var historicoAdapter: HistoricoAdapter
 
     // Listas globais para cada categoria
     private val listaLivros = mutableListOf<HistoryItem>()
@@ -27,6 +34,29 @@ class HistoricoActivity : AppCompatActivity() {
         enableEdgeToEdge()
         binding = TelaHistoricoBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Inicializa RecyclerView e Adapter uma única vez de forma estática (Evitando janks de performance)
+        binding.rvHistory.layoutManager = LinearLayoutManager(this)
+        historicoAdapter = HistoricoAdapter(emptyList()) { item ->
+            // Redirecionamento inteligente baseado no tipo do item
+            when (item.type) {
+                "LIVRO" -> {
+                    val intent = Intent(this, com.example.bibliotecaunifor.usuario.reserva.DetalhesLivroActivity::class.java).apply {
+                        putExtra("entrada_id", item.itemId)
+                    }
+                    startActivity(intent)
+                }
+                "JOGO" -> {
+                    val intent = Intent(this, com.example.bibliotecaunifor.usuario.jogos.JogosTabuleiroActivity::class.java)
+                    startActivity(intent)
+                }
+                "SALA" -> {
+                    val intent = Intent(this, com.example.bibliotecaunifor.usuario.salas.SalasActivity::class.java)
+                    startActivity(intent)
+                }
+            }
+        }
+        binding.rvHistory.adapter = historicoAdapter
 
         binding.includeToolbar.btnBack.setOnClickListener {
             finish()
@@ -189,67 +219,60 @@ class HistoricoActivity : AppCompatActivity() {
 
     // Função de preenchimento e vinculação do RecyclerView com a lista selecionada
     private fun atualizarRecyclerView(itens: List<HistoryItem>) {
-        binding.rvHistory.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this@HistoricoActivity)
-        binding.rvHistory.adapter = object : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
-            inner class HistoryViewHolder(view: android.view.View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
-                val icon: android.widget.ImageView = view.findViewById(R.id.iv_type_icon)
-                val title: android.widget.TextView = view.findViewById(R.id.tv_item_title)
-                val desc: android.widget.TextView = view.findViewById(R.id.tv_item_description)
-                val date: android.widget.TextView = view.findViewById(R.id.tv_item_date)
-                val type: android.widget.TextView = view.findViewById(R.id.tv_item_type)
-            }
+        historicoAdapter.updateList(itens)
+    }
 
-            override fun onCreateViewHolder(parent: android.view.ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
-                val view = android.view.LayoutInflater.from(parent.context).inflate(R.layout.item_history, parent, false)
-                return HistoryViewHolder(view)
-            }
+    class HistoricoAdapter(
+        private var itens: List<HistoryItem>,
+        private val onItemClick: (HistoryItem) -> Unit
+    ) : RecyclerView.Adapter<HistoricoAdapter.ViewHolder>() {
 
-            override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
-                val item = itens[position]
-                (holder as HistoryViewHolder).apply {
-                    title.text = item.title
-                    desc.text = item.description
-                    date.text = item.date
-                    type.text = item.type
-                    icon.setImageResource(item.iconRes)
-                    
-                    val isErrorStatus = item.description.contains("expirada", ignoreCase = true) || 
-                                        item.description.contains("recusada", ignoreCase = true) || 
-                                        item.description.contains("cancelada", ignoreCase = true) ||
-                                        item.description.contains("recusado", ignoreCase = true) || 
-                                        item.description.contains("cancelado", ignoreCase = true) ||
-                                        item.description.contains("expirado", ignoreCase = true)
-                    if (isErrorStatus) {
-                        icon.imageTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE)
-                        icon.setBackgroundResource(R.drawable.bg_circle_red)
-                    } else {
-                        icon.imageTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#004AF7"))
-                        icon.setBackgroundResource(R.drawable.bg_circle_white)
-                    }
-                    
-                    itemView.setOnClickListener {
-                        when (item.type) {
-                            "LIVRO" -> {
-                                val intent = Intent(this@HistoricoActivity, com.example.bibliotecaunifor.usuario.reserva.DetalhesLivroActivity::class.java).apply {
-                                    putExtra("entrada_id", item.itemId)
-                                }
-                                startActivity(intent)
-                            }
-                            "JOGO" -> {
-                                val intent = Intent(this@HistoricoActivity, com.example.bibliotecaunifor.usuario.jogos.JogosTabuleiroActivity::class.java)
-                                startActivity(intent)
-                            }
-                            "SALA" -> {
-                                val intent = Intent(this@HistoricoActivity, com.example.bibliotecaunifor.usuario.salas.SalasActivity::class.java)
-                                startActivity(intent)
-                            }
-                        }
-                    }
-                }
-            }
-
-            override fun getItemCount() = itens.size
+        class ViewHolder(val view: android.view.View) : RecyclerView.ViewHolder(view) {
+            val icon: android.widget.ImageView = view.findViewById(R.id.iv_type_icon)
+            val title: android.widget.TextView = view.findViewById(R.id.tv_item_title)
+            val desc: android.widget.TextView = view.findViewById(R.id.tv_item_description)
+            val date: android.widget.TextView = view.findViewById(R.id.tv_item_date)
+            val type: android.widget.TextView = view.findViewById(R.id.tv_item_type)
         }
+
+        fun updateList(newItens: List<HistoryItem>) {
+            itens = newItens
+            notifyDataSetChanged()
+        }
+
+        override fun onCreateViewHolder(parent: android.view.ViewGroup, viewType: Int): ViewHolder {
+            val view = android.view.LayoutInflater.from(parent.context).inflate(R.layout.item_history, parent, false)
+            return ViewHolder(view)
+        }
+
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+            val item = itens[position]
+            holder.apply {
+                title.text = item.title
+                desc.text = item.description
+                date.text = item.date
+                type.text = item.type
+                icon.setImageResource(item.iconRes)
+                
+                val isErrorStatus = item.description.contains("expirada", ignoreCase = true) || 
+                                    item.description.contains("recusada", ignoreCase = true) || 
+                                    item.description.contains("cancelada", ignoreCase = true) ||
+                                    item.description.contains("recusado", ignoreCase = true) || 
+                                    item.description.contains("cancelado", ignoreCase = true) ||
+                                    item.description.contains("expirado", ignoreCase = true)
+                if (isErrorStatus) {
+                    icon.imageTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE)
+                    icon.setBackgroundResource(R.drawable.bg_circle_red)
+                } else {
+                    icon.imageTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#004AF7"))
+                    icon.setBackgroundResource(R.drawable.bg_circle_white)
+                }
+                
+                itemView.setOnClickListener { onItemClick(item) }
+            }
+        }
+
+        override fun getItemCount() = itens.size
     }
 
     data class HistoryItem(

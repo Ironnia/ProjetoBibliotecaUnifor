@@ -13,7 +13,7 @@ object SalasRepository {
     suspend fun liberarHorario(idAgendamento: String) {
         db.collection("agendamentos")
             .document(idAgendamento)
-            .delete()
+            .update("status", "concluido")
             .await()
     }
 
@@ -49,7 +49,7 @@ object SalasRepository {
         if (!snapshot.isEmpty) {
             val batch = db.batch()
             for (doc in snapshot.documents) {
-                batch.delete(doc.reference)
+                batch.update(doc.reference, "status", "concluido")
             }
             batch.commit().await()
         }

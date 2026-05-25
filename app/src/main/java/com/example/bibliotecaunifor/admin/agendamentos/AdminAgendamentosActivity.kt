@@ -79,8 +79,8 @@ class AdminAgendamentosActivity : AppCompatActivity() {
                         try {
                             val horaInicio = LocalTime.parse(ag.horario.split(" - ")[0])
                             if (agora.isAfter(horaInicio.plusMinutes(15))) {
-                                // Se atrasou mais de 15 min, o sistema deleta silenciosamente para liberar a mesa/sala
-                                db.collection("agendamentos").document(ag.id).delete()
+                                // Se atrasou mais de 15 min, o sistema marca silenciosamente como expirado para fins de histórico e liberação
+                                db.collection("agendamentos").document(ag.id).update("status", "expirado")
                             }
                         } catch (e: Exception) { /* ignora erro de parse */ }
                     }

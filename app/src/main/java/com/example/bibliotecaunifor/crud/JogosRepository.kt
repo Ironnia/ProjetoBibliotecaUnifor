@@ -23,9 +23,12 @@ object JogosRepository {
     suspend fun registrarDevolucaoJogo(idAluguel: String, idJogo: String) {
         val batch = db.batch()
 
-        // 1. Atualiza o status do aluguel para "devolvido"
+        // 1. Atualiza o status do aluguel para "devolvido" e registra data de devolução real
         val aluguelRef = db.collection("alugueis").document(idAluguel)
-        batch.update(aluguelRef, "status", "devolvido")
+        batch.update(aluguelRef, mapOf(
+            "status" to "devolvido",
+            "dataDevolucaoReal" to System.currentTimeMillis()
+        ))
 
         // 2. Libera a disponibilidade do jogo de tabuleiro na coleção "jogos"
         val jogoRef = db.collection("jogos").document(idJogo)
