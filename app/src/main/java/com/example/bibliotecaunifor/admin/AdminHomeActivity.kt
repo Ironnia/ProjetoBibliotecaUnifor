@@ -12,6 +12,7 @@ import com.example.bibliotecaunifor.admin.jogos.AdminJogosActivity
 import com.example.bibliotecaunifor.databinding.TelaAdminHomeBinding
 import com.example.bibliotecaunifor.pegarNomeUsuario
 import com.example.bibliotecaunifor.usuario.utils.NavigationUtils
+import com.example.bibliotecaunifor.usuario.utils.FirestoreSeedData
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -31,6 +32,9 @@ class AdminHomeActivity : AppCompatActivity() {
         enableEdgeToEdge()
         binding = TelaAdminHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // RODE UMA VEZ E APAGUE DEPOIS PARA POPULAR O FIRESTORE:
+        // FirestoreSeedData.popularTudo()
 
         // Carregar Nome Real do Administrador para Saudação
         pegarNomeUsuario { nome ->

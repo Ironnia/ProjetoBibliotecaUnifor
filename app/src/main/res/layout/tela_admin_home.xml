@@ -77,7 +77,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="8dp"
                 android:background="@null"
-                android:hint="Pesquisar e-mail do aluno..."
+                android:hint="Pesquisar no Acervo..."
                 android:textColorHint="#888888"
                 android:textColor="@color/unifor_marinho_dark"
                 android:inputType="text"
@@ -111,6 +111,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
+                    android:minHeight="130dp"
                     app:cardCornerRadius="12dp"
                     app:cardElevation="2dp"
                     app:layout_columnWeight="1">
@@ -145,6 +146,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
+                    android:minHeight="130dp"
                     app:cardCornerRadius="12dp"
                     app:cardElevation="2dp"
                     app:layout_columnWeight="1">
@@ -179,6 +181,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
+                    android:minHeight="130dp"
                     app:cardCornerRadius="12dp"
                     app:cardElevation="2dp"
                     app:layout_columnWeight="1">
@@ -213,6 +216,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
+                    android:minHeight="130dp"
                     app:cardCornerRadius="12dp"
                     app:cardElevation="2dp"
                     app:layout_columnWeight="1">
@@ -234,7 +238,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:text="Gerenciar\nsalas"
+                            android:text="Gerenciar\nSalas"
                             android:textAlignment="center"
                             android:textColor="@color/unifor_marinho_dark"
                             android:textStyle="bold" />
