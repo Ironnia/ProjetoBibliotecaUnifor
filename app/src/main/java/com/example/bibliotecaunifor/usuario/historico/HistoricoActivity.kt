@@ -120,7 +120,7 @@ class HistoricoActivity : AppCompatActivity() {
                         else -> "Histórico"
                     }
                     val dateStr = if (timestamp > 0) sdfDisplay.format(java.util.Date(timestamp)) else "--/--"
-                    listaLivros.add(HistoryItem(titulo, desc, dateStr, "LIVRO", R.drawable.menu_book_24, timestamp, itemId))
+                    listaLivros.add(HistoryItem(titulo, desc, dateStr, "LIVRO", R.drawable.ic_livro_do_biblioteca, timestamp, itemId))
                 }
                 listaLivros.sortByDescending { it.timestamp }
                 

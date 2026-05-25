@@ -45,7 +45,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Livros"
-                app:chipIcon="@drawable/menu_book_24"
+                app:chipIcon="@drawable/ic_livro_do_biblioteca"
                 android:checked="true" />
 
             <com.google.android.material.chip.Chip

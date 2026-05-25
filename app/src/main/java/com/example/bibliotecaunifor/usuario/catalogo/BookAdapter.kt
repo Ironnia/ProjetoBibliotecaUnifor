@@ -38,14 +38,9 @@ class BookAdapter(
             val available = entry.exemplaresDisponiveis
             tvAvailability.text = "Disponibilidade: $available exemplares"
 
-            if (entry.imageUrl.isNotEmpty()) {
-                com.bumptech.glide.Glide.with(root.context)
-                    .load(entry.imageUrl)
-                    .placeholder(R.drawable.menu_book_24)
-                    .into(ivIcon)
-            } else {
-                ivIcon.setImageResource(R.drawable.menu_book_24)
-            }
+            // Usando apenas ícones conforme decidido
+            ivIcon.setImageResource(R.drawable.ic_livro_do_biblioteca)
+            ivIcon.imageTintList = ContextCompat.getColorStateList(root.context, R.color.unifor_anil_primary)
 
             val jaReservado = reservedBookIds.contains(entry.id)
             if (jaReservado) {

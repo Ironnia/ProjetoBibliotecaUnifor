@@ -111,6 +111,10 @@ class AdminDetalhesLivroActivity : AppCompatActivity() {
     private fun updateUI(entrada: Entrada) {
         binding.tvTitle.text = entrada.titulo
         binding.tvAuthor.text = entrada.autor
+
+        binding.ivBookCover.setImageResource(R.drawable.ic_livro_do_biblioteca)
+        binding.ivBookCover.imageTintList = android.content.res.ColorStateList.valueOf(getColor(R.color.unifor_anil_primary))
+
         setupBox(binding.boxIsbn, binding.tvIsbn, entrada.isbn)
         setupBox(binding.boxCduCutter, binding.tvCduCutter, "${entrada.cdu} ${entrada.cutter}".trim())
         setupBox(binding.boxEdicao, binding.tvEdicao, entrada.edicao)

@@ -44,27 +44,21 @@
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cv_book_cover"
-                android:layout_width="200dp"
-                android:layout_height="280dp"
+                android:layout_width="160dp"
+                android:layout_height="160dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="32dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="4dp">
+                app:cardCornerRadius="80dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="@color/unifor_gelo_bg">
 
                 <ImageView
                     android:id="@+id/iv_book_cover"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop" />
-
-                <TextView
-                    android:id="@+id/tv_book_cover_placeholder"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:text="foto"
-                    android:textSize="24sp"
-                    android:textColor="#999999" />
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_livro_do_biblioteca"
+                    app:tint="@color/unifor_anil_primary" />
             </com.google.android.material.card.MaterialCardView>
 
             <TextView

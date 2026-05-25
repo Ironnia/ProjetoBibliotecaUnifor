@@ -222,7 +222,7 @@ class CatalogoActivity : AppCompatActivity() {
 
                             transaction.set(aluguelRef, novoAluguel)
                             transaction.update(livroRef, "exemplares", novosExemplares)
-                            transaction.update(livroRef, "reservaCount", entradaDb.reservaCount + 1)
+                            // reservaCount é incrementado pelo admin ao aprovar retirada (EmprestimosRepository)
                             true
                         } else {
                             false

@@ -51,7 +51,7 @@
             <ImageView
                 android:layout_width="16dp"
                 android:layout_height="16dp"
-                android:src="@drawable/menu_book_24"
+                android:src="@drawable/ic_livro_do_biblioteca"
                 app:tint="#666666" />
 
             <TextView

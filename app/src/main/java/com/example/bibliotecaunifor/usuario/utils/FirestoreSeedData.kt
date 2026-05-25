@@ -90,8 +90,7 @@ object FirestoreSeedData {
                 "totalExemplares" to 2,
                 "exemplaresAlugados" to 1,
                 "exemplaresDisponiveis" to 1,
-                "reservaCount" to 38,
-                "imageUrl" to "https://images-na.ssl-images-amazon.com/images/I/81k392G-L5L.jpg"
+                "reservaCount" to 38
             ),
             mapOf(
                 "titulo" to "O Pequeno Príncipe",
@@ -106,8 +105,7 @@ object FirestoreSeedData {
                 "totalExemplares" to 1,
                 "exemplaresAlugados" to 0,
                 "exemplaresDisponiveis" to 1,
-                "reservaCount" to 55,
-                "imageUrl" to "https://images-na.ssl-images-amazon.com/images/I/71uGr7ZUXaL.jpg"
+                "reservaCount" to 55
             ),
             mapOf(
                 "titulo" to "O Alquimista",
@@ -122,8 +120,7 @@ object FirestoreSeedData {
                 "totalExemplares" to 1,
                 "exemplaresAlugados" to 0,
                 "exemplaresDisponiveis" to 1,
-                "reservaCount" to 15,
-                "imageUrl" to "https://images-na.ssl-images-amazon.com/images/I/51ZBY56q0kL.jpg"
+                "reservaCount" to 15
             ),
             mapOf(
                 "titulo" to "Vidas Secas",
@@ -138,8 +135,7 @@ object FirestoreSeedData {
                 "totalExemplares" to 1,
                 "exemplaresAlugados" to 1,
                 "exemplaresDisponiveis" to 0,
-                "reservaCount" to 12,
-                "imageUrl" to "https://images-na.ssl-images-amazon.com/images/I/81j8vI-rRSL.jpg"
+                "reservaCount" to 12
             )
         )
 

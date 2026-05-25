@@ -16,6 +16,7 @@ import com.example.bibliotecaunifor.usuario.utils.NavigationUtils
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.firestore
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -23,6 +24,7 @@ import java.util.Locale
 
 class AdminHomeActivity : AppCompatActivity() {
     private lateinit var binding: TelaAdminHomeBinding
+    private var rankingListener: ListenerRegistration? = null
 
     private val db = Firebase.firestore
     private val auth = Firebase.auth
@@ -94,13 +96,18 @@ class AdminHomeActivity : AppCompatActivity() {
         NavigationUtils.navegacaoAdmin(this, binding.bottomNavigation, R.id.navigation_home_admin)
     }
 
+    /** Escuta em tempo real os 3 livros mais alugados (reservaCount incrementado ao aprovar retirada). */
     private fun carregarPainelResumo() {
-        db.collection("Acervo")
+        rankingListener = db.collection("Acervo")
             .orderBy("reservaCount", com.google.firebase.firestore.Query.Direction.DESCENDING)
             .limit(3)
-            .get()
-            .addOnSuccessListener { result ->
-                val livros = result.documents.mapNotNull { doc ->
+            .addSnapshotListener { result, error ->
+                if (error != null) {
+                    FirebaseCrashlytics.getInstance().recordException(error)
+                    binding.tvTop1.text = "Erro ao carregar ranking"
+                    return@addSnapshotListener
+                }
+                val livros = result?.documents?.mapNotNull { doc ->
                     val titulo = doc.getString("titulo") ?: "Livro"
                     val rRaw = doc.get("reservaCount")
                     val count = when (rRaw) {
@@ -109,15 +116,16 @@ class AdminHomeActivity : AppCompatActivity() {
                         else -> 0
                     }
                     Pair(titulo, count)
-                }
+                } ?: emptyList()
 
-                if (livros.size >= 1) binding.tvTop1.text = "1. ${livros[0].first} - ${livros[0].second} vezes"
-                if (livros.size >= 2) binding.tvTop2.text = "2. ${livros[1].first} - ${livros[1].second} vezes"
-                if (livros.size >= 3) binding.tvTop3.text = "3. ${livros[2].first} - ${livros[2].second} vezes"
+                if (livros.isNotEmpty()) binding.tvTop1.text = "1. ${livros[0].first} — ${livros[0].second}x alugado"
+                if (livros.size >= 2) binding.tvTop2.text = "2. ${livros[1].first} — ${livros[1].second}x alugado"
+                if (livros.size >= 3) binding.tvTop3.text = "3. ${livros[2].first} — ${livros[2].second}x alugado"
             }
-            .addOnFailureListener { e ->
-                FirebaseCrashlytics.getInstance().recordException(e)
-                binding.tvTop1.text = "Erro ao carregar ranking"
-            }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        rankingListener?.remove()
     }
 }

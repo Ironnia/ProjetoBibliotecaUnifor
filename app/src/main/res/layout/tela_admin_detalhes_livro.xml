@@ -27,17 +27,19 @@
             android:padding="24dp">
 
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cv_book_cover"
                 android:layout_width="160dp"
-                android:layout_height="220dp"
+                android:layout_height="160dp"
                 android:layout_gravity="center"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="8dp">
+                app:cardCornerRadius="80dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="@color/unifor_gelo_bg">
                 <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/menu_book_24"
-                    android:padding="40dp"
+                    android:id="@+id/iv_book_cover"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_livro_do_biblioteca"
                     app:tint="@color/unifor_anil_primary" />
             </com.google.android.material.card.MaterialCardView>
 

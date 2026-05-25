@@ -85,7 +85,6 @@ class DetalhesLivroActivity : AppCompatActivity() {
     }
 
     private fun updateUI(entrada: Entrada) {
-        // dnv ktx,
         with(binding) {
             tvTitle.text = entrada.titulo
             tvAuthor.text = entrada.autor
@@ -96,24 +95,12 @@ class DetalhesLivroActivity : AppCompatActivity() {
             else
                 android.view.View.GONE
 
-            if (entrada.imageUrl.isNotEmpty()) {
-                try {
-                    com.bumptech.glide.Glide.with(this@DetalhesLivroActivity)
-                        .load(entrada.imageUrl)
-                        .into(ivBookCover)
-                    tvBookCoverPlaceholder.visibility = android.view.View.GONE
-                } catch (e: Exception) {
-                    ivBookCover.setImageDrawable(null)
-                    tvBookCoverPlaceholder.visibility = android.view.View.VISIBLE
-                }
-            } else {
-                ivBookCover.setImageDrawable(null)
-                tvBookCoverPlaceholder.visibility = android.view.View.VISIBLE
-            }
+            // Mudança para usar apenas ícones
+            ivBookCover.setImageResource(R.drawable.ic_livro_do_biblioteca)
+            ivBookCover.imageTintList = android.content.res.ColorStateList.valueOf(getColor(R.color.unifor_anil_primary))
 
             cgAssuntos.removeAllViews()
             entrada.assuntos.forEach { assunto ->
-                // só ktx, aproveitando que estou tentando ler uma lógica melhro.
                 val chip = Chip(this@DetalhesLivroActivity).apply {
                     text = assunto
                     setTextColor(getColor(R.color.unifor_anil_primary))
@@ -135,7 +122,6 @@ class DetalhesLivroActivity : AppCompatActivity() {
                 val tvInfo = TextView(this@DetalhesLivroActivity).apply {
                     text = "Exemplar - ${exemplar.localizacao}"
                     gravity = Gravity.START
-                    // Talvez modificar um pouco? verificar!
                     setPadding(36, 36, 36, 36)
                     setBackgroundResource(R.drawable.bg_border)
                     textSize = 12f
@@ -168,7 +154,6 @@ class DetalhesLivroActivity : AppCompatActivity() {
 
                 row.addView(tvInfo)
                 row.addView(tvSituacao)
-                // Melhorar a separação na hud:
                 val divisor = android.view.View(this@DetalhesLivroActivity).apply {
                     layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 2)
                     setBackgroundColor(getColor(R.color.unifor_gelo_bg))
@@ -182,7 +167,6 @@ class DetalhesLivroActivity : AppCompatActivity() {
     private fun confirmarReserva(entry: Entrada) {
         val uid = Firebase.auth.currentUser?.uid ?: return
 
-        // Primeiro verifica o limite de 5 livros ativos
         db.collection("emprestimos")
             .whereEqualTo("idUsuario", uid)
             .whereEqualTo("tipoItem", "livro")
@@ -196,7 +180,6 @@ class DetalhesLivroActivity : AppCompatActivity() {
                 abrirDialogoConfirmacao(entry, uid)
             }
             .addOnFailureListener {
-                // Em caso de falha na verificação, permite prosseguir (a transação ainda protege)
                 abrirDialogoConfirmacao(entry, uid)
             }
     }
@@ -220,20 +203,17 @@ class DetalhesLivroActivity : AppCompatActivity() {
         dialog.setOnShowListener {
             val button = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             button.setOnClickListener {
-                button.isEnabled = false // Evita cliques múltiplos
+                button.isEnabled = false 
                 com.example.bibliotecaunifor.pegarNomeUsuario { nomeUsuario ->
-                    // Transação atômica: pega exemplar disponível e cria empréstimo
                     db.runTransaction { transaction ->
                         val livroRef = db.collection("Acervo").document(entry.id)
                         val snapshot = transaction.get(livroRef)
                         val entradaDb = snapshot.toObject(com.example.bibliotecaunifor.crud.Entrada::class.java)
                             ?: return@runTransaction null
 
-                        // Busca o primeiro exemplar com situação "Disponivel"
                         val exemplar = entradaDb.exemplares.firstOrNull { it.situacao == "Disponivel" }
 
                         if (exemplar != null) {
-                            // Marca o exemplar como "Reservado"
                             val novosExemplares = entradaDb.exemplares.map { ex ->
                                 if (ex.registro == exemplar.registro) ex.copy(situacao = "Reservado")
                                 else ex
@@ -255,7 +235,6 @@ class DetalhesLivroActivity : AppCompatActivity() {
 
                             transaction.set(aluguelRef, novoAluguel)
                             transaction.update(livroRef, "exemplares", novosExemplares)
-                            transaction.update(livroRef, "reservaCount", entradaDb.reservaCount + 1)
                             true
                         } else {
                             false
@@ -264,7 +243,7 @@ class DetalhesLivroActivity : AppCompatActivity() {
                         dialog.dismiss()
                         if (sucesso == true) {
                             exibirSucessoReserva(entry, retiradaDate, devolucaoDate)
-                            loadEntrada(entry.id) // Atualiza a tela de detalhes
+                            loadEntrada(entry.id) 
                         } else {
                             mostrarToast("Infelizmente o livro acabou de ficar indisponível.")
                         }
@@ -284,7 +263,6 @@ class DetalhesLivroActivity : AppCompatActivity() {
             gravity = Gravity.CENTER_HORIZONTAL
             setPadding(32, 32, 32, 32)
 
-            // Esse aqui é nosso QRCODE! Só sinalizando
             val iv = android.widget.ImageView(context).apply {
                 setImageResource(R.drawable.ic_qrcode)
                 layoutParams = LinearLayout.LayoutParams(500, 500)
@@ -294,7 +272,6 @@ class DetalhesLivroActivity : AppCompatActivity() {
                 textSize = 14f
                 gravity = Gravity.CENTER
                 setPadding(0, 16, 0, 0)
-                // setTextColor(getColor(android.R.color.darker_gray))
             }
             addView(iv)
             addView(tv)

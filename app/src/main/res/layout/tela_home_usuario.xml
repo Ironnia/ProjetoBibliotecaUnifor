@@ -153,7 +153,7 @@
                 <ImageView
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:src="@drawable/menu_book_24"
+                    android:src="@drawable/ic_livro_do_biblioteca"
                     app:tint="@color/unifor_anil_primary" />
 
                 <TextView
