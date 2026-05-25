@@ -3,15 +3,25 @@ package com.example.bibliotecaunifor.admin.agendamentos
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bibliotecaunifor.R
+import com.example.bibliotecaunifor.crud.SalasRepository
 import com.example.bibliotecaunifor.databinding.ItemAdminHorarioPopupBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-class AdminHorarioPopupAdapter(private val items: List<AdminHorario>) :
-    RecyclerView.Adapter<AdminHorarioPopupAdapter.ViewHolder>() {
+class AdminHorarioPopupAdapter(
+    private var items: List<AdminHorario>,
+    private val onActionTriggered: () -> Unit // Callback para fechar popup e notificar activity
+) : RecyclerView.Adapter<AdminHorarioPopupAdapter.ViewHolder>() {
 
     class ViewHolder(val binding: ItemAdminHorarioPopupBinding) : RecyclerView.ViewHolder(binding.root)
+
+    fun updateList(newItems: List<AdminHorario>) {
+        items = newItems
+        notifyDataSetChanged()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemAdminHorarioPopupBinding.inflate(
@@ -22,26 +32,38 @@ class AdminHorarioPopupAdapter(private val items: List<AdminHorario>) :
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = items[position]
+        val context = holder.itemView.context
+
         with(holder.binding) {
             tvHorario.text = item.horario
             
             if (item.isOcupado) {
                 ivStatusDot.setBackgroundResource(R.drawable.bg_circle_red)
                 btnAcao.text = "Liberar"
-                // Light green background, dark green text
+                // Fundo verde claro, texto verde escuro
                 btnAcao.backgroundTintList = android.content.res.ColorStateList.valueOf(0xFFE8F5E9.toInt())
                 btnAcao.setTextColor(0xFF2E7D32.toInt())
             } else {
                 ivStatusDot.setBackgroundResource(R.drawable.bg_circle_green)
                 btnAcao.text = "Ocupar"
-                // Light red background, dark red text
+                // Fundo vermelho claro, texto vermelho escuro
                 btnAcao.backgroundTintList = android.content.res.ColorStateList.valueOf(0xFFFFEBEE.toInt())
                 btnAcao.setTextColor(0xFFC62828.toInt())
             }
 
             btnAcao.setOnClickListener {
-                val action = if (item.isOcupado) "liberado" else "ocupado"
-                Toast.makeText(holder.itemView.context, "Horário ${item.horario} $action com sucesso!", Toast.LENGTH_SHORT).show()
+                CoroutineScope(Dispatchers.Main).launch {
+                    if (item.isOcupado) {
+                        item.idAgendamento?.let { id ->
+                            SalasRepository.liberarHorario(id)
+                            Toast.makeText(context, "Mesa liberada para o horário ${item.horario}!", Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
+                        SalasRepository.ocuparHorarioADM(item.idSala, item.nomeSala, item.data, item.horario)
+                        Toast.makeText(context, "Mesa reservada para o horário ${item.horario}!", Toast.LENGTH_SHORT).show()
+                    }
+                    onActionTriggered() // Notifica a Activity para recarregar
+                }
             }
         }
     }

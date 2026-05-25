@@ -5,5 +5,5 @@ data class AdminMesa(
     val andar: String,
     val statusTexto: String,
     val isOcupada: Boolean,
-    val matricula: String = ""
+    val email: String = ""
 )

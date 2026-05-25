@@ -53,7 +53,7 @@ class JogosTabuleiroActivity : AppCompatActivity() {
 
         carregarJogos()
 
-        NavigationUtils.navegacaoAluno(this, binding.bottomNavigation, R.id.navigation_perfil_aluno)
+        NavigationUtils.navegacaoAluno(this, binding.bottomNavigation, -1) // tirar a selação do menu de navegação.
     }
 
     private fun setupRecyclerView() {
