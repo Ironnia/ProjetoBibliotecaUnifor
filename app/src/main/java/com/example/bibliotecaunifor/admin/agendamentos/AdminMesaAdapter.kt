@@ -8,6 +8,7 @@ import com.example.bibliotecaunifor.R
 import com.example.bibliotecaunifor.Sala
 import com.example.bibliotecaunifor.crud.SalasRepository
 import com.example.bibliotecaunifor.databinding.ItemAdminMesaBinding
+import com.example.bibliotecaunifor.usuario.salas.SalaStatusHelper
 import com.example.bibliotecaunifor.usuario.salas.AgendamentoDb
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
@@ -45,24 +46,37 @@ class AdminMesaAdapter(
         val context = holder.itemView.context
         val dataHoje = SimpleDateFormat("dd/MM", Locale.getDefault()).format(Date())
 
-        // 1. Busca se a mesa está ocupada neste exato momento por algum agendamento ativo hoje
+        // CÓDIGO ANTIGO COMENTADO CONFORME PEDIDO
+        /*
         val agendamentoAtivo = agendamentos.firstOrNull { ag ->
-            ag.idSala == sala.id && ag.data == dataHoje && ag.status == "reservado" && estaNaFaixa(ag.horario)
+            ag.idSala == sala.id && ag.data == dataHoje && 
+            (ag.status == "reservado" || ag.status == "pendente") && 
+            estaNaFaixa(ag.horario)
         }
-
         val isOcupada = agendamentoAtivo != null
+        */
+
+        // NOVA LÓGICA COM SALA STATUS HELPER
+        val (statusTexto, isLivre) = SalaStatusHelper.calcularStatus(sala.id, agendamentos)
 
         with(holder.binding) {
             tvMesaNome.text = sala.nome
+            
+            // CÓDIGO ANTIGO COMENTADO CONFORME PEDIDO
+            /*
             tvMesaStatus.text = if (isOcupada) {
                 "Ocupada por: ${agendamentoAtivo?.nomeUsuario}"
             } else {
                 "Livre no momento"
             }
-
-            // Indicador verde/vermelho baseado em tempo real
             ivStatus.setBackgroundResource(
                 if (isOcupada) R.drawable.bg_circle_red else R.drawable.bg_circle_green
+            )
+            */
+
+            tvMesaStatus.text = statusTexto
+            ivStatus.setBackgroundResource(
+                if (isLivre) R.drawable.bg_circle_green else R.drawable.bg_circle_red
             )
 
             // Menu de ações recolhido por padrão
@@ -76,8 +90,8 @@ class AdminMesaAdapter(
             btnLiberar.setOnClickListener {
                 /*
                 val titulo = if (isOcupada) "Encerrar Sessão" else "Liberar Mesa"
-                val msg = if (isOcupada) 
-                    "O aluno saiu mais cedo? Isso liberará a mesa ${sala.nome} imediatamente para outros." 
+                val msg = if (isOcupada)
+                    "O aluno saiu mais cedo? Isso liberará a mesa ${sala.nome} imediatamente para outros."
                     else "Deseja limpar todas as reservas de hoje para esta mesa?"
                 */
 

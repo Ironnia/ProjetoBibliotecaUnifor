@@ -41,6 +41,10 @@ class SalasActivity : AppCompatActivity() {
     private var salasListener: ListenerRegistration? = null
     private var agendamentosListener: ListenerRegistration? = null
 
+    // NOVAS VARIÁVEIS PARA FILTROS EM TEMPO REAL
+    private var todasAsSalas = listOf<Sala>()
+    private var todosOsAgendamentos = listOf<AgendamentoDb>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -50,6 +54,7 @@ class SalasActivity : AppCompatActivity() {
 
         setupAdapters()
         carregarSalas()
+        setupFiltros()
 
         binding.btnBack.setOnClickListener { finish() }
 
@@ -84,6 +89,8 @@ class SalasActivity : AppCompatActivity() {
     }
 
     private fun carregarSalas() {
+        // CÓDIGO ANTIGO COMENTADO CONFORME PEDIDO
+        /*
         agendamentosListener?.remove()
         agendamentosListener = null
 
@@ -106,6 +113,51 @@ class SalasActivity : AppCompatActivity() {
                 binding.rvSalas.visibility = View.VISIBLE
             }
         }
+        */
+
+        // NOVA LÓGICA REATIVA DE SALAS + AGENDAMENTOS
+        agendamentosListener?.remove()
+        val dataHoje = SimpleDateFormat("dd/MM", Locale.getDefault()).format(Date())
+        
+        agendamentosListener = db.collection("agendamentos")
+            .whereEqualTo("data", dataHoje)
+            .addSnapshotListener { snapAg, errorAg ->
+                if (errorAg != null) {
+                    FirebaseCrashlytics.getInstance().recordException(errorAg)
+                    return@addSnapshotListener
+                }
+                val ags = snapAg?.toObjects<AgendamentoDb>() ?: emptyList()
+                
+                salasListener?.remove()
+                salasListener = db.collection("salas").addSnapshotListener { snapSalas, errorSalas ->
+                    if (errorSalas != null) {
+                        FirebaseCrashlytics.getInstance().recordException(errorSalas)
+                        return@addSnapshotListener
+                    }
+                    // CÓDIGO ANTIGO COMENTADO CONFORME PEDIDO
+                    /*
+                    val listaSalas = snapSalas?.toObjects<Sala>() ?: emptyList()
+                    
+                    // Passamos a lista de agendamentos para o adapter
+                    salaAdapter.atualizarLista(listaSalas, ags)
+                    binding.rvSalas.adapter = salaAdapter
+
+                    if (listaSalas.isEmpty()) {
+                        binding.tvEmptyStateSalas.text = "Nenhuma sala disponível no momento."
+                        binding.tvEmptyStateSalas.visibility = View.VISIBLE
+                        binding.rvSalas.visibility = View.GONE
+                    } else {
+                        binding.tvEmptyStateSalas.visibility = View.GONE
+                        binding.rvSalas.visibility = View.VISIBLE
+                    }
+                    */
+
+                    // NOVA LÓGICA DE FILTRAGEM DINÂMICA
+                    todasAsSalas = snapSalas?.toObjects<Sala>() ?: emptyList()
+                    todosOsAgendamentos = ags
+                    aplicarFiltros()
+                }
+            }
     }
 
     private fun carregarMeusAgendamentos() {
@@ -215,8 +267,17 @@ class SalasActivity : AppCompatActivity() {
             .whereIn("status", listOf("pendente", "reservado"))
             .get()
             .addOnSuccessListener { userReservations ->
+                // CÓDIGO ANTIGO COMENTADO CONFORME PEDIDO
+                /*
                 if (!userReservations.isEmpty) {
-                    mostrarAviso("Você já possui uma reserva de sala ativa. Cancele em Meus Agendamentos para agendar outro.")
+                    mostrarAviso("Você já possui uma reserva ativa. Cancele em Meus Agendamentos para agendar outro.")
+                } else {
+                */
+
+                // NOVA LÓGICA DE AVISO COM TERMO DE ACORDO COM O NOME
+                if (!userReservations.isEmpty) {
+                    val termo = obterTermo(sala.nome)
+                    mostrarAviso("Você já possui uma reserva de $termo ativa. Cancele em Meus Agendamentos para agendar outro.")
                 } else {
                     // 2. Verifica se o slot está livre
                     db.collection("agendamentos")
@@ -261,18 +322,46 @@ class SalasActivity : AppCompatActivity() {
     private fun mostrarSalaSucesso(salaNome: String, data: String, horario: String) {
         val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_sala_sucesso, null)
         val dialog = AlertDialog.Builder(this).setView(dialogView).create()
+        
+        // CÓDIGO ANTIGO COMENTADO CONFORME PEDIDO
+        /*
         dialogView.findViewById<TextView>(R.id.tv_success_data).text = "Data: $data"
         dialogView.findViewById<TextView>(R.id.tv_success_horario).text = "Horário: $horario"
+        */
+
+        // NOVA LÓGICA DE TÍTULO DINÂMICO
+        val termo = obterTermo(salaNome)
+        val titulo = if (termo == "sala") "Sala reservada com sucesso!" else "Mesa reservada com sucesso!"
+        dialogView.findViewById<TextView>(R.id.tv_success_title)?.text = titulo
+        
+        dialogView.findViewById<TextView>(R.id.tv_success_data).text = "Data: $data"
+        dialogView.findViewById<TextView>(R.id.tv_success_horario).text = "Horário: $horario"
+        
         dialogView.findViewById<MaterialButton>(R.id.btn_success_voltar).setOnClickListener { dialog.dismiss() }
         dialog.show()
     }
 
     private fun mostrarSalaCancela(ag: AgendamentoDb) {
+        // CÓDIGO ANTIGO COMENTADO CONFORME PEDIDO
+        /*
         AlertDialog.Builder(this)
             .setTitle("ATENÇÃO!")
             .setMessage("Deseja cancelar a reserva?\nSala: ${ag.nomeSala}\nData: ${ag.data}")
             .setPositiveButton("Sim, Cancelar") { _, _ ->
                 // db.collection("agendamentos").document(ag.id).delete().addOnSuccessListener {
+                db.collection("agendamentos").document(ag.id).update("status", "cancelado").addOnSuccessListener {
+                    mostrarAviso("Cancelado com sucesso.")
+                    carregarMeusAgendamentos()
+                }
+            }
+            .setNegativeButton("Voltar", null).show()
+        */
+
+        val termo = obterTermo(ag.nomeSala).replaceFirstChar { it.uppercase() }
+        AlertDialog.Builder(this)
+            .setTitle("ATENÇÃO!")
+            .setMessage("Deseja cancelar a reserva?\n$termo: ${ag.nomeSala}\nData: ${ag.data}")
+            .setPositiveButton("Sim, Cancelar") { _, _ ->
                 db.collection("agendamentos").document(ag.id).update("status", "cancelado").addOnSuccessListener {
                     mostrarAviso("Cancelado com sucesso.")
                     carregarMeusAgendamentos()
@@ -332,5 +421,51 @@ class SalasActivity : AppCompatActivity() {
         super.onDestroy()
         salasListener?.remove()
         agendamentosListener?.remove()
+    }
+
+    // NOVAS FUNÇÕES COMPLEMENTARES DE FILTRAGEM E NOMENCLATURA
+    private fun obterTermo(nome: String): String {
+        return if (nome.contains("Sala Temática", ignoreCase = true)) "sala" else "mesa"
+    }
+
+    private fun setupFiltros() {
+        binding.chipGroupFiltros.setOnCheckedStateChangeListener { _, _ ->
+            aplicarFiltros()
+        }
+    }
+
+    private fun aplicarFiltros() {
+        val filtradas = when (binding.chipGroupFiltros.checkedChipId) {
+            R.id.chipDisponivel -> {
+                todasAsSalas.filter { sala ->
+                    val (statusTexto, isLivre) = SalaStatusHelper.calcularStatus(sala.id, todosOsAgendamentos)
+                    isLivre && !statusTexto.contains("Lotada")
+                }
+            }
+            R.id.chipOcupadas -> {
+                todasAsSalas.filter { sala ->
+                    val (_, isLivre) = SalaStatusHelper.calcularStatus(sala.id, todosOsAgendamentos)
+                    !isLivre
+                }
+            }
+            else -> todasAsSalas // Todas as salas/mesas
+        }
+        
+        salaAdapter.atualizarLista(filtradas, todosOsAgendamentos)
+        
+        // Garante que o adapter correto seja reatribuído ao voltar de "Meus Agendamentos"
+        if (binding.rvSalas.adapter != salaAdapter) {
+            binding.rvSalas.adapter = salaAdapter
+        }
+        
+        if (filtradas.isEmpty()) {
+            val termoText = if (todasAsSalas.isEmpty()) "Nenhuma sala disponível no momento." else "Nenhuma mesa disponível com este filtro."
+            binding.tvEmptyStateSalas.text = termoText
+            binding.tvEmptyStateSalas.visibility = View.VISIBLE
+            binding.rvSalas.visibility = View.GONE
+        } else {
+            binding.tvEmptyStateSalas.visibility = View.GONE
+            binding.rvSalas.visibility = View.VISIBLE
+        }
     }
 }

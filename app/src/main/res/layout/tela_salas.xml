@@ -34,7 +34,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="Agendar sala de estudos"
+        android:text="Agendar mesa de estudos"
         android:textColor="@color/unifor_marinho_dark"
         android:textSize="20sp"
         android:textStyle="bold"

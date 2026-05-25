@@ -13,6 +13,7 @@
         android:src="@drawable/ic_success_check" />
 
     <TextView
+        android:id="@+id/tv_success_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
