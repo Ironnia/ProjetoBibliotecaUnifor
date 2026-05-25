@@ -52,11 +52,7 @@ class MainActivity : AppCompatActivity() {
 
         // https://firebase.google.com/docs/auth/android/start?hl=pt-br#access_user_information
         //
-//        val usuarioAtual = Firebase.auth.currentUser
-//        usuarioAtual?.let {
-//            val nomeParaExibir = it.displayName ?: "nome"
-//            binding.tvGreeting.text = "Olá $nomeParaExibir, \no que você quer fazer hoje?"
-//        }
+
 
         pegarNomeUsuario { nome ->
             binding.tvGreeting.apply {
@@ -125,25 +121,8 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
-
-        // Isso que é uma lógica para fazer lá na prente. Deixar assim para sinalizar.
-//        binding.tvDevolucoesList.text = "PLACEHOLDER CORRIGIR!"
-
-
-        // Devolucoes List fake click - leva para os detalhes do livro
-//        binding.tvDevolucoesList.setOnClickListener {
-//            val intent = Intent(this, com.example.bibliotecaunifor.usuario.reserva.DetalhesLivroActivity::class.java).apply {
-//                putExtra("title", "Dom Casmurro")
-//                putExtra("author", "Machado de Assis")
-//                putExtra("available", 0)
-//            }
-//            startActivity(intent)
-//        }
     }
-    // Fazer um mock para depois entender como conectar no firestro. Acho que seria algo assim, baseado na documentação:
-    // https://firebase.google.com/docs/firestore/query-data/get-data?hl=pt-br#custom_objects
-    // Estruturado com auxilio do chat da documentação:
-    // private para não ser chamado por outras telas sem querer no biding.
+
     private fun configurarSecaoDevolucoes() {
         val uid = Firebase.auth.currentUser?.uid ?: return
 

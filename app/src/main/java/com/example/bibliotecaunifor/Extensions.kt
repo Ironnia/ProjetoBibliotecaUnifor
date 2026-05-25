@@ -59,11 +59,6 @@ fun AppCompatActivity.mostrarDialogo(
 
 
 
-// Usar esse para mostrar o nome do usuário pegando do banco, isso depois de rastrear com a id unica.
-// Exemplo de uso:
-//pegarNomeUsuario { nome ->
-//    binding.tvGreeting.text = "Olá $nome, \no que você quer fazer hoje?"
-//}
 fun pegarNomeUsuario(callback: (String) -> Unit) {
     // ?: return, vai verificar se o usuário está logado. Se não, isso cancela.
     val uid = Firebase.auth.currentUser?.uid ?: return

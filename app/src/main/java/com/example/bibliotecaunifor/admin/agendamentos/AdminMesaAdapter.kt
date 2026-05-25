@@ -46,15 +46,7 @@ class AdminMesaAdapter(
         val context = holder.itemView.context
         val dataHoje = SimpleDateFormat("dd/MM", Locale.getDefault()).format(Date())
 
-        // CÓDIGO ANTIGO COMENTADO CONFORME PEDIDO
-        /*
-        val agendamentoAtivo = agendamentos.firstOrNull { ag ->
-            ag.idSala == sala.id && ag.data == dataHoje && 
-            (ag.status == "reservado" || ag.status == "pendente") && 
-            estaNaFaixa(ag.horario)
-        }
-        val isOcupada = agendamentoAtivo != null
-        */
+
 
         // NOVA LÓGICA COM SALA STATUS HELPER
         val (statusTexto, isLivre) = SalaStatusHelper.calcularStatus(sala.id, agendamentos)
@@ -62,17 +54,7 @@ class AdminMesaAdapter(
         with(holder.binding) {
             tvMesaNome.text = sala.nome
             
-            // CÓDIGO ANTIGO COMENTADO CONFORME PEDIDO
-            /*
-            tvMesaStatus.text = if (isOcupada) {
-                "Ocupada por: ${agendamentoAtivo?.nomeUsuario}"
-            } else {
-                "Livre no momento"
-            }
-            ivStatus.setBackgroundResource(
-                if (isOcupada) R.drawable.bg_circle_red else R.drawable.bg_circle_green
-            )
-            */
+
 
             tvMesaStatus.text = statusTexto
             ivStatus.setBackgroundResource(
@@ -88,27 +70,14 @@ class AdminMesaAdapter(
 
             // Botão para liberar a sessão atual (caso o aluno saia mais cedo) ou limpar o dia
             btnLiberar.setOnClickListener {
-                /*
-                val titulo = if (isOcupada) "Encerrar Sessão" else "Liberar Mesa"
-                val msg = if (isOcupada)
-                    "O aluno saiu mais cedo? Isso liberará a mesa ${sala.nome} imediatamente para outros."
-                    else "Deseja limpar todas as reservas de hoje para esta mesa?"
-                */
+
 
                 MaterialAlertDialogBuilder(context)
                     .setTitle("Liberar Mesa")
                     .setMessage("Deseja limpar todas as reservas de hoje para esta mesa?")
                     .setPositiveButton("Confirmar") { _, _ ->
                         CoroutineScope(Dispatchers.Main).launch {
-                            /*
-                            if (isOcupada) {
-                                // Libera apenas a sessão que está acontecendo agora
-                                agendamentoAtivo?.id?.let { id -> SalasRepository.liberarHorario(id) }
-                            } else {
-                                // Caso não tenha ninguém agora, limpa o dia todo
-                                SalasRepository.liberarMesaCompleta(sala.id, dataHoje)
-                            }
-                            */
+
                             SalasRepository.liberarMesaCompleta(sala.id, dataHoje)
                             Snackbar.make(root, "Mesa liberada!", Snackbar.LENGTH_SHORT).show()
                             layoutAcoes.visibility = View.GONE

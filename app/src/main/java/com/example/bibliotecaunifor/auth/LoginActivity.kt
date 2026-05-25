@@ -34,13 +34,6 @@ class LoginActivity : AppCompatActivity() {
 
         // Se já estava logado, não precisa logar de novo
 
-        // https://firebase.google.com/docs/auth/android/start?hl=pt-br#check_current_auth_state
-        // currentUser retorna se tem algum usuário logado, na lógica do Firebase SDK. Se não tiver vai retornar null.
-//        if (auth.currentUser != null) {
-//            // !! É seguro aqui por causa da verificação de null acima.
-//            buscarTipoENavegar(auth.currentUser!!.uid)
-//            return
-//
 
 
         val prefs = getSharedPreferences("login", MODE_PRIVATE)
@@ -49,15 +42,7 @@ class LoginActivity : AppCompatActivity() {
         // refiz na sintaxe de KTX que entendo melhor. A "?" verifica o if null igalmente.
         // O !! não é uma boa prática pelo que li.
 
-        // FIZ UMA TELA SPLASH para isso: SplashActivity.kt
-//        auth.currentUser?.let { user ->
-//            if (manterLogado) {
-//                buscarTipoENavegar(user.uid)
-//                return
-//            } else {
-//                auth.signOut()
-//            }
-//        }
+
 
         // limpar os erros quando o usuario comoça a usar. Precisa ficar dentro do Oncrete para funcionar!
         binding.editTextEmail.doOnTextChanged { _, _, _, _ ->
@@ -77,16 +62,7 @@ class LoginActivity : AppCompatActivity() {
 
 
 
-            // verificação de formulario.
-//            if (email.isEmpty() || senha.isEmpty()) {
-//                mostrarAviso("Preencha e-mail e senha.")
-//                binding.layoutSenha.error = "As senhas não coincidem!"
-//                // Snackbar.make(binding.root, "Preencha e-mail e senha.", Snackbar.LENGTH_SHORT).show()
-//                return@setOnClickListener
-//            }
-            // limpar os erros
-//            binding.layoutEmail.error = null
-//            binding.layoutSenha.error = null
+
             when {
                 email.isEmpty() && senha.isEmpty() -> {
                     binding.layoutEmail.error = "Preencha o e-mail!"; binding.layoutSenha.error = "Preencha a senha!"; return@setOnClickListener
@@ -110,7 +86,7 @@ class LoginActivity : AppCompatActivity() {
                     val lembrar = binding.checkBoxLembrar.isChecked
                     val prefs = getSharedPreferences("login", MODE_PRIVATE)
                     prefs.edit { putBoolean("lembrar_me", lembrar) }
-                    //buscarTipoENavegar(resultado.user!!.uid)
+
                     resultado.user?.uid?.let { uid ->
                         buscarTipoENavegar(uid)
                     }
@@ -120,7 +96,7 @@ class LoginActivity : AppCompatActivity() {
                     binding.progressBar.visibility = android.view.View.GONE
                     binding.buttonEntrar.isEnabled = true
                     mostrarAviso("Usuário(a) ou senha incorretos")
-                // Snackbar.make(binding.root, "E-mail ou senha incorretos.", Snackbar.LENGTH_SHORT).show()
+
                 }
 
         }
@@ -149,7 +125,7 @@ class LoginActivity : AppCompatActivity() {
     private fun buscarTipoENavegar(uid: String) {
         db.collection("usuario").document(uid).get()
             .addOnSuccessListener { documento ->
-                // val tipo = documento.getString("tipo") ?: "usuario"
+
 
                 // usando a classe do usuario.
                 val usuario = documento.toObject(Usuario::class.java)

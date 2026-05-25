@@ -42,7 +42,10 @@ class AdminEmprestimoAdapter(private var items: List<Emprestimo>) :
 
         with(holder.binding) {
             tvBookTitle.text = "${item.tituloLivro} | ${item.autorLivro}"
-            tvUserId.text = "Aluno(a): ${item.nomeUsuario}"
+            // Fallback: se nomeUsuario estiver vazio, exibe parte do UID para o admin identificar
+            val nomeExibir = if (item.nomeUsuario.isNotEmpty()) item.nomeUsuario
+                             else "UID: ${item.idUsuario.take(8)}..."
+            tvUserId.text = "Aluno(a): $nomeExibir"
             
             // Formatação de data
             val df = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())

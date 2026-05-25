@@ -22,13 +22,7 @@ class SalaAdapter(
         fun bind(item: Sala) {
             binding.tvSalaNome.text = item.nome
 
-            // CÓDIGO ANTIGO COMENTADO CONFORME PEDIDO
-            /*
-            binding.tvSalaStatus.text = if (item.disponivel) "Disponível" else "Ocupada"
-            val cor = if (item.disponivel) R.color.success_green else R.color.error_red
-            binding.tvSalaStatus.setTextColor(binding.root.context.getColor(cor))
-            binding.btnVerHorarios.isEnabled = item.disponivel
-            */
+
 
             // NOVA LÓGICA COM SALA STATUS HELPER
             val (statusTexto, isLivre) = SalaStatusHelper.calcularStatus(item.id, agendamentos)
@@ -39,11 +33,7 @@ class SalaAdapter(
             // Deixa sempre habilitado para ele ver os horários mesmo se estiver ocupado agora
             binding.btnVerHorarios.isEnabled = true
 
-            // CÓDIGO ANTIGO COMENTADO CONFORME PEDIDO
-            /*
-            val termo = if (item.nome.contains("Sala Temática", ignoreCase = true)) "sala" else "mesa"
-            binding.btnVerHorarios.text = "Ver horários da $termo"
-            */
+
 
             binding.btnVerHorarios.text = "Ver horários"
             
@@ -51,13 +41,7 @@ class SalaAdapter(
         }
     }
 
-    // CÓDIGO ANTIGO COMENTADO CONFORME PEDIDO
-    /*
-    fun atualizarLista(novaLista: List<Sala>) {
-        lista = novaLista
-        notifyDataSetChanged()
-    }
-    */
+
 
     // NOVAS ASSINATURAS DE ATUALIZAÇÃO
     fun atualizarLista(novaLista: List<Sala>) {

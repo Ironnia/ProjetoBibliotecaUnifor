@@ -28,21 +28,7 @@ class TrocarSenhaActivity : AppCompatActivity() {
         }
 
         binding.btnConfirmar.setOnClickListener {
-            // CÓDIGO ANTIGO COMENTADO CONFORME PEDIDO
-            /*
-            val atual = binding.etSenhaAtual.text.toString().trim()
-            val nova = binding.etNovaSenha.text.toString().trim()
-            val confirmar = binding.etConfirmarSenha.text.toString().trim()
 
-            if (atual.isEmpty() || nova.isEmpty() || confirmar.isEmpty()) {
-                Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            if (nova != confirmar) {
-                Toast.makeText(this, "As senhas não coincidem", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            */
 
             // NOVA LÓGICA DE SENHA PURA E TRATAMENTO DE ERROS AMIGÁVEL
             val atual = binding.etSenhaAtual.text.toString()

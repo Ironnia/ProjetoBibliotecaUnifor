@@ -32,9 +32,7 @@ class EmprestimoAdapter(
         fun bind(item: Emprestimo) {
             val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
             
-            /*
-            val data = sdf.format(Date(item.dataDevolucao))
-            */
+
             val dataDevolucaoTime = item.dataDevolucaoPrevista?.time ?: 0L
             val data = sdf.format(Date(dataDevolucaoTime))
 

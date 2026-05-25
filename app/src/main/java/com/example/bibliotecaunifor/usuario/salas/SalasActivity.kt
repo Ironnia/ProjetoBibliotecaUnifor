@@ -87,38 +87,14 @@ class SalasActivity : AppCompatActivity() {
         binding.rvMesas.layoutManager = LinearLayoutManager(this)
         binding.rvMesas.adapter = salaAdapter
     }
-
     private fun carregarSalas() {
-        // CÓDIGO ANTIGO COMENTADO CONFORME PEDIDO
-        /*
+        // NOVA LÓGICA REATIVA DE SALAS + AGENDAMENTOS (listeners independentes)
         agendamentosListener?.remove()
-        agendamentosListener = null
-
         salasListener?.remove()
-        salasListener = db.collection("salas").addSnapshotListener { snapshot, error ->
-            if (error != null) {
-                FirebaseCrashlytics.getInstance().recordException(error)
-                return@addSnapshotListener
-            }
-            val lista = snapshot?.toObjects<Sala>() ?: emptyList()
-            salaAdapter.atualizarLista(lista)
-            binding.rvMesas.adapter = salaAdapter
 
-            if (lista.isEmpty()) {
-                binding.tvEmptyStateMesas.text = "Nenhuma sala disponível no momento."
-                binding.tvEmptyStateMesas.visibility = View.VISIBLE
-                binding.rvMesas.visibility = View.GONE
-            } else {
-                binding.tvEmptyStateMesas.visibility = View.GONE
-                binding.rvMesas.visibility = View.VISIBLE
-            }
-        }
-        */
-
-        // NOVA LÓGICA REATIVA DE SALAS + AGENDAMENTOS
-        agendamentosListener?.remove()
         val dataHoje = SimpleDateFormat("dd/MM", Locale.getDefault()).format(Date())
-        
+
+        // Listener 1: Agendamentos de hoje (atualiza todosOsAgendamentos e redesenha)
         agendamentosListener = db.collection("agendamentos")
             .whereEqualTo("data", dataHoje)
             .addSnapshotListener { snapAg, errorAg ->
@@ -126,38 +102,20 @@ class SalasActivity : AppCompatActivity() {
                     FirebaseCrashlytics.getInstance().recordException(errorAg)
                     return@addSnapshotListener
                 }
-                val ags = snapAg?.toObjects<AgendamentoDb>() ?: emptyList()
-                
-                salasListener?.remove()
-                salasListener = db.collection("salas").addSnapshotListener { snapSalas, errorSalas ->
-                    if (errorSalas != null) {
-                        FirebaseCrashlytics.getInstance().recordException(errorSalas)
-                        return@addSnapshotListener
-                    }
-                    // CÓDIGO ANTIGO COMENTADO CONFORME PEDIDO
-                    /*
-                    val listaSalas = snapSalas?.toObjects<Sala>() ?: emptyList()
-                    
-                    // Passamos a lista de agendamentos para o adapter
-                    salaAdapter.atualizarLista(listaSalas, ags)
-                    binding.rvMesas.adapter = salaAdapter
-
-                    if (listaSalas.isEmpty()) {
-                        binding.tvEmptyStateMesas.text = "Nenhuma sala disponível no momento."
-                        binding.tvEmptyStateMesas.visibility = View.VISIBLE
-                        binding.rvMesas.visibility = View.GONE
-                    } else {
-                        binding.tvEmptyStateMesas.visibility = View.GONE
-                        binding.rvMesas.visibility = View.VISIBLE
-                    }
-                    */
-
-                    // NOVA LÓGICA DE FILTRAGEM DINÂMICA
-                    todasAsSalas = snapSalas?.toObjects<Sala>() ?: emptyList()
-                    todosOsAgendamentos = ags
-                    aplicarFiltros()
-                }
+                todosOsAgendamentos = snapAg?.toObjects<AgendamentoDb>() ?: emptyList()
+                aplicarFiltros()
             }
+
+        // Listener 2: Salas (atualiza todasAsSalas e redesenha — independente do listener de agendamentos)
+        salasListener = db.collection("salas").addSnapshotListener { snapSalas, errorSalas ->
+            if (errorSalas != null) {
+                FirebaseCrashlytics.getInstance().recordException(errorSalas)
+                return@addSnapshotListener
+            }
+            todasAsSalas = snapSalas?.toObjects<Sala>() ?: emptyList()
+            aplicarFiltros()
+        }
+
     }
 
     private fun carregarMeusAgendamentos() {
@@ -267,12 +225,7 @@ class SalasActivity : AppCompatActivity() {
             .whereIn("status", listOf("pendente", "reservado"))
             .get()
             .addOnSuccessListener { userReservations ->
-                // CÓDIGO ANTIGO COMENTADO CONFORME PEDIDO
-                /*
-                if (!userReservations.isEmpty) {
-                    mostrarAviso("Você já possui uma reserva ativa. Cancele em Meus Agendamentos para agendar outro.")
-                } else {
-                */
+
 
                 // NOVA LÓGICA DE AVISO COM TERMO DE ACORDO COM O NOME
                 if (!userReservations.isEmpty) {
@@ -323,11 +276,7 @@ class SalasActivity : AppCompatActivity() {
         val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_sala_sucesso, null)
         val dialog = AlertDialog.Builder(this).setView(dialogView).create()
         
-        // CÓDIGO ANTIGO COMENTADO CONFORME PEDIDO
-        /*
-        dialogView.findViewById<TextView>(R.id.tv_success_data).text = "Data: $data"
-        dialogView.findViewById<TextView>(R.id.tv_success_horario).text = "Horário: $horario"
-        */
+
 
         // NOVA LÓGICA DE TÍTULO DINÂMICO
         val termo = obterTermo(salaNome)
@@ -340,23 +289,7 @@ class SalasActivity : AppCompatActivity() {
         dialogView.findViewById<MaterialButton>(R.id.btn_success_voltar).setOnClickListener { dialog.dismiss() }
         dialog.show()
     }
-
     private fun mostrarSalaCancela(ag: AgendamentoDb) {
-        // CÓDIGO ANTIGO COMENTADO CONFORME PEDIDO
-        /*
-        AlertDialog.Builder(this)
-            .setTitle("ATENÇÃO!")
-            .setMessage("Deseja cancelar a reserva?\nSala: ${ag.nomeSala}\nData: ${ag.data}")
-            .setPositiveButton("Sim, Cancelar") { _, _ ->
-                // db.collection("agendamentos").document(ag.id).delete().addOnSuccessListener {
-                db.collection("agendamentos").document(ag.id).update("status", "cancelado").addOnSuccessListener {
-                    mostrarAviso("Cancelado com sucesso.")
-                    carregarMeusAgendamentos()
-                }
-            }
-            .setNegativeButton("Voltar", null).show()
-        */
-
         val termo = obterTermo(ag.nomeSala).replaceFirstChar { it.uppercase() }
         AlertDialog.Builder(this)
             .setTitle("ATENÇÃO!")

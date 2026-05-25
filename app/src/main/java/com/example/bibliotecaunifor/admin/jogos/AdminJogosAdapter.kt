@@ -69,20 +69,7 @@ class AdminJogosAdapter(private var items: List<AluguelJogo>) :
 
             // Diálogo rápido de informações extras
             ivInfo.visibility = View.GONE
-            /*
-            ivInfo.setOnClickListener {
-                val dataInfo = if (status == "pendente") {
-                    "Aguardando retirada de 15 minutos pelo aluno."
-                } else {
-                    "Em posse do aluno. Devolução limite: $dataDevolucaoStr."
-                }
-                android.widget.Toast.makeText(
-                    context,
-                    "${item.tituloItem}\nEmail: ${item.emailUsuario}\nInfo: $dataInfo",
-                    android.widget.Toast.LENGTH_LONG
-                ).show()
-            }
-            */
+
 
             // 2. Configurações contextuais dos botões de ação do ADM
             if (status == "pendente") {

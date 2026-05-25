@@ -51,8 +51,6 @@ class PerfilUsuarioActivity : AppCompatActivity() {
             startActivity(Intent(this, ConfiguracoesUsuarioActivity::class.java))
         }
 
-        // Ícone estático (sem clique de câmera/galeria) conforme solicitado
-
         binding.btnHistorico.setOnClickListener {
             startActivity(Intent(this, com.example.bibliotecaunifor.usuario.historico.HistoricoActivity::class.java))
         }

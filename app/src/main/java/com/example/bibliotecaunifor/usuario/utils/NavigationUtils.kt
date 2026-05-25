@@ -22,16 +22,6 @@ object NavigationUtils {
             selectedItemId = currentItemId
 
             setOnItemSelectedListener { item ->
-//                val isCurrentActivityTab = when (item.itemId) {
-//                    R.id.navigation_home -> activity is MainActivity
-//                    R.id.navigation_catalogo -> activity is CatalogoActivity
-//                    R.id.navigation_salas -> activity is SalasActivity
-//                    R.id.navigation_perfil -> activity is PerfilUsuarioActivity
-//                    else -> false
-//                }
-            // Para evitar a tela de "piscarr, clicando pra mesma. Evita ficar criando várias da mesma tela.
-            // faz o mesmo do de ciam.
-//          if (item.itemId == currentItemId) return@setOnItemSelectedListener true
                 // as telas "secundárias" estavam com o home desativado.
                 val estouNaTelaAtual = when (item.itemId) {
                     R.id.navigation_home_aluno -> activity is MainActivity
@@ -67,10 +57,6 @@ object NavigationUtils {
                         // resolve o problema dos icones com realce nas telas erradas:
                         return@setOnItemSelectedListener false
                     }
-//                        // O antigo destruia a tela. Agora vai trazer a tela que foi usada, assim fica meio que "salvo" o estado da tela. Não recria ela.
-//                        it.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-//                        activity.startActivity(it)
-
                 }
                 true
             }

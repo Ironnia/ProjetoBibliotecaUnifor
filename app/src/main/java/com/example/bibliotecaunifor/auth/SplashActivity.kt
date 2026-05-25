@@ -7,8 +7,7 @@ import com.example.bibliotecaunifor.MainActivity
 import com.example.bibliotecaunifor.Usuario
 import com.example.bibliotecaunifor.admin.AdminHomeActivity
 import com.example.bibliotecaunifor.crud.db
-import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.auth.ktx.auth
 
 
@@ -35,8 +34,6 @@ class SplashActivity : AppCompatActivity() {
     private fun buscarTipoENavegar(uid: String) {
         db.collection("usuario").document(uid).get()
             .addOnSuccessListener { documento ->
-                // val tipo = documento.getString("tipo") ?: "usuario"
-
                 // usando a classe do usuario.
                 val usuario = documento.toObject(Usuario::class.java)
                 val tipo = usuario?.tipo ?: "usuario"

@@ -62,15 +62,13 @@ class RecuperarSenhaActivity : AppCompatActivity() {
                                 else -> {
                                     // Só funciona para problemas de verdade do Firebase. Por questões de hack descobrindo quais email tinham cadastro pela resposta. Todos agora dão Sucesso.
                                     mostrarToast("Erro ao enviar e-mail de recuperação")
-                                    // Toast.makeText(this, "Erro ao enviar e-mail de recuperação", Toast.LENGTH_SHORT).show()
                                 }
                             }
                         }
                     }
             } else {
                 binding.layoutEmail.error = "Por favor, insira um e-mail"
-                //   mostrarToast("Por favor, insira um e-mail")
-//                Toast.makeText(this, "Por favor, insira um e-mail", Toast.LENGTH_SHORT).show()
+
 
             }
 

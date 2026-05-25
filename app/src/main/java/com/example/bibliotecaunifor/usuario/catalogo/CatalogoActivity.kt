@@ -63,10 +63,7 @@ class CatalogoActivity : AppCompatActivity() {
         // +ktx, Nosso campinho de bucsar vai funcionar assim:
         // "monitora" se tem texto escrito, se tem faz o "filtro, se não mostra tudo (mesmo de antes, mas agora simples de entender né)
         binding.etSearch.doOnTextChanged { _, _, _, _ ->
-            /*
-            val query = text.toString().trim()
-            if (query.isNotEmpty()) searchEntries(query) else loadEntries()
-            */
+
             filtrarEAtualizarAdapter()
         }
 
@@ -134,45 +131,7 @@ class CatalogoActivity : AppCompatActivity() {
         adapter.updateData(resultado, idsReservados)
     }
 
-    /*
-    private fun loadEntries() {
-        val uid = auth.currentUser?.uid ?: return
-        lifecycleScope.launch {
-            val entries = listarEntradas()
-            db.collection("emprestimos")
-                .whereEqualTo("idUsuario", uid)
-                .whereEqualTo("tipoItem", "livro")
-                .whereIn("status", listOf("pendente", "ativo"))
-                .get()
-                .addOnSuccessListener { result ->
-                    val idsReservados = result.documents.mapNotNull { it.getString("idItem") }.toSet()
-                    adapter.updateData(entries, idsReservados)
-                }
-                .addOnFailureListener {
-                    adapter.updateData(entries, emptySet())
-                }
-        }
-    }
 
-    private fun searchEntries(query: String) {
-        val uid = auth.currentUser?.uid ?: return
-        lifecycleScope.launch {
-            val entries = buscarEntrada(query)
-            db.collection("emprestimos")
-                .whereEqualTo("idUsuario", uid)
-                .whereEqualTo("tipoItem", "livro")
-                .whereIn("status", listOf("pendente", "ativo"))
-                .get()
-                .addOnSuccessListener { result ->
-                    val idsReservados = result.documents.mapNotNull { it.getString("idItem") }.toSet()
-                    adapter.updateData(entries, idsReservados)
-                }
-                .addOnFailureListener {
-                    adapter.updateData(entries, emptySet())
-                }
-        }
-    }
-    */
 
     private fun confirmarReserva(entry: Entrada) {
         val uid = auth.currentUser?.uid ?: return
@@ -228,18 +187,7 @@ class CatalogoActivity : AppCompatActivity() {
                     calendarDevolucao.add(java.util.Calendar.DAY_OF_YEAR, 15)
                     val devolucaoMillis = calendarDevolucao.timeInMillis
 
-                    /*
-                    val novoAluguel = hashMapOf(
-                        "idUsuario" to uid,
-                        "idItem" to entry.id,
-                        "tituloItem" to entry.titulo,
-                        "autorItem" to entry.autor,
-                        "dataEmprestimo" to System.currentTimeMillis(),
-                        "dataDevolucao" to devolucaoMillis,
-                        "status" to "pendente",
-                        "tipoItem" to "livro"
-                    )
-                    */
+
 
                     db.runTransaction { transaction ->
                         val livroRef = db.collection("Acervo").document(entry.id)

@@ -45,15 +45,17 @@ class AdminEmprestimosActivity : AppCompatActivity() {
     }
 
     private fun setupRealtimeListener() {
-        // Escuta real-time na coleção de emprestimos
+        // Escuta real-time somente os empréstimos de LIVROS (não inclui jogos)
         emprestimosListener = db.collection("emprestimos")
-            .whereNotEqualTo("status", "devolvido")
+            .whereEqualTo("tipoItem", "livro")
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
                     return@addSnapshotListener
                 }
                 if (snapshot != null) {
+                    // Filtra localmente para excluir os já concluídos (evita índice composto)
                     allLoans = snapshot.toObjects(Emprestimo::class.java)
+                        .filter { it.status != "devolvido" && it.status != "cancelado" }
                     filterList()
                 }
             }

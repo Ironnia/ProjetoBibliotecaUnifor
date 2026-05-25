@@ -62,9 +62,6 @@ class JogosTabuleiroActivity : AppCompatActivity() {
     private fun setupRecyclerView() {
         adapter = JogoAdapter(emptyList()) { jogo ->
             if (showingMeusJogos) {
-                /*
-                confirmarDevolucaoJogo(jogo)
-                */
                 if (jogo.status == "pendente") {
                     cancelarReservaJogo(jogo)
                 } else {
@@ -125,48 +122,6 @@ class JogosTabuleiroActivity : AppCompatActivity() {
         alugueisListener?.remove()
 
         if (showingMeusJogos) {
-            /*
-            db.collection("alugueis")
-                .whereEqualTo("idUsuario", uid)
-                .whereEqualTo("tipoItem", "jogo")
-                .whereIn("status", listOf("pendente", "ativo"))
-                .get()
-                .addOnSuccessListener { result ->
-                    binding.progressBarJogos.visibility = View.GONE
-                    val lista = result.map { doc ->
-                        val status = doc.getString("status") ?: ""
-                        val dataEmprestimo = doc.getLong("dataEmprestimo") ?: 0L
-                        val desc = if (status == "pendente") {
-                            val horaLimite = java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault()).format(java.util.Date(dataEmprestimo + 15 * 60 * 1000))
-                            "Reservado (Retirar até: $horaLimite)"
-                        } else {
-                            "Em uso"
-                        }
-                        Jogo(
-                            id = doc.id,
-                            nome = doc.getString("tituloItem") ?: "",
-                            descricao = desc,
-                            jogadores = doc.getString("jogadores") ?: "",
-                            tempoMinutos = doc.getLong("tempoMinutos")?.toInt() ?: 0,
-                            idUsuarioComJogo = doc.getString("idItem") ?: "",
-                            disponivel = false
-                        )
-                    }
-                    adapter.atualizarLista(lista, true)
-                    if (lista.isEmpty()) {
-                        binding.tvEmptyStateJogos.text = "Você não possui jogos alugados."
-                        binding.tvEmptyStateJogos.visibility = View.VISIBLE
-                        binding.rvJogos.visibility = View.GONE
-                    } else {
-                        binding.tvEmptyStateJogos.visibility = View.GONE
-                        binding.rvJogos.visibility = View.VISIBLE
-                    }
-                }
-                .addOnFailureListener {
-                    binding.progressBarJogos.visibility = View.GONE
-                    mostrarAviso("Erro ao carregar dados.")
-                }
-            */
             alugueisListener = db.collection("alugueis")
                 .whereEqualTo("idUsuario", uid)
                 .whereEqualTo("tipoItem", "jogo")
@@ -209,27 +164,6 @@ class JogosTabuleiroActivity : AppCompatActivity() {
                     }
                 }
         } else {
-            /*
-            db.collection("jogos")
-                .get()
-                .addOnSuccessListener { result ->
-                    binding.progressBarJogos.visibility = View.GONE
-                    val lista = result.toObjects<Jogo>()
-                    adapter.atualizarLista(lista, false)
-                    if (lista.isEmpty()) {
-                        binding.tvEmptyStateJogos.text = "Nenhum jogo disponível no momento."
-                        binding.tvEmptyStateJogos.visibility = View.VISIBLE
-                        binding.rvJogos.visibility = View.GONE
-                    } else {
-                        binding.tvEmptyStateJogos.visibility = View.GONE
-                        binding.rvJogos.visibility = View.VISIBLE
-                    }
-                }
-                .addOnFailureListener {
-                    binding.progressBarJogos.visibility = View.GONE
-                    mostrarAviso("Erro ao carregar dados.")
-                }
-            */
             alugueisListener = db.collection("jogos")
                 .addSnapshotListener { snapshot, error ->
                     binding.progressBarJogos.visibility = View.GONE

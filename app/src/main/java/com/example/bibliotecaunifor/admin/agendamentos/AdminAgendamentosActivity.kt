@@ -135,9 +135,7 @@ class AdminAgendamentosActivity : AppCompatActivity() {
 
         // Mapeia slots baseando-se nos agendamentos reais da mesa
         val horariosPopup = slots.map { slot ->
-            // val ag = allAgendamentos.firstOrNull { 
-            //     it.idSala == mesa.id && it.data == dataHoje && it.horario == slot && it.status == "reservado"
-            // }
+
             val ag = allAgendamentos.firstOrNull { 
                 it.idSala == mesa.id && it.data == dataHoje && it.horario == slot && 
                 (it.status == "reservado" || it.status == "pendente")

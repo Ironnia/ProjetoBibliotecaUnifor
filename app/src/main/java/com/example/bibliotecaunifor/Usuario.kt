@@ -6,5 +6,4 @@ data class Usuario(
     val email: String = "",
     val tipo: String = "usuario",
     val pontos: Int = 0
-    // val matricula: String = ""
 )

@@ -15,6 +15,7 @@ import com.example.bibliotecaunifor.databinding.TelaDetalhesLivroBinding
 import com.google.android.material.chip.Chip
 import kotlinx.coroutines.launch
 import androidx.core.view.isVisible
+import com.example.bibliotecaunifor.mostrarAviso
 import com.example.bibliotecaunifor.mostrarDialogo
 import com.example.bibliotecaunifor.mostrarDialogoSimples
 import com.example.bibliotecaunifor.mostrarToast
@@ -45,30 +46,22 @@ class DetalhesLivroActivity : AppCompatActivity() {
         }
 
         binding.btnDetails.setOnClickListener {
-//            entrada?.let {
-//                AlertDialog.Builder(this)
-//                    .setTitle("Detalhes do Livro")
-//                    .setMessage("Título: ${it.titulo}\nAutor: ${it.autor}\nISBN: ${it.isbn}\nEdição: ${it.edicao}\nPublicação: ${it.publicacao}\nCDU/Cutter: ${it.cdu} ${it.cutter}")
-//                    .setPositiveButton("Ok", null)
-//                    .show()
-//            }
             // deixando igual do adm como o prof. pediu
-        with(binding) {
-            val estaVisivel = layoutDetalhesExpansivel.isVisible
+            with(binding) {
+                val estaVisivel = layoutDetalhesExpansivel.isVisible
 
-            if (estaVisivel) { //vai fechar
-                layoutDetalhesExpansivel.visibility = android.view.View.GONE
-                btnDetails.text = "Mostrar Detalhes"
-            } else {//abre
-                entrada?.let {
-                    tvDetalhesConteudo.text =
-                        "ISBN: ${it.isbn}\nEdição: ${it.edicao}\nPublicação: ${it.publicacao}\nCDU/Cutter: ${it.cdu} ${it.cutter}"
+                if (estaVisivel) { //vai fechar
+                    layoutDetalhesExpansivel.visibility = android.view.View.GONE
+                    btnDetails.text = "Mostrar Detalhes"
+                } else {//abre
+                    entrada?.let {
+                        tvDetalhesConteudo.text =
+                            "ISBN: ${it.isbn}\nEdição: ${it.edicao}\nPublicação: ${it.publicacao}\nCDU/Cutter: ${it.cdu} ${it.cutter}"
+                    }
+                    layoutDetalhesExpansivel.visibility = android.view.View.VISIBLE
+                    btnDetails.text = "Ocultar Detalhes"
                 }
-                layoutDetalhesExpansivel.visibility = android.view.View.VISIBLE
-                btnDetails.text = "Ocultar Detalhes"
             }
-        }
-
         }
 
         binding.btnReservar.setOnClickListener {
@@ -97,7 +90,11 @@ class DetalhesLivroActivity : AppCompatActivity() {
             tvTitle.text = entrada.titulo
             tvAuthor.text = entrada.autor
 
-            btnReservar.visibility = android.view.View.GONE
+            // Mostrar botão somente quando há exemplares disponíveis
+            btnReservar.visibility = if (entrada.exemplaresDisponiveis > 0)
+                android.view.View.VISIBLE
+            else
+                android.view.View.GONE
 
             if (entrada.imageUrl.isNotEmpty()) {
                 try {
@@ -183,60 +180,102 @@ class DetalhesLivroActivity : AppCompatActivity() {
     }
 
     private fun confirmarReserva(entry: Entrada) {
+        val uid = Firebase.auth.currentUser?.uid ?: return
+
+        // Primeiro verifica o limite de 5 livros ativos
+        db.collection("emprestimos")
+            .whereEqualTo("idUsuario", uid)
+            .whereEqualTo("tipoItem", "livro")
+            .whereIn("status", listOf("pendente", "ativo"))
+            .get()
+            .addOnSuccessListener { result ->
+                if (result.size() >= 5) {
+                    mostrarAviso("Você atingiu o limite de 5 livros. Devolva um antes de reservar outro.")
+                    return@addOnSuccessListener
+                }
+                abrirDialogoConfirmacao(entry, uid)
+            }
+            .addOnFailureListener {
+                // Em caso de falha na verificação, permite prosseguir (a transação ainda protege)
+                abrirDialogoConfirmacao(entry, uid)
+            }
+    }
+
+    private fun abrirDialogoConfirmacao(entry: Entrada, uid: String) {
         val calendar = java.util.Calendar.getInstance()
         calendar.add(java.util.Calendar.DAY_OF_YEAR, 1)
         val retiradaDate = java.text.SimpleDateFormat("dd/MM/yyyy").format(calendar.time)
-        calendar.add(java.util.Calendar.DAY_OF_YEAR, 14)
-        val devolucaoDate = java.text.SimpleDateFormat("dd/MM/yyyy").format(calendar.time)
+        val calendarDevolucao = java.util.Calendar.getInstance()
+        calendarDevolucao.add(java.util.Calendar.DAY_OF_YEAR, 15)
+        val devolucaoDate = java.text.SimpleDateFormat("dd/MM/yyyy").format(calendarDevolucao.time)
+        val devolucaoMillis = calendarDevolucao.timeInMillis
 
-        AlertDialog.Builder(this)
+        val dialog = AlertDialog.Builder(this)
             .setTitle("Confirmar Reserva")
-            .setMessage("Título: ${entry.titulo}\nAutor: ${entry.autor}\nISBN: ${entry.isbn}\n\nDeseja confirmar a reserva deste item?")
-            .setPositiveButton("Confirmar") { _, _ ->
-                val uid = Firebase.auth.currentUser?.uid ?: return@setPositiveButton
-                
-                val calendarDevolucao = java.util.Calendar.getInstance()
-                calendarDevolucao.add(java.util.Calendar.DAY_OF_YEAR, 15)
-                val devolucaoMillis = calendarDevolucao.timeInMillis
+            .setMessage("Título: ${entry.titulo}\nAutor: ${entry.autor}\nISBN: ${entry.isbn}\n\nPrazo para retirada: $retiradaDate às 21:00")
+            .setPositiveButton("Confirmar", null)
+            .setNegativeButton("Cancelar", null)
+            .create()
 
-                val novoAluguel = hashMapOf(
-                    "idUsuario" to uid,
-                    "idItem" to entry.id,
-                    "tituloItem" to entry.titulo,
-                    "autorItem" to entry.autor,
-                    "dataEmprestimo" to System.currentTimeMillis(),
-                    "dataDevolucao" to devolucaoMillis,
-                    "status" to "pendente",
-                    "tipoItem" to "livro"
-                )
-                db.runTransaction { transaction ->
-                    val livroRef = db.collection("Acervo").document(entry.id)
-                    val snapshot = transaction.get(livroRef)
-                    val qtdAtual = snapshot.getLong("exemplaresDisponiveis") ?: 0
+        dialog.setOnShowListener {
+            val button = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            button.setOnClickListener {
+                button.isEnabled = false // Evita cliques múltiplos
+                com.example.bibliotecaunifor.pegarNomeUsuario { nomeUsuario ->
+                    // Transação atômica: pega exemplar disponível e cria empréstimo
+                    db.runTransaction { transaction ->
+                        val livroRef = db.collection("Acervo").document(entry.id)
+                        val snapshot = transaction.get(livroRef)
+                        val entradaDb = snapshot.toObject(com.example.bibliotecaunifor.crud.Entrada::class.java)
+                            ?: return@runTransaction null
 
-                    if (qtdAtual > 0) {
-                        val aluguelRef = db.collection("emprestimos").document()
-                        transaction.set(aluguelRef, novoAluguel)
+                        // Busca o primeiro exemplar com situação "Disponivel"
+                        val exemplar = entradaDb.exemplares.firstOrNull { it.situacao == "Disponivel" }
 
-                        transaction.update(livroRef, "exemplaresDisponiveis", qtdAtual - 1)
-                        true
-                    } else {
-                        false
-                    }
-                }.addOnSuccessListener { sucesso ->
-                    if (sucesso) {
-                        exibirSucessoReserva(entry, retiradaDate, devolucaoDate)                        // atualiza na tela.
-                        loadEntrada(entry.id)
-                    } else {
-                        mostrarToast("Infelizmente o livro acabou de ficar indisponível.")
-                    }
-                }
-                    .addOnFailureListener {
+                        if (exemplar != null) {
+                            // Marca o exemplar como "Reservado"
+                            val novosExemplares = entradaDb.exemplares.map { ex ->
+                                if (ex.registro == exemplar.registro) ex.copy(situacao = "Reservado")
+                                else ex
+                            }
+
+                            val aluguelRef = db.collection("emprestimos").document()
+                            val novoAluguel = hashMapOf(
+                                "idUsuario" to uid,
+                                "nomeUsuario" to nomeUsuario,
+                                "idLivro" to entry.id,
+                                "tituloLivro" to entry.titulo,
+                                "autorLivro" to entry.autor,
+                                "idExemplar" to exemplar.registro,
+                                "dataEmprestimo" to System.currentTimeMillis(),
+                                "dataDevolucaoPrevista" to java.util.Date(devolucaoMillis),
+                                "status" to "pendente",
+                                "tipoItem" to "livro"
+                            )
+
+                            transaction.set(aluguelRef, novoAluguel)
+                            transaction.update(livroRef, "exemplares", novosExemplares)
+                            transaction.update(livroRef, "reservaCount", entradaDb.reservaCount + 1)
+                            true
+                        } else {
+                            false
+                        }
+                    }.addOnSuccessListener { sucesso ->
+                        dialog.dismiss()
+                        if (sucesso == true) {
+                            exibirSucessoReserva(entry, retiradaDate, devolucaoDate)
+                            loadEntrada(entry.id) // Atualiza a tela de detalhes
+                        } else {
+                            mostrarToast("Infelizmente o livro acabou de ficar indisponível.")
+                        }
+                    }.addOnFailureListener {
+                        button.isEnabled = true
                         mostrarToast("Erro ao processar reserva. Tente novamente.")
                     }
+                }
             }
-            .setNegativeButton("Cancelar", null)
-            .show()
+        }
+        dialog.show()
     }
 
     private fun exibirSucessoReserva(entry: Entrada, retiradaDate: String, devolucaoDate: String) {
@@ -261,18 +300,12 @@ class DetalhesLivroActivity : AppCompatActivity() {
             addView(tv)
         }
 
-//        AlertDialog.Builder(this)
-//            .setTitle("Reserva Realizada!")
-//            .setMessage("O livro \"${entry.titulo}\" foi reservado com sucesso.\n\nRetirar até: $retiradaDate às 21:00\nDevolver em: $devolucaoDate")
-//            .setView(dialogView)
-//            .setPositiveButton("Fechar", null)
-//            .show()
         mostrarDialogo(
             titulo = "Solicitação Enviada!",
             mensagem = "Sua reserva para \"${entry.titulo}\" foi enviada com sucesso.\n\n" +
-                    "📅 Retire no balcão até: $retiradaDate às 21:00\n" + // Mudar isso para icones de emotes (todos os icones de todo o app) de verdade do googlefont!
+                    "📅 Retire no balcão até: $retiradaDate às 21:00\n" + 
                     "⏳ Prazo de devolução: $devolucaoDate",
-            layoutCustomizado = dialogView // Lembrar de colocaro QRCODE aqui depois.
+            layoutCustomizado = dialogView
         )
     }
 }

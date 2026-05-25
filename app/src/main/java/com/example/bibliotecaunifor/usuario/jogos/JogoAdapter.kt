@@ -30,11 +30,7 @@ class JogoAdapter(
                 // Se estou na aba "Meus Aluguéis"
                 binding.tvJogoDesc.text = "${item.jogadores} | ${item.tempoMinutos} min\n(${item.descricao})"
                 
-                /*
-                binding.btnAcaoJogo.text = "Devolver"
-                binding.btnAcaoJogo.isEnabled = true
-                binding.btnAcaoJogo.alpha = 1f
-                */
+
 
                 if (item.status == "pendente") {
                     binding.btnAcaoJogo.visibility = android.view.View.VISIBLE
